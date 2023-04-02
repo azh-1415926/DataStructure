@@ -1,0 +1,42 @@
+#ifndef _SEQ_STACK_H_
+#define _SEQ_STACK_H_
+#include<iostream>
+template<class Type,int size=10>
+class seqStack {
+    Type *pStack;
+    int top;
+    int capacity;
+    public:
+    seqStack();
+    bool isEmpty();
+    bool push(Type data);
+    Type pop();
+};
+template<class Type,int size>
+seqStack<Type,size>::seqStack(){
+    this->capacity=size;
+    pStack=new Type[this->capacity];
+    top=0;
+}
+template<class Type,int size>
+bool seqStack<Type,size>::isEmpty(){
+    return top==0;
+}
+template<class Type,int size>
+bool seqStack<Type,size>::push(Type data){
+    if(top==capacity){
+        std::cout<<"stack is full!"<<std::endl;
+        return false;
+    }
+    pStack[top++]=data;
+    return true;
+}
+template<class Type,int size>
+Type seqStack<Type,size>::pop(){
+    if(top==0){
+        std::cout<<"stack is empty!"<<std::endl;
+        return 0;
+    }
+    return pStack[--top];
+}
+#endif

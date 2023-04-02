@@ -1,0 +1,108 @@
+#ifndef _BINARY_TREE_H_
+#define _BINARY_TREE_H_
+#include<iostream>
+#include "linkQueue"
+template<class Type>
+class treeNode {
+    public:
+    Type data;
+    treeNode *left;
+    treeNode *right;
+    treeNode(Type data=0);
+};
+template<class Type>
+class binaryTree {
+    treeNode<Type> *pTreeRoot;
+    treeNode<Type> *pTree;
+    linkQueue<Type> dataQueue;
+    public:
+    binaryTree();
+    binaryTree(Type *pArray,int size);
+    bool preOrderCreate(treeNode<Type> *pNode);
+    bool inOrderTraversal(treeNode<Type> *pNode=NULL);
+    void breOrderTraversal();
+    ~binaryTree();
+};
+template<class Type>
+treeNode<Type>::treeNode(Type data){
+    this->data=data;
+    this->left=NULL;
+    this->right=NULL;
+}
+template<class Type>
+binaryTree<Type>::binaryTree(){
+    pTreeRoot=new treeNode<Type>;
+    pTree=pTreeRoot;
+}
+template<class Type>
+binaryTree<Type>::binaryTree(Type *pArray,int size){
+    pTreeRoot=new treeNode<Type>;
+    pTree=pTreeRoot;
+    for(int i=0;i<size;++i){
+        dataQueue.enqueue(pArray[i]);
+    }
+    preOrderCreate(pTree);
+}
+template<class Type>
+bool binaryTree<Type>::preOrderCreate(treeNode<Type> *pNode){
+    if(dataQueue.isEmpty()){
+        return false;
+    }
+    Type e=dataQueue.dequeue();
+    pNode->data=e;
+    pNode->left=new treeNode<Type>;
+    pNode->right=new treeNode<Type>;
+    preOrderCreate(pNode->left);
+    preOrderCreate(pNode->right);
+    return true;
+}
+template<class Type>
+bool binaryTree<Type>::inOrderTraversal(treeNode<Type> *pNode){
+    if(pNode==NULL){
+        pNode=pTreeRoot;
+    }
+    if(pNode){
+        if(pNode->left){
+            inOrderTraversal(pNode->left);
+        }
+        std::cout<<pNode->data<<" ";
+        if(pNode->right){
+            inOrderTraversal(pNode->right);
+        }
+    };
+    return true;
+}
+template<class Type>
+void binaryTree<Type>::breOrderTraversal(){
+    linkQueue<treeNode<Type>*> queue;
+    queue.enqueue(pTreeRoot);
+    pTree=pTreeRoot;
+    while(!queue.isEmpty()){
+        pTree=queue.dequeue();
+        std::cout<<pTree->data<<" ";
+        if(pTree->left){
+            queue.enqueue(pTree->left);
+        }
+        if(pTree->right){
+            queue.enqueue(pTree->right);
+        }
+    }
+    std::cout<<std::endl;
+}
+template<class Type>
+binaryTree<Type>::~binaryTree(){
+    linkQueue<treeNode<Type>*> queue;
+    queue.enqueue(pTreeRoot);
+    pTree=pTreeRoot;
+    while(queue.isEmpty()){
+        pTree=queue.dequeue();
+        if(pTree->left){
+            queue.enqueue(pTree->left);
+        }
+        if(pTree->right){
+            queue.enqueue(pTree->right);
+        }
+        delete pTree;
+    }
+}
+#endif

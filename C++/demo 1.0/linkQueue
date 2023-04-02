@@ -1,0 +1,79 @@
+#ifndef _LINK_QUEUE_H_
+#define _LINK_QUEUE_H_
+#include<iostream>
+template<class Type>
+class linkQueueNode {
+    public:
+    Type data;
+    linkQueueNode *next;
+    linkQueueNode(Type data);
+};
+template<class Type>
+class linkQueue {
+    linkQueueNode<Type> *pHead;
+    linkQueueNode<Type> *pQueue;
+    int length;
+    public:
+    linkQueue();
+    bool isEmpty();
+    bool enqueue(Type data);
+    Type dequeue();
+    ~linkQueue();
+};
+template<class Type>
+linkQueueNode<Type>::linkQueueNode(Type data){
+    this->data=data;
+    this->next=NULL;
+}
+template<class Type>
+linkQueue<Type>::linkQueue(){
+    pHead=new linkQueueNode<Type>(0);
+    if(pHead==NULL){
+        std::cout<<"head node new error!\n";
+        return;
+    }
+    pQueue=pHead;
+    length=0;
+}
+template<class Type>
+bool linkQueue<Type>::isEmpty(){
+    return length==0;
+}
+template<class Type>
+bool linkQueue<Type>::enqueue(Type data){
+    pQueue=pHead;
+    while(pQueue->next){
+        pQueue=pQueue->next;
+    }
+    pQueue->next=new linkQueueNode<Type>(data);
+    ++length;
+    return true;
+}
+template<class Type>
+Type linkQueue<Type>::dequeue(){
+    if(pHead->next==NULL){
+        std::cout<<"queue is empty!\n";
+        return 0;
+    }
+    Type e;
+    pQueue=pHead->next;
+    pHead->next=pQueue->next;
+    e=pQueue->data;
+    delete pQueue;
+    pQueue=NULL;
+    --length;
+    return e;
+}
+template<class Type>
+linkQueue<Type>::~linkQueue(){
+    pQueue=pHead;
+    linkQueueNode<Type> *temp;
+    while(pQueue){
+        temp=pQueue;
+        pQueue=pQueue->next;
+        delete temp;
+    }
+    temp=NULL;
+    pQueue=NULL;
+}
+#endif
