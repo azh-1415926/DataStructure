@@ -18,10 +18,14 @@ bool linkQueueIsEmpty(linkQueue queue){
     return queue->next==NULL;
 }
 void linkQueueEnqueue(linkQueue queue,void* const data){
-    linkQueue pQueue=queue->next;
-    queue->next=(linkQueueNode*)malloc(sizeof(struct linkQueueNode));
-    queue->next->next=pQueue;
-    queue->next->data=data;
+    linkQueue pQueue=queue;
+    while(pQueue->next){
+        pQueue=pQueue->next;
+    }
+    pQueue->next=(linkQueueNode*)malloc(sizeof(struct linkQueueNode));
+    pQueue=pQueue->next;
+    pQueue->next=NULL;
+    pQueue->data=data;
 }
 void* linkQueueFront(linkQueue const queue){
     return queue->next->data;
