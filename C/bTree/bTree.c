@@ -37,10 +37,11 @@ static void insertValue(BTNode* node,int index,pPair pair){
 }
 
 static void insertBTNode(BTNode* parent,int index,BTNode* node){
-    int endPos=node->keynum+1;
+    int endPos=node->keynum;
     for(int i=0;i<endPos-index;i++)
-        node->child[endPos-i]=node->child[endPos-i-1];
-    node->child[index]=node;
+        parent->child[endPos-i]=parent->child[endPos-i-1];
+    node->parent=parent;
+    parent->child[index]=node;
 }
 
 static void splitBTNode(BTNode* node){
@@ -49,7 +50,7 @@ static void splitBTNode(BTNode* node){
     Pair pair={node->keys[MID_KEY],node->data[MID_KEY]};
     BTNode* temp=NULL;
     if(node->parent==NULL){
-        printf("currnode is root,start to split\n");
+        printf("root %p,start to split\n",node);
         //node is root,and node still is root
         //create left tree
         temp=createBTNode(node,NULL);
@@ -66,6 +67,7 @@ static void splitBTNode(BTNode* node){
         }
         //the root's left tree
         node->child[0]=temp;
+        temp->parent=node;
         printf("node %p 's left child set %p\n",node,temp);
         //use mid value
         node->keys[1]=node->keys[MID_KEY];
@@ -83,16 +85,19 @@ static void splitBTNode(BTNode* node){
         }
         //the root's right tree
         node->child[1]=temp;
+        temp->parent=node;
         printf("node %p 's right child set %p\n",node,temp);
         node->keynum=1;
     }else{
+        printf("node %p,start to split\n",node);
         i=serachIndex(node->parent,node->keys[MID_KEY]);
         //create right node
         temp=createBTNode(node->parent,NULL);
+        printf("create node %p\n",temp);
         insertBTNode(node->parent,i,temp);
         insertValue(node->parent,i,&pair);
-        //temp->child[0]=node->child[MID_KEY];
-        for(int i=1;i<node->keynum-MID_KEY;i++){
+        temp->child[0]=node->child[MID_KEY];
+        for(int i=1;i<=node->keynum-MID_KEY;i++){
             pair.key=node->keys[MID_KEY+i];
             pair.value=node->data[MID_KEY+i];
             insertValue(temp,i,&pair);
