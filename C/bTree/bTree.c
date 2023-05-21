@@ -32,8 +32,10 @@ static void insertValue(BTNode* node,int index,pPair pair){
     node->keys[index]=pair->key;
     node->data[index]=pair->value;
     if(node->child[0]==NULL){
-        node->child[index]=NULL;
+        node->child[index+1]=NULL;
+        //printf("child %d set null\n",index+1);
     }
+    printf("insert value to node:%p,pos:%d,key:%d,value:%d\n",node,index,pair->key,*(int*)pair->value);
     node->keynum++;
 }
 
@@ -50,32 +52,39 @@ static void splitBTNode(BTNode* parent,BTNode* node){
     Pair pair={node->keys[MID_KEY],node->data[MID_KEY]};
     BTNode* temp=NULL;
     if(parent==NULL){
+        printf("currnode is root,start to split\n");
         //node is root,and node still is root
         //create left tree
         temp=createBTNode(node,NULL);
+        printf("create node %p\n",temp);
         temp->child[0]=node->child[0];
+        printf("node %p 's child[%d] set %p\n",temp,0,node->child[0]);
         for(int i=1;i<MID_KEY;i++){
             pair.key=node->keys[i];
             pair.value=node->data[i];
             insertValue(temp,i,&pair);
             temp->child[i]=node->child[i];
+            printf("node %p 's child[%d] set %p\n",temp,i,node->child[i]);
         }
         //the root's left tree
         node->child[0]=temp;
+        printf("node %p 's left child set %p\n",node,temp);
         //use mid value
         node->keys[1]=node->keys[MID_KEY];
         node->data[1]=node->data[MID_KEY];
         //create right tree
         temp=createBTNode(node,NULL);
+        printf("create node %p\n",temp);
         temp->child[0]=node->child[MID_KEY];
-        for(int i=1;i<node->keynum-MID_KEY;i++){
-            pair.key=temp->keys[MID_KEY+i];
-            pair.value=temp->data[MID_KEY+i];
+        for(int i=1;i<=node->keynum-MID_KEY;i++){
+            pair.key=node->keys[MID_KEY+i];
+            pair.value=node->data[MID_KEY+i];
             insertValue(temp,i,&pair);
             temp->child[i]=node->child[MID_KEY+i];
         }
         //the root's right tree
         node->child[1]=temp;
+        printf("node %p 's right child set %p\n",node,temp);
         node->keynum=1;
     }else{
         i=serachIndex(parent,node->keys[MID_KEY]);
@@ -84,8 +93,8 @@ static void splitBTNode(BTNode* parent,BTNode* node){
         temp=createBTNode(parent,NULL);
         temp->child[0]=node->child[MID_KEY];
         for(int i=1;i<node->keynum-MID_KEY;i++){
-            pair.key=temp->keys[MID_KEY+i];
-            pair.value=temp->data[MID_KEY+i];
+            pair.key=node->keys[MID_KEY+i];
+            pair.value=node->data[MID_KEY+i];
             insertValue(temp,i,&pair);
             temp->child[i]=node->child[MID_KEY+i];
         }
@@ -116,8 +125,8 @@ bool bTreeInsert(BTree tree, pPair pair)
     BTNode* preNode=NULL;
     while(currNode!=NULL){
         i=serachIndex(currNode,pair->key);
-        if(currNode->keynum==0)
-            break;
+        // if(currNode->keynum==0)
+        //     break;
         if(pair->key==currNode->keys[i]){
             return false;
         }
@@ -125,12 +134,16 @@ bool bTreeInsert(BTree tree, pPair pair)
             preNode=currNode;
             currNode=currNode->child[i];
         }
+        else{
+            preNode=currNode;
+            currNode=currNode->child[i-1];
+        }
     }
     if(preNode!=NULL)
         currNode=preNode;
     insertValue(currNode,i,pair);
-    printf("insert to node:%p,key:%d,value:%d",currNode,pair->key,*(int*)pair->value);
-    if(currNode->keynum==MAX_KEY){
+    //printf("insert to node:%p,key:%d,value:%d\n",currNode,pair->key,*(int*)pair->value);
+    if(currNode->keynum>MAX_KEY){
         splitBTNode(currNode->parent,currNode);
     }
     return true;
@@ -151,11 +164,15 @@ void bTreeFree(BTree *tree)
         if(currNode->child[0]!=NULL){
             linkQueueEnqueue(queue,currNode->child[0]);
         }
-        while(i++<currNode->keynum){
+        while(i<=currNode->keynum){
             if(currNode->child[i]!=NULL)
                 linkQueueEnqueue(queue,currNode->child[i]);
+            i++;
         }
-        printf("delete Node:%p,key:%d,value:%d",currNode,currNode->keys[1],*(int*)currNode->data);
+        printf("delete Node:%p\n",currNode);
+        for(int i=1;i<=currNode->keynum;i++){
+            printf("\tkey:%d,value:%d\n",currNode->keys[i],*(int*)currNode->data[i]);
+        }
         free(currNode);
         i=1;
     }
