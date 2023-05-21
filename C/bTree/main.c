@@ -8,7 +8,7 @@ int main(){
     // bTreeInsert(tree,&pair[1]);
     // bTreeInsert(tree,&pair[2]);
     // bTreeInsert(tree,&pair[3]);
-    for(int i=1;i<5;i++){
+    for(int i=0;i<5;i++){
         bTreeInsert(tree,&pair[i]);
     }
     bTreeFree(&tree);

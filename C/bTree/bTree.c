@@ -1,7 +1,7 @@
 #include "bTree.h"
 #include "linkQueue.h"
 #include<stdlib.h>
-
+#include "debug.h"
 static BTNode* createBTNode(BTNode* parent,pPair pair){
     BTNode* node=malloc(sizeof(BTNode));
     if(pair!=NULL){
@@ -11,8 +11,9 @@ static BTNode* createBTNode(BTNode* parent,pPair pair){
     }else
         node->keynum=0;
     node->parent=parent;
-    node->child[0]=NULL;
-    node->child[1]=NULL;
+    for(int i=0;i<=M;i++){
+        node->child[i]=NULL;
+    }
     return node;
 }
 
@@ -31,10 +32,6 @@ static void insertValue(BTNode* node,int index,pPair pair){
     }
     node->keys[index]=pair->key;
     node->data[index]=pair->value;
-    if(node->child[0]==NULL){
-        node->child[index+1]=NULL;
-        //printf("child %d set null\n",index+1);
-    }
     printf("insert value to node:%p,pos:%d,key:%d,value:%d\n",node,index,pair->key,*(int*)pair->value);
     node->keynum++;
 }
@@ -46,12 +43,12 @@ static void insertBTNode(BTNode* parent,int index,BTNode* node){
     node->child[index]=node;
 }
 
-static void splitBTNode(BTNode* parent,BTNode* node){
+static void splitBTNode(BTNode* node){
     int i=1;
     //save mid value
     Pair pair={node->keys[MID_KEY],node->data[MID_KEY]};
     BTNode* temp=NULL;
-    if(parent==NULL){
+    if(node->parent==NULL){
         printf("currnode is root,start to split\n");
         //node is root,and node still is root
         //create left tree
@@ -64,6 +61,7 @@ static void splitBTNode(BTNode* parent,BTNode* node){
             pair.value=node->data[i];
             insertValue(temp,i,&pair);
             temp->child[i]=node->child[i];
+            node->child[i]=NULL;
             printf("node %p 's child[%d] set %p\n",temp,i,node->child[i]);
         }
         //the root's left tree
@@ -81,23 +79,29 @@ static void splitBTNode(BTNode* parent,BTNode* node){
             pair.value=node->data[MID_KEY+i];
             insertValue(temp,i,&pair);
             temp->child[i]=node->child[MID_KEY+i];
+            node->child[MID_KEY+i]=NULL;
         }
         //the root's right tree
         node->child[1]=temp;
         printf("node %p 's right child set %p\n",node,temp);
         node->keynum=1;
     }else{
-        i=serachIndex(parent,node->keys[MID_KEY]);
-        insertBTNode(parent,i,temp);
-        insertValue(parent,i,&pair);
-        temp=createBTNode(parent,NULL);
-        temp->child[0]=node->child[MID_KEY];
+        i=serachIndex(node->parent,node->keys[MID_KEY]);
+        //create right node
+        temp=createBTNode(node->parent,NULL);
+        insertBTNode(node->parent,i,temp);
+        insertValue(node->parent,i,&pair);
+        //temp->child[0]=node->child[MID_KEY];
         for(int i=1;i<node->keynum-MID_KEY;i++){
             pair.key=node->keys[MID_KEY+i];
             pair.value=node->data[MID_KEY+i];
             insertValue(temp,i,&pair);
             temp->child[i]=node->child[MID_KEY+i];
+            node->child[MID_KEY+i]=NULL;
         }
+        node->keynum=MID_KEY-1;
+        if(node->parent->keynum>MAX_KEY)
+            splitBTNode(node->parent);
     }
 }
 
@@ -130,7 +134,7 @@ bool bTreeInsert(BTree tree, pPair pair)
         if(pair->key==currNode->keys[i]){
             return false;
         }
-        if(pair->key>currNode->keys[i]){
+        if(i<currNode->keynum&&pair->key>currNode->keys[i]){
             preNode=currNode;
             currNode=currNode->child[i];
         }
@@ -144,7 +148,7 @@ bool bTreeInsert(BTree tree, pPair pair)
     insertValue(currNode,i,pair);
     //printf("insert to node:%p,key:%d,value:%d\n",currNode,pair->key,*(int*)pair->value);
     if(currNode->keynum>MAX_KEY){
-        splitBTNode(currNode->parent,currNode);
+        splitBTNode(currNode);
     }
     return true;
 }
@@ -170,9 +174,7 @@ void bTreeFree(BTree *tree)
             i++;
         }
         printf("delete Node:%p\n",currNode);
-        for(int i=1;i<=currNode->keynum;i++){
-            printf("\tkey:%d,value:%d\n",currNode->keys[i],*(int*)currNode->data[i]);
-        }
+        showBTree(currNode);
         free(currNode);
         i=1;
     }
