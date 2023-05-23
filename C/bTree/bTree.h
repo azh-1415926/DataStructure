@@ -4,9 +4,9 @@
 #include <stdbool.h>
 
 #define M 3
-#define MAX_KEY M-1
-#define MIN_KEY (M-1)/2
-#define MID_KEY (M+1)/2
+#define MAX_KEY (M-1)
+#define MIN_KEY ((M-1)/2)
+#define MID_KEY ((M+1)/2)
 typedef int Key;
 typedef void* eleType;
 typedef struct BTNode {
@@ -16,12 +16,9 @@ typedef struct BTNode {
     struct BTNode* parent;
     struct BTNode* child[M+1];
 }BTNode,*BTree;
-typedef struct Pair {
-    Key key;
-    eleType value;
-}Pair,*pPair;
-void bTreeCreateRoot(BTree *tree,pPair pair,BTNode* lchild, BTNode* rchild);
 void bTreeInitalize(BTree* tree);
-bool bTreeInsert(BTree tree,pPair pair);
+eleType bTreeSearch(BTree tree,Key key);
+bool bTreeInsert(BTree tree,Key key,eleType value);
+bool bTreeDelete(BTree tree,Key key);
 void bTreeFree(BTree* tree);
 #endif /* _B_TREE_H_ */

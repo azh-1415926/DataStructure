@@ -2,121 +2,109 @@
 #include "linkQueue.h"
 #include<stdlib.h>
 #include "debug.h"
-static BTNode* createBTNode(BTNode* parent,pPair pair){
+static BTNode* createBTNode(BTNode* parent){
     BTNode* node=malloc(sizeof(BTNode));
-    if(pair!=NULL){
-        node->keynum=1;
-        node->keys[1]=pair->key;
-        node->data[1]=pair->value;
-    }else
-        node->keynum=0;
+    node->keynum=0;
     node->parent=parent;
     for(int i=0;i<=M;i++){
+        node->keys[i]=0;
+        node->data[i]=0;
         node->child[i]=NULL;
     }
+    printf("create node %p\n",node);
     return node;
 }
 
 static int serachIndex(BTNode *node,Key key){
     int i=1;
-    while(i<=node->keynum&&key>=node->keys[i])
+    while(i<node->keynum&&key>node->keys[i])
         i++;
     return i;
 }
 
-static void insertValue(BTNode* node,int index,pPair pair){
+static void insertValue(BTNode* node,int index,Key key,eleType value){
     int endPos=node->keynum+1;
     for(int i=0;i<endPos-index;i++){
         node->keys[endPos-i]=node->keys[endPos-i-1];
         node->data[endPos-i]=node->data[endPos-i-1];
     }
-    node->keys[index]=pair->key;
-    node->data[index]=pair->value;
-    printf("insert value to node:%p,pos:%d,key:%d,value:%d\n",node,index,pair->key,*(int*)pair->value);
+    node->keys[index]=key;
+    node->data[index]=value;
+    printf("insert value to node:%p,pos:%d,key:%d,value:%d\n",node,index,key,*(int*)value);
     node->keynum++;
 }
 
 static void insertBTNode(BTNode* parent,int index,BTNode* node){
-    int endPos=node->keynum;
+    int endPos=parent->keynum;
     for(int i=0;i<endPos-index;i++)
         parent->child[endPos-i]=parent->child[endPos-i-1];
-    node->parent=parent;
     parent->child[index]=node;
-}
-
-static void splitBTNode(BTNode* node){
-    int i=1;
-    //save mid value
-    Pair pair={node->keys[MID_KEY],node->data[MID_KEY]};
-    BTNode* temp=NULL;
-    if(node->parent==NULL){
-        printf("root %p,start to split\n",node);
-        //node is root,and node still is root
-        //create left tree
-        temp=createBTNode(node,NULL);
-        printf("create node %p\n",temp);
-        temp->child[0]=node->child[0];
-        printf("node %p 's child[%d] set %p\n",temp,0,node->child[0]);
-        for(int i=1;i<MID_KEY;i++){
-            pair.key=node->keys[i];
-            pair.value=node->data[i];
-            insertValue(temp,i,&pair);
-            temp->child[i]=node->child[i];
-            node->child[i]=NULL;
-            printf("node %p 's child[%d] set %p\n",temp,i,node->child[i]);
-        }
-        //the root's left tree
-        node->child[0]=temp;
-        temp->parent=node;
-        printf("node %p 's left child set %p\n",node,temp);
-        //use mid value
-        node->keys[1]=node->keys[MID_KEY];
-        node->data[1]=node->data[MID_KEY];
-        //create right tree
-        temp=createBTNode(node,NULL);
-        printf("create node %p\n",temp);
-        temp->child[0]=node->child[MID_KEY];
-        for(int i=1;i<=node->keynum-MID_KEY;i++){
-            pair.key=node->keys[MID_KEY+i];
-            pair.value=node->data[MID_KEY+i];
-            insertValue(temp,i,&pair);
-            temp->child[i]=node->child[MID_KEY+i];
-            node->child[MID_KEY+i]=NULL;
-        }
-        //the root's right tree
-        node->child[1]=temp;
-        temp->parent=node;
-        printf("node %p 's right child set %p\n",node,temp);
-        node->keynum=1;
-    }else{
-        printf("node %p,start to split\n",node);
-        i=serachIndex(node->parent,node->keys[MID_KEY]);
-        //create right node
-        temp=createBTNode(node->parent,NULL);
-        printf("create node %p\n",temp);
-        insertBTNode(node->parent,i,temp);
-        insertValue(node->parent,i,&pair);
-        temp->child[0]=node->child[MID_KEY];
-        for(int i=1;i<=node->keynum-MID_KEY;i++){
-            pair.key=node->keys[MID_KEY+i];
-            pair.value=node->data[MID_KEY+i];
-            insertValue(temp,i,&pair);
-            temp->child[i]=node->child[MID_KEY+i];
-            node->child[MID_KEY+i]=NULL;
-        }
-        node->keynum=MID_KEY-1;
-        if(node->parent->keynum>MAX_KEY)
-            splitBTNode(node->parent);
+    if(node!=NULL){
+        node->parent=parent;
+        printf("node %p 's child[%d] set %p\n",parent,index,node->child[index]);
     }
 }
 
-void bTreeCreateRoot(BTree *tree, pPair pair, BTNode *lchild, BTNode *rchild)
-{
-    *tree=createBTNode(NULL,pair);
-    if(pair!=NULL){
-        (*tree)->keynum=1;
-        (*tree)->child[0]=lchild;
-        (*tree)->child[1]=rchild;
+static void splitBTNode(BTNode* node){
+    //save mid value
+    Key key=node->keys[MID_KEY];
+    eleType value=node->data[MID_KEY];
+    BTNode* parent=node->parent;
+    BTNode* rightChild=NULL;
+    //right child
+    rightChild=createBTNode(node);
+    insertBTNode(rightChild,0,node->child[MID_KEY]);
+    node->child[MID_KEY]=NULL;
+    for(int i=1;i<=node->keynum-MID_KEY;i++){
+        key=node->keys[MID_KEY+i];
+        value=node->data[MID_KEY+i];
+        node->keys[MID_KEY+i]=0;
+        node->data[MID_KEY+i]=NULL;
+        insertValue(rightChild,i,key,value);
+        insertBTNode(rightChild,i,node->child[MID_KEY+i]);
+        node->child[MID_KEY+i]=NULL;
+    }
+    printf("-------split--------node:%p\n",node);
+    if(parent==NULL){
+        BTNode* leftChild=NULL;
+        //left child
+        leftChild=createBTNode(node);
+        insertBTNode(leftChild,0,node->child[0]);
+        node->child[0]=NULL;
+        for(int i=1;i<MID_KEY;i++){
+            key=node->keys[i];
+            value=node->data[i];
+            node->keys[i]=0;
+            node->data[i]=NULL;
+            insertValue(leftChild,i,key,value);
+            insertBTNode(leftChild,i,node->child[i]);
+            node->child[i]=NULL;
+        }
+        key=node->keys[MID_KEY];
+        value=node->data[MID_KEY];
+        node->keys[MID_KEY]=0;
+        node->data[MID_KEY]=NULL;
+        node->keynum=0;
+        insertBTNode(node,0,leftChild);
+        insertValue(node,1,key,value);
+        insertBTNode(node,1,rightChild);
+        showBTree(node);
+        showBTree(leftChild);
+        showBTree(rightChild);
+    }else{
+        int index=1;
+        index=serachIndex(parent,key);
+        node->keynum=MID_KEY-1;
+        node->keys[MID_KEY]=0;
+        node->data[MID_KEY]=NULL;        
+        insertValue(parent,index,key,value);
+        //leftChild=node;
+        insertBTNode(parent,index,rightChild);
+        showBTree(parent);
+        showBTree(node);
+        showBTree(rightChild);
+        if(parent->keynum>MAX_KEY)
+            splitBTNode(parent);
     }
 }
 
@@ -124,34 +112,48 @@ void bTreeInitalize(BTree *tree)
 {
     if(tree==NULL)
         return;
-    bTreeCreateRoot(tree,NULL,NULL,NULL);
+    *tree=createBTNode(NULL);
 }
 
-bool bTreeInsert(BTree tree, pPair pair)
+eleType bTreeSearch(BTree tree, Key key)
 {
     int i=1;
     BTNode* currNode=tree;
+    while(currNode&&key!=currNode->keys[i]){
+        i=serachIndex(currNode,key);
+        if(key>currNode->keys[i])
+            currNode=currNode->child[i];
+        else if(key<currNode->keys[i])
+            currNode=currNode->child[i-1];
+    }
+    if(currNode==NULL)
+        return NULL;
+    return currNode->data[i];
+}
+
+bool bTreeInsert(BTree tree, Key key, eleType value)
+{
+    int i=1;
     BTNode* preNode=NULL;
-    while(currNode!=NULL){
-        i=serachIndex(currNode,pair->key);
-        // if(currNode->keynum==0)
-        //     break;
-        if(pair->key==currNode->keys[i]){
-            return false;
-        }
-        if(i<currNode->keynum&&pair->key>currNode->keys[i]){
+    BTNode* currNode=tree;
+    while(currNode){
+        i=serachIndex(currNode,key);
+        if(key>currNode->keys[i]){
             preNode=currNode;
             currNode=currNode->child[i];
         }
-        else{
+        else if(key==currNode->keys[i]){
+            return false;
+        }
+        else if(key<currNode->keys[i]){
             preNode=currNode;
             currNode=currNode->child[i-1];
         }
     }
-    if(preNode!=NULL)
+    if(currNode==NULL)
         currNode=preNode;
-    insertValue(currNode,i,pair);
-    //printf("insert to node:%p,key:%d,value:%d\n",currNode,pair->key,*(int*)pair->value);
+    i=serachIndex(currNode,key);
+    insertValue(currNode,i,key,value);
     if(currNode->keynum>MAX_KEY){
         splitBTNode(currNode);
     }
@@ -167,6 +169,7 @@ void bTreeFree(BTree *tree)
     linkQueueInitalize(&queue);
     linkQueueEnqueue(queue,*tree);
     int i=1;
+    printf("----------end----------\n");
     while(!linkQueueIsEmpty(queue)){
         currNode=linkQueueFront(queue);
         linkQueueDequeue(queue);
@@ -178,7 +181,6 @@ void bTreeFree(BTree *tree)
                 linkQueueEnqueue(queue,currNode->child[i]);
             i++;
         }
-        printf("delete Node:%p\n",currNode);
         showBTree(currNode);
         free(currNode);
         i=1;
