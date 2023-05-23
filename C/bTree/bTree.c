@@ -47,8 +47,8 @@ static void insertBTNode(BTNode* parent,int index,BTNode* node){
 
 static void splitBTNode(BTNode* node){
     //save mid value
-    Key key=node->keys[MID_KEY];
-    eleType value=node->data[MID_KEY];
+    Key key=0;
+    eleType value=NULL;
     BTNode* parent=node->parent;
     BTNode* rightChild=NULL;
     //right child
@@ -64,6 +64,8 @@ static void splitBTNode(BTNode* node){
         insertBTNode(rightChild,i,node->child[MID_KEY+i]);
         node->child[MID_KEY+i]=NULL;
     }
+    key=node->keys[MID_KEY];
+    value=node->data[MID_KEY];
     printf("-------split--------node:%p\n",node);
     if(parent==NULL){
         BTNode* leftChild=NULL;
@@ -96,7 +98,9 @@ static void splitBTNode(BTNode* node){
         index=serachIndex(parent,key);
         node->keynum=MID_KEY-1;
         node->keys[MID_KEY]=0;
-        node->data[MID_KEY]=NULL;        
+        node->data[MID_KEY]=NULL;
+        if(key>parent->keys[index])
+            index++;
         insertValue(parent,index,key,value);
         //leftChild=node;
         insertBTNode(parent,index,rightChild);
@@ -106,6 +110,15 @@ static void splitBTNode(BTNode* node){
         if(parent->keynum>MAX_KEY)
             splitBTNode(parent);
     }
+}
+
+static BTNode* getPrecursor(BTNode* node){
+    BTNode* currNode=node;
+    
+}
+
+static BTNode* getSuccessor(BTNode* node){
+    
 }
 
 void bTreeInitalize(BTree *tree)
@@ -153,11 +166,18 @@ bool bTreeInsert(BTree tree, Key key, eleType value)
     if(currNode==NULL)
         currNode=preNode;
     i=serachIndex(currNode,key);
+    if(i<=currNode->keynum&&key>currNode->keys[i])
+        i++;
     insertValue(currNode,i,key,value);
     if(currNode->keynum>MAX_KEY){
         splitBTNode(currNode);
     }
     return true;
+}
+
+bool bTreeDelete(BTree tree, Key key)
+{
+    return false;
 }
 
 void bTreeFree(BTree *tree)

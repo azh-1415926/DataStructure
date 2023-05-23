@@ -4,7 +4,7 @@ int main(){
     int a[10]={35,16,18,70,5,50,22,60,13,17};
     bTreeInitalize(&tree);
     printf("root:%p,child[0]:%p,child[1]:%p\n",tree,tree->child[0],tree->child[1]);
-    for(int i=0;i<6;i++){
+    for(int i=0;i<10;i++){
         bTreeInsert(tree,a[i],&a[9-i]);
     }
     int *p=bTreeSearch(tree,60);
