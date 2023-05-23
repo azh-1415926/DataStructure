@@ -19,6 +19,6 @@ typedef struct BTNode {
 void bTreeInitalize(BTree* tree);
 eleType bTreeSearch(BTree tree,Key key);
 bool bTreeInsert(BTree tree,Key key,eleType value);
-bool bTreeDelete(BTree tree,Key key);
+eleType bTreeDelete(BTree tree,Key key);
 void bTreeFree(BTree* tree);
 #endif /* _B_TREE_H_ */

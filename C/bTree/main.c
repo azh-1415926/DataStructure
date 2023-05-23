@@ -10,6 +10,9 @@ int main(){
     int *p=bTreeSearch(tree,60);
     if(p!=NULL)
         printf("search data:%d\n",*p);
+    //bTreeDelete(tree,5);
+    bTreeDelete(tree,70);
+    bTreeDelete(tree,60);
     bTreeFree(&tree);
     return 0;
 }
