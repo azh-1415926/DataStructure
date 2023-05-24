@@ -166,15 +166,17 @@ static void moveLeft(BTNode* parent,int index,BTNode* leftChild,int dataPos)
         move rightChild's begin data to parent's end position
     */
     BTNode* rightChild=parent->child[index];
-    if(!(parent&&leftChild&&rightChild))
+    if(!(parent&&rightChild))
         return;
-    //left child move to left
-    for(int i=dataPos;i<leftChild->keynum;i++){
-        leftChild->keys[i]=leftChild->keys[i];
-        leftChild->data[i]=leftChild->data[i];
+    if(leftChild!=NULL){
+        //left child move to left
+        for(int i=dataPos;i<leftChild->keynum;i++){
+            leftChild->keys[i]=leftChild->keys[i+1];
+            leftChild->data[i]=leftChild->data[i+1];
+        }
+        leftChild->keys[leftChild->keynum]=parent->keys[index];
+        leftChild->data[leftChild->keynum]=parent->data[index];
     }
-    leftChild->keys[leftChild->keynum]=parent->keys[index];
-    leftChild->data[leftChild->keynum]=parent->data[index];
     //parent move to left
     parent->keys[index]=rightChild->keys[1];
     parent->data[index]=rightChild->data[1];
@@ -198,15 +200,17 @@ static void moveRight(BTNode* parent,int index,BTNode* rightChild,int dataPos)
         move leftChild's end data to parent's begin position
     */
     BTNode* leftChild=parent->child[index-1];
-    if(!(parent&&leftChild&&rightChild))
+    if(!(parent&&leftChild))
         return;
-    //right child move to left
-    for(int i=dataPos;i>1;i--){
-        rightChild->keys[i]=rightChild->keys[i-1];
-        rightChild->data[i]=rightChild->data[i-1];
+    if(rightChild!=NULL){
+        //right child move to left
+        for(int i=dataPos;i>1;i--){
+            rightChild->keys[i]=rightChild->keys[i-1];
+            rightChild->data[i]=rightChild->data[i-1];
+        }
+        rightChild->keys[1]=parent->keys[index];
+        rightChild->data[1]=parent->data[index];
     }
-    rightChild->keys[1]=parent->keys[index];
-    rightChild->data[1]=parent->data[index];
     //parent move to left
     parent->keys[index]=leftChild->keys[leftChild->keynum];
     parent->data[index]=leftChild->data[leftChild->keynum];
@@ -216,11 +220,21 @@ static void moveRight(BTNode* parent,int index,BTNode* rightChild,int dataPos)
     leftChild->keynum--;
 }
 
-static void combineNode()
+// static void moveNode(BTNode* parent,int index,BTNode* node)
+// {
+//     /*
+//         try to move data to node
+//     */
+// }
+
+static void combineNode(BTNode* parent,int index,BTNode* leftChild,BTNode* rightChild)
 {
     /*
         combine two child node
     */
+    if(!(parent&&leftChild&&rightChild))
+        return;
+    
 }
 
 static BTNode* getPrecursor(BTNode* node)
@@ -323,7 +337,7 @@ bool bTreeInsert(BTree tree, Key key, eleType value)
 eleType bTreeDelete(BTree tree, Key key)
 {
     /*
-        delete data to b-tree by key
+        delete data on b-tree by key
     */
     if(tree==NULL)
         return false;
@@ -361,24 +375,44 @@ eleType bTreeDelete(BTree tree, Key key)
             }
             //normal node
             int j=serachIndex(parent,currNode->keys[i]);
-            BTNode* leftChild=NULL;
-            BTNode* rightChild=NULL;
             if(currNode->keys[i]<parent->keys[j])
                 j--;
-            //right node is rich node
             //move to left
             if(j+1<=parent->keynum&&parent->child[j+1]->keynum>MIN_KEY){
+                //right node is rich node
                 moveLeft(parent,j+1,currNode,i);
-                return data;
             }
-            //left node is rich node
             //move to right
-            if(j-1>=0&&parent->child[j-1]->keynum>MIN_KEY){
+            else if(j-1>=0&&parent->child[j-1]->keynum>MIN_KEY){
+                //left node is rich node
                 moveRight(parent,j,currNode,i);
-                return data;
             }
             //right and left are not rich node
-
+            else if(j-1>=0){
+                //combine node and leftChild
+                deleteValue(currNode,i);
+                combineNode(parent,j,parent->child[j-1],currNode);
+            }
+            else if(j+1<=parent->keynum){
+                //combine node and rightChild
+                deleteValue(currNode,i);
+                combineNode(parent,j+1,currNode,parent->child[j+1]);
+            }
+        }
+    }else{
+        //get precursor key-value
+        BTNode* target=currNode->child[i-1];
+        BTNode* temp=NULL;
+        int j=1;
+        while(target->child[target->keynum]!=NULL)
+            target=target->child[target->keynum];
+        currNode->keys[i]=target->keys[target->keynum];
+        currNode->data[i]=target->data[target->keynum];
+        j=target->parent->keynum;
+        temp=target->parent->child[j-1];
+        deleteValue(target,target->keynum);
+        if(target->keynum<MIN_KEY){
+            combineNode(target->parent,j,temp,target);
         }
     }
     return data;
