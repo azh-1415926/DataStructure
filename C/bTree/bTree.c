@@ -22,10 +22,10 @@ static BTNode* createBTNode(BTNode* parent)
     return node;
 }
 
-static int serachIndex(BTNode *node,Key key)
+static int searchIndex(BTNode *node,Key key)
 {
     /*
-        search node
+        search node index
 
         index start at 1,the range is [1,keynum]
     */
@@ -33,6 +33,32 @@ static int serachIndex(BTNode *node,Key key)
     while(i<node->keynum&&key>node->keys[i])
         i++;
     return i;
+}
+
+static BTNode* searchBTNode(BTNode* node,Key key)
+{
+    /*
+        search node
+
+        failed,return NULL
+    */
+    int i=1;
+    BTNode* currNode=node;
+    while(currNode){
+        i=searchIndex(currNode,key);
+        //i range is [1,keynum]
+        if(key>currNode->keys[i]){
+            //right
+            currNode=currNode->child[i];
+        }else if(key==currNode->keys[i]){
+            //find it
+            break;
+        }else if(key<currNode->keys[i]){
+            //key less than the first key
+            currNode=currNode->child[i-1];
+        }
+    }
+    return currNode;
 }
 
 static void insertValue(BTNode* node,int index,Key key,eleType value)
@@ -82,6 +108,19 @@ static eleType deleteValue(BTNode* node,int index)
     printf("delete value on node:%p,pos:%d\n",node,index);
     node->keynum--;
     return data;
+}
+
+static BTNode* deleteBTNode(BTNode* node,int index)
+{
+    /*
+        delete node's child
+    */
+    int endPos=node->keynum;
+    BTNode* child=node->child[index];
+    for(int i=index;i<endPos;i++)
+        node->child[index]=node->child[index];
+    node->child[endPos]=NULL;
+    return child;
 }
 
 static void splitBTNode(BTNode* node)
@@ -139,7 +178,7 @@ static void splitBTNode(BTNode* node)
         showBTree(rightChild);
     }else{
         int index=1;
-        index=serachIndex(parent,key);
+        index=searchIndex(parent,key);
         node->keynum=MID_KEY-1;
         node->keys[MID_KEY]=0;
         node->data[MID_KEY]=NULL;
@@ -174,9 +213,15 @@ static void moveLeft(BTNode* parent,int index,BTNode* leftChild,int dataPos)
             leftChild->keys[i]=leftChild->keys[i+1];
             leftChild->data[i]=leftChild->data[i+1];
         }
+        if(dataPos>leftChild->keynum){
+            leftChild->keynum++;
+        }
         leftChild->keys[leftChild->keynum]=parent->keys[index];
         leftChild->data[leftChild->keynum]=parent->data[index];
+        if(leftChild->keynum>MAX_KEY)
+            splitBTNode(leftChild);
     }
+    insertBTNode(leftChild,leftChild->keynum,deleteBTNode(rightChild,0));
     //parent move to left
     parent->keys[index]=rightChild->keys[1];
     parent->data[index]=rightChild->data[1];
@@ -204,13 +249,20 @@ static void moveRight(BTNode* parent,int index,BTNode* rightChild,int dataPos)
         return;
     if(rightChild!=NULL){
         //right child move to left
+        if(dataPos>rightChild->keynum){
+            rightChild->keynum++;
+            dataPos=rightChild->keynum;
+        }
         for(int i=dataPos;i>1;i--){
             rightChild->keys[i]=rightChild->keys[i-1];
             rightChild->data[i]=rightChild->data[i-1];
         }
         rightChild->keys[1]=parent->keys[index];
         rightChild->data[1]=parent->data[index];
+        if(rightChild->keynum>MAX_KEY)
+            splitBTNode(rightChild);
     }
+    insertBTNode(rightChild,0,deleteBTNode(leftChild,leftChild->keynum));
     //parent move to left
     parent->keys[index]=leftChild->keys[leftChild->keynum];
     parent->data[index]=leftChild->data[leftChild->keynum];
@@ -220,25 +272,88 @@ static void moveRight(BTNode* parent,int index,BTNode* rightChild,int dataPos)
     leftChild->keynum--;
 }
 
-// static void moveNode(BTNode* parent,int index,BTNode* node)
-// {
-//     /*
-//         try to move data to node
-//     */
-// }
-
-static void combineNode(BTNode* parent,int index,BTNode* leftChild,BTNode* rightChild)
+static void combineBTNode(BTNode* parent,int index)
 {
     /*
         combine two child node
     */
-    if(!(parent&&leftChild&&rightChild))
+    if(!parent||index<1)
         return;
-    
+    BTNode* leftChild=parent->child[index-1];
+    BTNode* rightChild=parent->child[index];
+    Key key=0;
+    eleType value=NULL;
+    if(!(leftChild&&rightChild))
+        return;
+    for(int i=1;i<=rightChild->keynum;i++){
+        key=rightChild->keys[i];
+        value=rightChild->data[i];
+        insertValue(leftChild,leftChild->keynum+1,key,value);
+    }
+    free(deleteBTNode(parent,index));
+    deleteValue(parent,index);
+    if(parent->keynum==0){
+        //copy leftChild to parent
+        parent->keynum=leftChild->keynum;
+        parent->child[0]=leftChild->child[0];
+        for(int i=1;i<=parent->keynum;i++){
+            parent->keys[i]=leftChild->keys[i];
+            parent->data[i]=leftChild->data[i];
+            parent->child[i]=leftChild->child[i];
+        }
+        free(leftChild);
+    }
 }
 
-static BTNode* getPrecursor(BTNode* node)
+static void balanceBTNode(BTNode* parent,int index)
 {
+    /*
+        balance node
+
+    */
+    if(parent==NULL)
+        return;
+    //BTNode* parent=node->parent;
+    BTNode* node=parent->child[index];
+    //move to left
+    if(index+1<=parent->keynum&&parent->child[index+1]->keynum>MIN_KEY){
+        //right node is rich node
+        moveLeft(parent,index+1,node,node->keynum+1);
+    }
+    //move to right
+    else if(index-1>=0&&parent->child[index-1]->keynum>MIN_KEY){
+        //left node is rich node
+        moveRight(parent,index,node,node->keynum+1);
+    }
+    //right and left are not rich node
+    else{
+        int j=1;
+        if(index-1>=0){
+            //combine node and leftChild
+            insertValue(node,1,parent->keys[index],parent->data[index]);
+            //deleteValue(node,index);
+            combineBTNode(parent,index);
+        }else if(index+1<=parent->keynum){
+            //combine node and rightChild
+            insertValue(node,node->keynum+1,parent->keys[index],parent->data[index]);
+            //deleteValue(node,index);
+            combineBTNode(parent,index+1);
+        }
+        //update node
+        node=parent;
+        parent=node->parent;
+        j=searchIndex(parent,node->keys[index]);
+        if(node->keys[index]<parent->keys[j])
+            j--;
+        deleteValue(node,index);
+        if(parent->keynum<MIN_KEY){
+            balanceBTNode(parent,j);
+        }
+    }
+}
+
+//static BTNode* getPrecursor(BTNode* node)
+//{
     // //if node not leaf,should have child
     // if(node==NULL||node->parent!=NULL&&node->child[0]==NULL)
     //     return NULL;
@@ -247,7 +362,7 @@ static BTNode* getPrecursor(BTNode* node)
     // if(parent!=NULL){
     //     //leaf node
     //     //node don't have child
-    //     int i=serachIndex(parent,node->keys[1]);
+    //     int i=searchIndex(parent,node->keys[1]);
     //     if(node->keys[1]<parent->keys[i])
     //         i--;
     //     if(i==0)
@@ -261,12 +376,12 @@ static BTNode* getPrecursor(BTNode* node)
     //         target=target->child[target->keynum];
     // }
     // return target;
-}
+//}
 
-static BTNode* getSuccessor(BTNode* node)
-{
+//static BTNode* getSuccessor(BTNode* node)
+//{
     
-}
+//}
 
 void bTreeInitalize(BTree *tree)
 {
@@ -286,20 +401,8 @@ eleType bTreeSearch(BTree tree, Key key)
         search data by key in b-tree
     */
     int i=1;
-    BTNode* currNode=tree;
-    while(currNode){
-        i=serachIndex(currNode,key);
-        if(key>currNode->keys[i]){
-            currNode=currNode->child[i];
-        }else if(key==currNode->keys[i]){
-            break;
-        }else if(key<currNode->keys[i]){
-            currNode=currNode->child[i-1];
-        }
-    }
-    if(currNode==NULL)
-        return NULL;
-    return currNode->data[i];
+    BTNode* node=searchBTNode(tree,key);
+    return node!=NULL?node->data[i]:NULL;
 }
 
 bool bTreeInsert(BTree tree, Key key, eleType value)
@@ -311,7 +414,7 @@ bool bTreeInsert(BTree tree, Key key, eleType value)
     BTNode* preNode=NULL;
     BTNode* currNode=tree;
     while(currNode){
-        i=serachIndex(currNode,key);
+        i=searchIndex(currNode,key);
         if(key>currNode->keys[i]){
             preNode=currNode;
             currNode=currNode->child[i];
@@ -324,7 +427,7 @@ bool bTreeInsert(BTree tree, Key key, eleType value)
     }
     if(currNode==NULL)
         currNode=preNode;
-    i=serachIndex(currNode,key);
+    i=searchIndex(currNode,key);
     if(i==currNode->keynum&&key>currNode->keys[i])
         i++;
     insertValue(currNode,i,key,value);
@@ -345,22 +448,14 @@ eleType bTreeDelete(BTree tree, Key key)
     BTNode* parent=NULL;
     BTNode* currNode=tree;
     eleType data=NULL;
-    while(currNode){
-        i=serachIndex(currNode,key);
-        if(key>currNode->keys[i]){
-            currNode=currNode->child[i];
-        }else if(key==currNode->keys[i]){
-            break;
-        }else if(key<currNode->keys[i])
-            currNode=currNode->child[i-1];
-    }
+    currNode=searchBTNode(tree,key);
     if(currNode==NULL)
         return NULL;
-    i=serachIndex(currNode,key);
+    i=searchIndex(currNode,key);
     //save data
     data=currNode->data[i];
     printf("key:%d,value:%d\n",currNode->keys[i],*(int*)currNode->data[i]);
-    //leaf node
+    //this node is leaf node
     if(currNode->child[0]==NULL){
         //key greater than min
         if(currNode->keynum>MIN_KEY){
@@ -374,7 +469,7 @@ eleType bTreeDelete(BTree tree, Key key)
                 return data;
             }
             //normal node
-            int j=serachIndex(parent,currNode->keys[i]);
+            int j=searchIndex(parent,currNode->keys[i]);
             if(currNode->keys[i]<parent->keys[j])
                 j--;
             //move to left
@@ -388,15 +483,9 @@ eleType bTreeDelete(BTree tree, Key key)
                 moveRight(parent,j,currNode,i);
             }
             //right and left are not rich node
-            else if(j-1>=0){
-                //combine node and leftChild
+            else{
                 deleteValue(currNode,i);
-                combineNode(parent,j,parent->child[j-1],currNode);
-            }
-            else if(j+1<=parent->keynum){
-                //combine node and rightChild
-                deleteValue(currNode,i);
-                combineNode(parent,j+1,currNode,parent->child[j+1]);
+                balanceBTNode(parent,j);
             }
         }
     }else{
@@ -409,10 +498,9 @@ eleType bTreeDelete(BTree tree, Key key)
         currNode->keys[i]=target->keys[target->keynum];
         currNode->data[i]=target->data[target->keynum];
         j=target->parent->keynum;
-        temp=target->parent->child[j-1];
         deleteValue(target,target->keynum);
         if(target->keynum<MIN_KEY){
-            combineNode(target->parent,j,temp,target);
+            balanceBTNode(target->parent,j);
         }
     }
     return data;
