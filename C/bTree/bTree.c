@@ -312,12 +312,12 @@ static void combineBTNode(BTNode* parent,int index)
     }else if(rightChild->keynum<MIN_KEY){
         //parent key move to right node
         insertValue(rightChild,1,parent->keys[index],parent->data[index]);
-        insertBTNode(rightChild,0,rightChild->child[0]);
+        insertBTNode(rightChild,0,leftChild->child[0]);
         for(int i=1;i<=leftChild->keynum;i++){
             key=leftChild->keys[i];
             value=leftChild->data[i];
-            insertValue(rightChild,rightChild->keynum+1,key,value);
-            insertBTNode(rightChild,rightChild->keynum,leftChild->child[i]);
+            insertValue(rightChild,1,key,value);
+            insertBTNode(rightChild,i,leftChild->child[i]);
         }
         free(deleteBTNode(parent,index-1));
     }

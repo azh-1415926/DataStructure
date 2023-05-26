@@ -9,8 +9,8 @@ int main(){
     bTreeDelete(tree,45);
     bTreeDelete(tree,90);
     bTreeDelete(tree,50);
-    //bTreeDelete(tree,22);
-    //bTreeDelete(tree,42);
+    bTreeDelete(tree,22);
+    bTreeDelete(tree,42);
     bTreeFree(&tree);
     return 0;
 }
