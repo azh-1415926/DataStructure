@@ -1,18 +1,16 @@
 #include "bTree.h"
 int main(){
     BTree tree;
-    int a[10]={35,16,18,70,5,50,22,60,13,17};
+    int a[18]={35,16,18,70,5,50,22,60,13,17,12,45,25,42,15,90,30,7};
     bTreeInitalize(&tree);
-    printf("root:%p,child[0]:%p,child[1]:%p\n",tree,tree->child[0],tree->child[1]);
-    for(int i=0;i<10;i++){
-        bTreeInsert(tree,a[i],&a[9-i]);
+    for(int i=0;i<18;i++){
+        bTreeInsert(tree,a[i],&a[18-i]);
     }
-    int *p=bTreeSearch(tree,60);
-    if(p!=NULL)
-        printf("search data:%d\n",*p);
-    //bTreeDelete(tree,5);
-    bTreeDelete(tree,70);
-    bTreeDelete(tree,60);
+    bTreeDelete(tree,45);
+    bTreeDelete(tree,90);
+    bTreeDelete(tree,50);
+    //bTreeDelete(tree,22);
+    //bTreeDelete(tree,42);
     bTreeFree(&tree);
     return 0;
 }
