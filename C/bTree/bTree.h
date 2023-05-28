@@ -17,6 +17,7 @@ typedef struct BTNode {
     struct BTNode* child[M+1];
 }BTNode,*BTree;
 void bTreeInitalize(BTree* tree);
+void bTreeTraversal(BTree tree,void(*traversal)(void*));
 eleType bTreeSearch(BTree tree,Key key);
 bool bTreeInsert(BTree tree,Key key,eleType value);
 eleType bTreeDelete(BTree tree,Key key);

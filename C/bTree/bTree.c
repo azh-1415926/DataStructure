@@ -416,6 +416,55 @@ void bTreeInitalize(BTree *tree)
     *tree=createBTNode(NULL);
 }
 
+void bTreeTraversal(BTree tree, void (*traversal)(void *))
+{
+    if(tree==NULL)
+        return;
+    //queue
+    linkQueue queue;
+    BTNode* currNode=NULL;
+    linkQueueInitalize(&queue);
+    linkQueueEnqueue(queue,tree);
+    int i=1;
+    while(!linkQueueIsEmpty(queue)){
+        currNode=linkQueueFront(queue);
+        linkQueueDequeue(queue);
+        if(currNode->child[0]!=NULL){
+            linkQueueEnqueue(queue,currNode->child[0]);
+        }
+        while(i<=currNode->keynum){
+            traversal(currNode->data[i]);
+            if(currNode->child[i]!=NULL)
+                linkQueueEnqueue(queue,currNode->child[i]);
+            i++;
+        }
+        i=1;
+    }
+    linkQueueFree(&queue);
+    //stack
+    /*
+        linkStack stack;
+        linkStackInitalize(&stack);
+        linkStackPush(stack,*tree);
+        int i=1;
+        while(!linkStackIsEmpty(stack)){
+            currNode=linkStackTop(stack);
+            linkStackPop(stack);
+            if(currNode->child[0]!=NULL){
+                linkStackPush(stack,currNode->child[0]);
+            }
+            while(i<=currNode->keynum){
+                traversal(currNode->data[i]);
+                if(currNode->child[i]!=NULL)
+                    linkStackPush(stack,currNode->child[i]);
+                i++;
+            }
+            i=1;
+        }
+        linkStackFree(&stack);
+    */
+}
+
 eleType bTreeSearch(BTree tree, Key key)
 {
     /*
@@ -532,12 +581,13 @@ void bTreeFree(BTree *tree)
         linkQueueDequeue(queue);
         if(currNode->child[0]!=NULL){
             linkQueueEnqueue(queue,currNode->child[0]);
+            while(i<=currNode->keynum){
+                if(currNode->child[i]!=NULL)
+                    linkQueueEnqueue(queue,currNode->child[i]);
+                i++;
+            }
         }
-        while(i<=currNode->keynum){
-            if(currNode->child[i]!=NULL)
-                linkQueueEnqueue(queue,currNode->child[i]);
-            i++;
-        }
+
         free(currNode);
         i=1;
     }
@@ -553,11 +603,11 @@ void bTreeFree(BTree *tree)
             linkStackPop(stack);
             if(currNode->child[0]!=NULL){
                 linkStackPush(stack,currNode->child[0]);
-            }
-            while(i<=currNode->keynum){
-                if(currNode->child[i]!=NULL)
-                    linkStackPush(stack,currNode->child[i]);
-                i++;
+                while(i<=currNode->keynum){
+                    if(currNode->child[i]!=NULL)
+                        linkStackPush(stack,currNode->child[i]);
+                    i++;
+                }
             }
             free(currNode);
             i=1;
