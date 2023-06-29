@@ -1,5 +1,10 @@
 #ifndef _SEQ_STACK_H_
 #define _SEQ_STACK_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include<stdio.h>
 #include<stdbool.h>
 typedef struct seqStack {
@@ -14,4 +19,9 @@ bool seqStackIsFull(seqStack const stack);
 void seqStackPush(seqStack stack,void* const data);
 void* seqStackTop(seqStack const stack);
 void seqStackPop(seqStack stack);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

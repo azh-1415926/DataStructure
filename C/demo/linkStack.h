@@ -1,5 +1,10 @@
 #ifndef _LINK_STACK_H_
 #define _LINK_STACK_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include<stdio.h>
 #include<stdbool.h>
 typedef struct linkStackNode {
@@ -16,4 +21,9 @@ bool linkStackIsEmpty(linkStack const stack);
 void linkStackPush(linkStack stack,void* const data);
 void* linkStackTop(linkStack const stack);
 void linkStackPop(linkStack stack);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
