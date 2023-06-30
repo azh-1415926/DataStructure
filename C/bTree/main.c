@@ -1,6 +1,6 @@
 #include "bTree.h"
 void traversal(void* data){
-    printf("%d ",*(int*)data);
+    printf("%d",*(int*)data);
 }
 int main(){
     BTree tree;
@@ -14,7 +14,8 @@ int main(){
     bTreeDelete(tree,50);
     bTreeDelete(tree,22);
     bTreeDelete(tree,42);
-    bTreeTraversal(tree,traversal);
+    bTreeLevelOrderTraversal(tree,traversal);
+    bTreeShow(tree,traversal);
     bTreeFree(&tree);
     return 0;
 }

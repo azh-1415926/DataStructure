@@ -3,6 +3,10 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define M 3
 #define MAX_KEY (M-1)
 #define MIN_KEY ((M-1)/2)
@@ -17,9 +21,15 @@ typedef struct BTNode {
     struct BTNode* child[M+1];
 }BTNode,*BTree;
 void bTreeInitalize(BTree* tree);
-void bTreeTraversal(BTree tree,void(*traversal)(void*));
+void bTreeShow(BTree tree,void(*traversal)(void*));
+void bTreeLevelOrderTraversal(BTree tree,void(*traversal)(void*));
 eleType bTreeSearch(BTree tree,Key key);
 bool bTreeInsert(BTree tree,Key key,eleType value);
 eleType bTreeDelete(BTree tree,Key key);
 void bTreeFree(BTree* tree);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* _B_TREE_H_ */

@@ -415,8 +415,38 @@ void bTreeInitalize(BTree *tree)
         return;
     *tree=createBTNode(NULL);
 }
-
-void bTreeTraversal(BTree tree, void (*traversal)(void *))
+void bTreeShow(BTree tree, void (*traversal)(void *)){
+    if(tree==NULL)
+        return;
+    //queue
+    linkQueue queue;
+    BTNode* currNode=NULL;
+    linkQueueInitalize(&queue);
+    linkQueueEnqueue(queue,tree);
+    int i=1;
+    while(!linkQueueIsEmpty(queue)){
+        currNode=linkQueueFront(queue);
+        linkQueueDequeue(queue);
+        if(currNode->child[0]!=NULL){
+            linkQueueEnqueue(queue,currNode->child[0]);
+        }
+        while(i<=currNode->keynum){
+            traversal(currNode->data[i]);
+            if(i!=currNode->keynum)
+                printf(",");
+            else
+                printf(" ");
+            if(currNode->child[i]!=NULL)
+                linkQueueEnqueue(queue,currNode->child[i]);
+            i++;
+        }
+        i=1;
+    }
+    printf("\n");
+    linkQueueFree(&queue);
+}
+//Traversal
+void bTreeLevelOrderTraversal(BTree tree, void (*traversal)(void *))
 {
     if(tree==NULL)
         return;
@@ -434,12 +464,14 @@ void bTreeTraversal(BTree tree, void (*traversal)(void *))
         }
         while(i<=currNode->keynum){
             traversal(currNode->data[i]);
+            printf(" ");
             if(currNode->child[i]!=NULL)
                 linkQueueEnqueue(queue,currNode->child[i]);
             i++;
         }
         i=1;
     }
+    printf("\n");
     linkQueueFree(&queue);
     //stack
     /*
