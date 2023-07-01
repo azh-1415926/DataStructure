@@ -5,8 +5,9 @@ void traversal(void* data){
 int main(){
     BTree tree;
     int a[18]={35,16,18,70,5,50,22,60,13,17,12,45,25,42,15,90,30,7};
+    //int a[18]={35,16,18,70,5,50,22,60,13,17,12,45,25,42,15,90,30,7};
     bTreeInitalize(&tree);
-    for(int i=0;i<18;i++){
+    for(int i=0;i<sizeof(a)/sizeof(int);i++){
         bTreeInsert(tree,a[i],&a[i]);
     }
     bTreeDelete(tree,45);

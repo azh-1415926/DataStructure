@@ -109,8 +109,8 @@ static eleType deleteValue(BTNode* node,int index)
     int endPos=node->keynum;
     eleType data=node->data[index];
     for(int i=index;i<endPos;i++){
-        node->keys[index]=node->keys[index+1];
-        node->data[index]=node->data[index+1];
+        node->keys[i]=node->keys[i+1];
+        node->data[i]=node->data[i+1];
     }
     node->keys[endPos]=0;
     node->data[endPos]=NULL;
@@ -426,6 +426,7 @@ void bTreeShow(BTree tree, void (*traversal)(void *)){
     int i=1;
     while(!linkQueueIsEmpty(queue)){
         currNode=linkQueueFront(queue);
+        showBTree(currNode);
         linkQueueDequeue(queue);
         if(currNode->child[0]!=NULL){
             linkQueueEnqueue(queue,currNode->child[0]);
