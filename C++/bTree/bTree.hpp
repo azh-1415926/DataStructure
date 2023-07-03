@@ -1,6 +1,7 @@
 #ifndef _B_TREE_H_
 #define _B_TREE_H_
 #include <iostream>
+#include "linkQueue.hpp"
 
 const int M=3;
 const int MAX_KEY=(M-1);
@@ -16,7 +17,7 @@ class BTNode {
         BTNode<eleType,Key>* parent;
         BTNode<eleType,Key>* child[M+1];
         BTNode(BTNode<eleType,Key>* parent=nullptr)
-        ,parent(parent)
+        :parent(parent)
         {
             this->keynum=0;
             for(int i=0;i<=M;i++){
@@ -25,10 +26,10 @@ class BTNode {
                 this->child[i]=nullptr;
             }
         }
-        ~BTNode();
+        //~BTNode();
         int searchIndex(Key key){
             int i=1;
-            while(i<nthis->keynum&&key>this->keys[i])
+            while(i<this->keynum&&key>this->keys[i])
                 i++;
             return i;
         }
@@ -58,7 +59,7 @@ class BTNode {
                 this->data[i]=this->data[i+1];
             }
             this->keys[endPos]=0;
-            this->data[endPos]=NULL;
+            //this->data[endPos]=NULL;
             this->keynum--;
             return data;
         }
@@ -96,9 +97,9 @@ class BTree {
             }
             return currNode;
         }
-        void splitBTNode(BTNode<eleType,Key>* node){
+        static void splitBTNode(BTNode<eleType,Key>* node){
             Key key=0;
-            eleType value=NULL;
+            eleType value;
             BTNode<eleType,Key>* parent=node->parent;
             BTNode<eleType,Key>* rightChild=NULL;
             //right child
@@ -109,7 +110,7 @@ class BTree {
                 key=node->keys[MID_KEY+i];
                 value=node->data[MID_KEY+i];
                 node->keys[MID_KEY+i]=0;
-                node->data[MID_KEY+i]=NULL;
+                //node->data[MID_KEY+i]=NULL;
                 rightChild->insertValue(i,key,value);
                 rightChild->insertBTNode(i,node->child[MID_KEY+i]);
                 node->child[MID_KEY+i]=NULL;
@@ -120,21 +121,21 @@ class BTree {
                 BTNode<eleType,Key>* leftChild=NULL;
                 //left child
                 leftChild=new BTNode<eleType,Key>;
-                insertBTNode(leftChild,0,node->child[0]);
+                leftChild->insertBTNode(0,node->child[0]);
                 node->child[0]=NULL;
                 for(int i=1;i<MID_KEY;i++){
                     key=node->keys[i];
                     value=node->data[i];
                     node->keys[i]=0;
-                    node->data[i]=NULL;
+                    //node->data[i]=NULL;
                     leftChild->insertValue(i,key,value);
-                    leftChild->insertBTNode(i,node->child[i])
+                    leftChild->insertBTNode(i,node->child[i]);
                     node->child[i]=NULL;
                 }
                 key=node->keys[MID_KEY];
                 value=node->data[MID_KEY];
                 node->keys[MID_KEY]=0;
-                node->data[MID_KEY]=NULL;
+                //node->data[MID_KEY]=NULL;
                 node->keynum=0;
                 node->insertBTNode(0,leftChild);
                 node->insertValue(1,key,value);
@@ -144,17 +145,17 @@ class BTree {
                 index=parent->searchIndex(key);
                 node->keynum=MID_KEY-1;
                 node->keys[MID_KEY]=0;
-                node->data[MID_KEY]=NULL;
+                //node->data[MID_KEY]=NULL;
                 if(key>parent->keys[index])
                     index++;
-                parent->insertValue(index,key,value)
+                parent->insertValue(index,key,value);
                 //leftChild is node;
                 parent->insertBTNode(index,rightChild);
                 if(parent->keynum>MAX_KEY)
                     splitBTNode(parent);
             }
         }
-        void moveLeft(BTNode<eleType,Key>* parent,int index,BTNode<eleType,Key>* leftChild,int dataPos){
+        static void moveLeft(BTNode<eleType,Key>* parent,int index,BTNode<eleType,Key>* leftChild,int dataPos){
             BTNode<eleType,Key>* rightChild=parent->child[index];
             if(!(parent&&rightChild))
                 return;
@@ -180,10 +181,10 @@ class BTree {
                 rightChild->data[i]=rightChild->data[i+1];
             }
             rightChild->keys[rightChild->keynum]=0;
-            rightChild->data[rightChild->keynum]=NULL;
+            //rightChild->data[rightChild->keynum]=NULL;
             rightChild->keynum--;
         }
-        void moveRight(BTNode<eleType,Key>* parent,int index,BTNode<eleType,Key>* rightChild,int dataPos){
+        static void moveRight(BTNode<eleType,Key>* parent,int index,BTNode<eleType,Key>* rightChild,int dataPos){
             BTNode<eleType,Key>* leftChild=parent->child[index-1];
             if(!(parent&&leftChild))
                 return;
@@ -206,10 +207,10 @@ class BTree {
             parent->data[index]=leftChild->data[leftChild->keynum];
             //left child move to left
             leftChild->keys[leftChild->keynum]=0;
-            leftChild->data[leftChild->keynum]=NULL;
+            //leftChild->data[leftChild->keynum]=NULL;
             leftChild->keynum--;
         }
-        void combineBTNode(BTNode* parent,int index){
+        static void combineBTNode(BTNode<eleType,Key>* parent,int index){
             if(!parent||index<1)
                 return;
             BTNode<eleType,Key>* leftChild=parent->child[index-1];
@@ -217,7 +218,7 @@ class BTree {
             if(!(leftChild&&rightChild))
                 return;
             Key key=0;
-            eleType value=NULL;
+            eleType value;
             if(leftChild->keynum<MIN_KEY){
                 //parent key move to left node
                 leftChild->insertValue(leftChild->keynum+1,parent->keys[index],parent->data[index]);
@@ -270,11 +271,11 @@ class BTree {
                     j--;
                 node->deleteValue(index);
                 if(node->keynum<MIN_KEY){
-                    parent->balanceBTNode(j);
+                    balanceBTNode(parent,j);
                 }
             }
         }
-        void balanceBTNode(BTNode<eleType,Key>* parent,int index){
+        static void balanceBTNode(BTNode<eleType,Key>* parent,int index){
             if(parent==NULL)
                 return;
             //BTNode* parent=node->parent;
@@ -305,32 +306,34 @@ class BTree {
             root=new BTNode<eleType,Key>;
         }
         ~BTree(){
-            linkQueue queue;
+            linkQueue<BTNode<eleType,Key>*> queue;
             BTNode<eleType,Key>* currNode=NULL;
-            linkQueueInitalize(&queue);
-            linkQueueEnqueue(queue,*tree);
+            queue.enqueue(root);
             int i=1;
-            while(!linkQueueIsEmpty(queue)){
-                currNode=(BTNode*)linkQueueFront(queue);
-                linkQueueDequeue(queue);
+            while(!queue.empty()){
+                currNode=queue.front();
+                queue.dequeue();
                 if(currNode->child[0]!=NULL){
-                    linkQueueEnqueue(queue,currNode->child[0]);
+                    queue.enqueue(currNode->child[0]);
                     while(i<=currNode->keynum){
                         if(currNode->child[i]!=NULL)
-                            linkQueueEnqueue(queue,currNode->child[i]);
+                            queue.enqueue(currNode->child[i]);
                         i++;
                     }
                 }
-
-                free(currNode);
+                delete currNode;
                 i=1;
             }
-            linkQueueFree(&queue);
         }
         eleType search(Key key){
             int i=1;
             BTNode<eleType,Key>* node=searchBTNode(key);
-            return node!=NULL?node->data[i]:NULL;
+            eleType data;
+            if(node!=nullptr){
+                i=node->searchIndex(key);
+                data=node->data[i];
+            }
+            return data;
         }
         bool insert(Key key,eleType value){
             int i=1;
@@ -359,18 +362,22 @@ class BTree {
             }
             return true;
         }
-        eleType delete(Key key){
+        bool erase(Key key){
+            if(root==nullptr)
+                throw std::out_of_range("earse() error,btree is empty!");
             //need to alter
             int i=1;
             BTNode<eleType,Key>* parent=NULL;
-            BTNode<eleType,Key>* currNode=tree;
-            eleType data=NULL;
+            BTNode<eleType,Key>* currNode=root;
+            //eleType data;
             currNode=searchBTNode(key);
-            if(currNode==NULL)
-                return NULL;
+            if(currNode=nullptr){
+                std::cout<<"Can't find the data by the key!\n";
+                return false;
+            }
             i=currNode->searchIndex(key);
             //save data
-            data=currNode->data[i];
+            //data=currNode->data[i];
             //this node is leaf node
             if(currNode->child[0]==NULL){
                 //key greater than min
@@ -382,7 +389,7 @@ class BTree {
                     //leaf node is root
                     if(parent==NULL){
                         currNode->deleteValue(1);
-                        return data;
+                        return true;
                     }
                     //normal node
                     int j=parent->searchIndex(currNode->keys[i]);
@@ -407,58 +414,54 @@ class BTree {
                     balanceBTNode(target->parent,j);
                 }
             }
-            return data;
+            return true;
         }
-        void show(void(*traversal)(void*)){
-            linkQueue queue;
+        void show(void(*traversal)(eleType)){
+            linkQueue<BTNode<eleType,Key>*> queue;
             BTNode<eleType,Key>* currNode=NULL;
-            linkQueueInitalize(&queue);
-            linkQueueEnqueue(queue,tree);
+            queue.enqueue(root);
             int i=1;
-            while(!linkQueueIsEmpty(queue)){
-                currNode=(BTNode*)linkQueueFront(queue);
-                linkQueueDequeue(queue);
+            while(!queue.empty()){
+                currNode=queue.front();
+                queue.dequeue();
                 if(currNode->child[0]!=NULL){
-                    linkQueueEnqueue(queue,currNode->child[0]);
+                    queue.enqueue(currNode->child[0]);
                 }
                 while(i<=currNode->keynum){
                     traversal(currNode->data[i]);
                     if(i!=currNode->keynum)
-                        printf(",");
+                        std::cout<<",";
                     else
-                        printf(" ");
+                        std::cout<<" ";
                     if(currNode->child[i]!=NULL)
-                        linkQueueEnqueue(queue,currNode->child[i]);
+                        queue.enqueue(currNode->child[i]);
                     i++;
                 }
                 i=1;
             }
-            printf("\n");
-            linkQueueFree(&queue);
+            std::cout<<"\n";
         }
         void LevelOrderTraversal(void(*traversal)(void*)){
-            linkQueue queue;
+            linkQueue<BTNode<eleType,Key>*> queue;
             BTNode<eleType,Key>* currNode=NULL;
-            linkQueueInitalize(&queue);
-            linkQueueEnqueue(queue,root);
+            queue.enqueue(root);
             int i=1;
-            while(!linkQueueIsEmpty(queue)){
-                currNode=(BTNode*)linkQueueFront(queue);
-                linkQueueDequeue(queue);
+            while(!queue.empty()){
+                currNode=queue.front();
+                queue.dequeue();
                 if(currNode->child[0]!=NULL){
-                    linkQueueEnqueue(queue,currNode->child[0]);
+                    queue.enqueue(currNode->child[0]);
                 }
                 while(i<=currNode->keynum){
                     traversal(currNode->data[i]);
                     printf(" ");
                     if(currNode->child[i]!=NULL)
-                        linkQueueEnqueue(queue,currNode->child[i]);
+                        queue.enqueue(currNode->child[i]);
                     i++;
                 }
                 i=1;
             }
-            printf("\n");
-            linkQueueFree(&queue);
+            std::cout<<"\n";
         }
 };
 #endif /* _B_TREE_H_ */
