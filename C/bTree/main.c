@@ -15,6 +15,7 @@ int main(){
     bTreeDelete(tree,50);
     bTreeDelete(tree,22);
     bTreeDelete(tree,42);
+    printf("%d\n",*(int*)(bTreeSearch(tree,60)));
     bTreeLevelOrderTraversal(tree,traversal);
     bTreeShow(tree,traversal);
     bTreeFree(&tree);

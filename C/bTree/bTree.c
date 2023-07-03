@@ -505,6 +505,7 @@ eleType bTreeSearch(BTree tree, Key key)
     */
     int i=1;
     BTNode* node=searchBTNode(tree,key);
+    i=searchIndex(node,key);
     return node!=NULL?node->data[i]:NULL;
 }
 
