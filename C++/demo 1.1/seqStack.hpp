@@ -45,18 +45,20 @@ bool seqStack<Type,size>::full(){
 }
 template<class Type,int size>
 Type& seqStack<Type,size>::top(){
+    if(empty())
+        throw std::out_of_range("top() error:stack is empty!");
     return pStack[m_top];
 }
 template<class Type,int size>
 void seqStack<Type,size>::push(Type const& data){
     if(full())
-        return;
+        throw std::out_of_range("push() error:stack is full!");
     pStack[--m_top]=data;
 }
 template<class Type,int size>
 void seqStack<Type,size>::pop(){
-    if(isEmpty())
-        return;
+    if(empty())
+        throw std::out_of_range("pop() error:stack is empty!");
     ++m_top;
 }
 #endif

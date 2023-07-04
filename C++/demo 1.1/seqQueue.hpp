@@ -51,12 +51,14 @@ bool seqQueue<Type,size>::full(){
 }
 template<class Type,int size>
 Type& seqQueue<Type,size>::front(){
+    if(empty())
+        throw std::out_of_range("front() error:queue is empty!");
     return pQueue[head];
 }
 template<class Type,int size>
 void seqQueue<Type,size>::enqueue(Type const& data){
     if(full())
-        return;
+        throw std::out_of_range("enqueue() error:queue is full!");
     pQueue[tail]=data;
     tail=(tail+1)%capacity;
     flag=QUEUE_PUSH;
@@ -64,7 +66,7 @@ void seqQueue<Type,size>::enqueue(Type const& data){
 template<class Type,int size>
 void seqQueue<Type,size>::dequeue(){
     if(empty())
-        return;
+        throw std::out_of_range("dequeue() error:queue is empty!");
     head=(head+1)%capacity;
     flag=QUEUE_POP;
 }
