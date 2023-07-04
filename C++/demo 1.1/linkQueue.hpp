@@ -19,7 +19,7 @@ class linkQueue {
     ~linkQueue();
 };
 template<class Type>
-linkQueue<Type>::linkQueue():length(0){
+linkQueue<Type>::linkQueue(){
     pHead=new linkQueue<Type>::node(0);
 }
 template<class Type>
