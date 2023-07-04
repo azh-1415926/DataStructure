@@ -29,5 +29,6 @@ int main(){
     tree.erase(50);
     tree.erase(22);
     tree.erase(42);
+    tree.show(visit);
     return 0;
 }

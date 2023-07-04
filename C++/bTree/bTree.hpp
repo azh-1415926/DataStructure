@@ -371,7 +371,7 @@ class BTree {
             BTNode<eleType,Key>* currNode=root;
             //eleType data;
             currNode=searchBTNode(key);
-            if(currNode=nullptr){
+            if(currNode==nullptr){
                 std::cout<<"Can't find the data by the key!\n";
                 return false;
             }
