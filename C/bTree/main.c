@@ -15,9 +15,15 @@ int main(){
     bTreeDelete(tree,50);
     bTreeDelete(tree,22);
     bTreeDelete(tree,42);
-    printf("%d\n",*(int*)(bTreeSearch(tree,60)));
+    printf("find key:60,data:%d\n",*(int*)(bTreeSearch(tree,60)));
+    printf("LevelOrderTraversal:");
     bTreeLevelOrderTraversal(tree,traversal);
-    bTreeShow(tree,traversal);
+    printf("PreOrderTraversal:");
+    bTreePreOrderTraversal(tree,traversal);
+    printf("InOrderTraversal:");
+    bTreeInOrderTraversal(tree,traversal);
+    printf("ShowKeys:");
+    bTreeShow(tree);
     bTreeFree(&tree);
     return 0;
 }

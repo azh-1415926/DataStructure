@@ -1,5 +1,6 @@
 #include "bTree.h"
 #include "linkQueue.h"
+//#include "linkStack.h"
 #include<stdlib.h>
 //#include "debug.h"
 static BTNode* createBTNode(BTNode* parent);
@@ -415,7 +416,12 @@ void bTreeInitalize(BTree *tree)
         return;
     *tree=createBTNode(NULL);
 }
-void bTreeShow(BTree tree, void (*traversal)(void *)){
+void bTreeShow(BTree tree){
+    /*
+        show b-tree
+
+        traversal all the keys by levelorder
+    */
     if(tree==NULL)
         return;
     //queue
@@ -432,7 +438,7 @@ void bTreeShow(BTree tree, void (*traversal)(void *)){
             linkQueueEnqueue(queue,currNode->child[0]);
         }
         while(i<=currNode->keynum){
-            traversal(currNode->data[i]);
+            printf("%d",currNode->keys[i]);
             if(i!=currNode->keynum)
                 printf(",");
             else
@@ -447,6 +453,38 @@ void bTreeShow(BTree tree, void (*traversal)(void *)){
     linkQueueFree(&queue);
 }
 //Traversal
+void bTreePreOrderTraversal(BTree tree, void (*traversal)(void *))
+{
+    if(tree==NULL)
+        return;
+    BTNode* currNode=tree;
+    for(int i=0;currNode&&i<=currNode->keynum;i++){
+        if(i+1<=currNode->keynum){
+            traversal(currNode->data[i+1]);
+            printf(" ");
+        }
+        if(currNode->child[i]!=NULL)
+            bTreePreOrderTraversal(currNode->child[i],traversal);
+    }
+    if(currNode->parent==NULL)
+        printf("\n");
+}
+void bTreeInOrderTraversal(BTree tree, void (*traversal)(void *))
+{
+    if(tree==NULL)
+        return;
+    BTNode* currNode=tree;
+    for(int i=0;currNode&&i<=currNode->keynum;i++){
+        if(currNode->child[i]!=NULL)
+            bTreeInOrderTraversal(currNode->child[i],traversal);
+        if(i+1<=currNode->keynum){
+            traversal(currNode->data[i+1]);
+            printf(" ");
+        }
+    }
+    if(currNode->parent==NULL)
+        printf("\n");
+}
 void bTreeLevelOrderTraversal(BTree tree, void (*traversal)(void *))
 {
     if(tree==NULL)

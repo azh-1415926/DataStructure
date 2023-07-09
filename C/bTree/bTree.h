@@ -21,7 +21,9 @@ typedef struct BTNode {
     struct BTNode* child[M+1];
 }BTNode,*BTree;
 void bTreeInitalize(BTree* tree);
-void bTreeShow(BTree tree,void(*traversal)(void*));
+void bTreeShow(BTree tree);
+void bTreePreOrderTraversal(BTree tree, void (*traversal)(void *));
+void bTreeInOrderTraversal(BTree tree, void (*traversal)(void *));
 void bTreeLevelOrderTraversal(BTree tree,void(*traversal)(void*));
 eleType bTreeSearch(BTree tree,Key key);
 bool bTreeInsert(BTree tree,Key key,eleType value);
