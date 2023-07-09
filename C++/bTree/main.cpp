@@ -23,12 +23,24 @@ int main(){
     tree.insert(90,90);
     tree.insert(30,30);
     tree.insert(7,7);
-    tree.show(visit);
+    std::cout<<"Create bTree\n";
+    std::cout<<"ShowKeys:";
+    tree.show();
+    std::cout<<"inOrderTraversal:";
+    tree.inOrderTraversal(visit);
+    std::cout<<"preOrderTraversal:";
+    tree.preOrderTraversal(visit);
+    std::cout<<"Delete some keys\n";
     tree.erase(45);
     tree.erase(90);
     tree.erase(50);
     tree.erase(22);
     tree.erase(42);
-    tree.show(visit);
+    std::cout<<"ShowKeys:";
+    tree.show();
+    std::cout<<"inOrderTraversal:";
+    tree.inOrderTraversal(visit);
+    std::cout<<"preOrderTraversal:";
+    tree.preOrderTraversal(visit);
     return 0;
 }

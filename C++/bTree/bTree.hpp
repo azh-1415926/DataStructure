@@ -416,7 +416,7 @@ class BTree {
             }
             return true;
         }
-        void show(void(*traversal)(eleType)){
+        void show(){
             linkQueue<BTNode<eleType,Key>*> queue;
             BTNode<eleType,Key>* currNode=NULL;
             queue.enqueue(root);
@@ -428,7 +428,7 @@ class BTree {
                     queue.enqueue(currNode->child[0]);
                 }
                 while(i<=currNode->keynum){
-                    traversal(currNode->data[i]);
+                    std::cout<<currNode->keys[i];
                     if(i!=currNode->keynum)
                         std::cout<<",";
                     else
@@ -441,7 +441,39 @@ class BTree {
             }
             std::cout<<"\n";
         }
-        void LevelOrderTraversal(void(*traversal)(void*)){
+        void preOrderTraversal(void (*traversal)(eleType),BTNode<eleType,Key>* node=nullptr)
+        {
+            if(node==nullptr)
+                node=root;
+            BTNode<eleType,Key>* currNode=node;
+            for(int i=0;currNode&&i<=currNode->keynum;i++){
+                if(i+1<=currNode->keynum){
+                    traversal(currNode->data[i+1]);
+                    std::cout<<" ";
+                }
+                if(currNode->child[i]!=NULL)
+                    preOrderTraversal(traversal,currNode->child[i]);
+            }
+            if(currNode&&currNode->parent==NULL)
+                std::cout<<"\n";
+        }
+        void inOrderTraversal(void (*traversal)(eleType),BTNode<eleType,Key>* node=nullptr)
+        {
+            if(node==nullptr)
+                node=root;
+            BTNode<eleType,Key>* currNode=node;
+            for(int i=0;currNode&&i<=currNode->keynum;i++){
+                if(currNode->child[i]!=NULL)
+                    inOrderTraversal(traversal,currNode->child[i]);
+                if(i+1<=currNode->keynum){
+                    traversal(currNode->data[i+1]);
+                    std::cout<<" ";
+                }
+            }
+            if(currNode&&currNode->parent==NULL)
+                std::cout<<"\n";
+        }
+        void levelOrderTraversal(void(*traversal)(eleType)){
             linkQueue<BTNode<eleType,Key>*> queue;
             BTNode<eleType,Key>* currNode=NULL;
             queue.enqueue(root);
