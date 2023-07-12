@@ -459,10 +459,8 @@ void bTreePreOrderTraversal(BTree tree, void (*traversal)(void *))
         return;
     BTNode* currNode=tree;
     for(int i=0;currNode&&i<=currNode->keynum;i++){
-        if(i+1<=currNode->keynum){
+        if(i+1<=currNode->keynum)
             traversal(currNode->data[i+1]);
-            printf(" ");
-        }
         if(currNode->child[i]!=NULL)
             bTreePreOrderTraversal(currNode->child[i],traversal);
     }
@@ -477,10 +475,8 @@ void bTreeInOrderTraversal(BTree tree, void (*traversal)(void *))
     for(int i=0;currNode&&i<=currNode->keynum;i++){
         if(currNode->child[i]!=NULL)
             bTreeInOrderTraversal(currNode->child[i],traversal);
-        if(i+1<=currNode->keynum){
+        if(i+1<=currNode->keynum)
             traversal(currNode->data[i+1]);
-            printf(" ");
-        }
     }
     if(currNode->parent==NULL)
         printf("\n");
@@ -503,7 +499,6 @@ void bTreeLevelOrderTraversal(BTree tree, void (*traversal)(void *))
         }
         while(i<=currNode->keynum){
             traversal(currNode->data[i]);
-            printf(" ");
             if(currNode->child[i]!=NULL)
                 linkQueueEnqueue(queue,currNode->child[i]);
             i++;

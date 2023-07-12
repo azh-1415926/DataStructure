@@ -1,6 +1,6 @@
 #include "bTree.h"
 void traversal(void* data){
-    printf("%d",*(int*)data);
+    printf("%d ",*(int*)data);
 }
 int main(){
     BTree tree;
