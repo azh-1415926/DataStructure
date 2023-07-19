@@ -36,6 +36,16 @@ void func2(int count)
         show(array,sizeof(array)/sizeof(int));
 }
 
+void func3(int count)
+{
+    int array[]={1,7,8,2,4,6,3,5,9,10};
+    if(count==0)
+        show(array,sizeof(array)/sizeof(int));
+    insertionSort(array,sizeof(array)/sizeof(int),sizeof(int),compare);
+    if(count==COUNT-1)
+        show(array,sizeof(array)/sizeof(int));
+}
+
 void countTime(int count,void(*func)(int))
 {
     clock_t startTime,endTime;
@@ -54,5 +64,7 @@ int main(){
     countTime(COUNT,func1);
     printf("SelectionSort\n");
     countTime(COUNT,func2);
+    printf("InsectionSort\n");
+    countTime(COUNT,func3);
     return 0;
 }

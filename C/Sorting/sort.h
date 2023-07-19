@@ -11,7 +11,7 @@ typedef void eleType;
 typedef eleType* pType;
 void bubbleSort(pType array,int n,int size,int(*compare)(const pType,const pType));
 void selectionSort(pType array,int n,int size,int(*compare)(const pType,const pType));
-void insertionSort();
+void insertionSort(pType array,int n,int size,int(*compare)(const pType,const pType));
 
 #ifdef __cplusplus
 }
