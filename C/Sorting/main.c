@@ -3,6 +3,8 @@
 #include "sort.h"
 #define COUNT 1000000
 #define SIZE sizeof(int)
+#define TEST_CASE int array[]={1,7,8,2,4,6,3,5,9,10}
+#define SHOW_CASE show(array,sizeof(array)/sizeof(int))
 
 int compare(void* first,void* second)
 {
@@ -18,32 +20,32 @@ void show(int* array,int n)
 
 void func1(int count)
 {
-    int array[]={1,7,8,2,4,6,3,5,9,10};
+    TEST_CASE;
     if(count==0)
-        show(array,sizeof(array)/sizeof(int));
+        SHOW_CASE;
     bubbleSort(array,sizeof(array)/sizeof(int),sizeof(int),compare);
     if(count==COUNT-1)
-        show(array,sizeof(array)/sizeof(int));
+        SHOW_CASE;
 }
 
 void func2(int count)
 {
-    int array[]={1,7,8,2,4,6,3,5,9,10};
+    TEST_CASE;
     if(count==0)
-        show(array,sizeof(array)/sizeof(int));
+        SHOW_CASE;
     selectionSort(array,sizeof(array)/sizeof(int),sizeof(int),compare);
     if(count==COUNT-1)
-        show(array,sizeof(array)/sizeof(int));
+        SHOW_CASE;
 }
 
 void func3(int count)
 {
-    int array[]={1,7,8,2,4,6,3,5,9,10};
+    TEST_CASE;
     if(count==0)
-        show(array,sizeof(array)/sizeof(int));
+        SHOW_CASE;
     insertionSort(array,sizeof(array)/sizeof(int),sizeof(int),compare);
     if(count==COUNT-1)
-        show(array,sizeof(array)/sizeof(int));
+        SHOW_CASE;
 }
 
 void countTime(int count,void(*func)(int))
