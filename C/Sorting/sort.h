@@ -9,7 +9,7 @@ extern "C" {
 
 typedef void* eleType;
 void bubbleSort(eleType array,int n,int size,int(*compare)(const eleType,const eleType));
-void selectSort(eleType array,int n,int size,int(*compare)(const eleType,const eleType));
+void selectionSort(eleType array,int n,int size,int(*compare)(const eleType,const eleType));
 
 #ifdef __cplusplus
 }

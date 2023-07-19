@@ -31,7 +31,7 @@ void func2(int count)
     int array[]={1,7,8,2,4,6,3,5,9,10};
     if(count==0)
         show(array,sizeof(array)/sizeof(int));
-    selectSort(array,sizeof(array)/sizeof(int),sizeof(int),compare);
+    selectionSort(array,sizeof(array)/sizeof(int),sizeof(int),compare);
     if(count==COUNT-1)
         show(array,sizeof(array)/sizeof(int));
 }
@@ -52,7 +52,7 @@ void countTime(int count,void(*func)(int))
 int main(){
     printf("BubbleSort\n");
     countTime(COUNT,func1);
-    printf("SelectSort\n");
+    printf("SelectionSort\n");
     countTime(COUNT,func2);
     return 0;
 }

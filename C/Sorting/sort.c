@@ -22,7 +22,7 @@ void bubbleSort(eleType array, int n, int size,int (*compare)(const eleType, con
     }
 }
 
-void selectSort(eleType array, int n, int size, int (*compare)(const eleType, const eleType))
+void selectionSort(eleType array, int n, int size, int (*compare)(const eleType, const eleType))
 {
     if(array==NULL)
         return;
