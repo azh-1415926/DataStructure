@@ -1,9 +1,24 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 #include "sort.h"
 #define COUNT 1000000
 #define SIZE sizeof(int)
 #define TEST_CASE int array[]={1,7,8,2,4,6,3,5,9,10}
+//#define TEST_CASE int array[]={10,9,8,7,6,5,4,3,2,1}
+//#define TEST_CASE int array[]={1,2,3,4,5,6,7,8,9,10}
+#define N 10
+#define RANDOM_CASE \
+    int array[N]={0};   \
+    srand(time(NULL));  \
+    int index=0;    \
+    for(int i=0;i<N;i++){   \
+        index=rand()%10;    \
+        while(array[index]!=0)  \
+            index=rand()%10;    \
+        array[index]=i+1; \
+    }   \
+    
 #define SHOW_CASE show(array,sizeof(array)/sizeof(int))
 
 int compare(void* first,void* second)
