@@ -4,22 +4,37 @@
 #include "sort.h"
 #define COUNT 1000000
 #define SIZE sizeof(int)
-#define TEST_CASE int array[]={1,7,8,2,4,6,3,5,9,10}
-//#define TEST_CASE int array[]={10,9,8,7,6,5,4,3,2,1}
-//#define TEST_CASE int array[]={1,2,3,4,5,6,7,8,9,10}
 #define N 10
 #define RANDOM_CASE \
-    int array[N]={0};   \
-    srand(time(NULL));  \
-    int index=0;    \
-    for(int i=0;i<N;i++){   \
-        index=rand()%10;    \
-        while(array[index]!=0)  \
+    if(randomFlag==1){  \
+        srand(time(NULL));  \
+        int index=0;    \
+        for(int i=0;i<N;i++){   \
             index=rand()%10;    \
-        array[index]=i+1; \
-    }   \
-    
-#define SHOW_CASE show(array,sizeof(array)/sizeof(int))
+            while(arrayCopy[index]!=0)  \
+                index=rand()%10;    \
+            arrayCopy[index]=i+1; \
+        }   \
+    }
+#define RESET_CASE \
+    for(int i=0;i<N;i++){   \
+        array[i]=arrayCopy[i];  \
+    }
+#define SHOW_CASE show(array,N)
+
+static int randomFlag=1;
+static int array[N]={0};
+static int arrayCopy[N]={0};
+
+// static int randomFlag=0;
+// static int array[]={1,7,8,2,4,6,3,5,9,10};
+// static int arrayCopy[]={1,7,8,2,4,6,3,5,9,10};
+
+// static int array[]={10,9,8,7,6,5,4,3,2,1};
+// static int arrayCopy[]={10,9,8,7,6,5,4,3,2,1};
+
+// static int array[]={1,2,3,4,5,6,7,8,9,10};
+// static int arrayCopy[]={1,2,3,4,5,6,7,8,9,10};
 
 int compare(void* first,void* second)
 {
@@ -35,30 +50,30 @@ void show(int* array,int n)
 
 void func1(int count)
 {
-    TEST_CASE;
+    RESET_CASE;
     if(count==0)
         SHOW_CASE;
-    bubbleSort(array,sizeof(array)/sizeof(int),sizeof(int),compare);
+    bubbleSort(array,N,SIZE,compare);
     if(count==COUNT-1)
         SHOW_CASE;
 }
 
 void func2(int count)
 {
-    TEST_CASE;
+    RESET_CASE;
     if(count==0)
         SHOW_CASE;
-    selectionSort(array,sizeof(array)/sizeof(int),sizeof(int),compare);
+    selectionSort(array,N,SIZE,compare);
     if(count==COUNT-1)
         SHOW_CASE;
 }
 
 void func3(int count)
 {
-    TEST_CASE;
+    RESET_CASE;
     if(count==0)
         SHOW_CASE;
-    insertionSort(array,sizeof(array)/sizeof(int),sizeof(int),compare);
+    insertionSort(array,N,SIZE,compare);
     if(count==COUNT-1)
         SHOW_CASE;
 }
@@ -77,6 +92,7 @@ void countTime(int count,void(*func)(int))
 }
 
 int main(){
+    RANDOM_CASE;
     printf("BubbleSort\n");
     countTime(COUNT,func1);
     printf("SelectionSort\n");
