@@ -10,7 +10,7 @@ static void swap(void* first,void* second,int size)
         *((char*)first+i)^=*((char*)second+i);
     }
 }
-void bubbleSort(eleType array, int n, int size,int (*compare)(const eleType, const eleType))
+void bubbleSort(pType array, int n, int size,int (*compare)(const pType, const pType))
 {
     if(array==NULL)
         return;
@@ -22,7 +22,7 @@ void bubbleSort(eleType array, int n, int size,int (*compare)(const eleType, con
     }
 }
 
-void selectionSort(eleType array, int n, int size, int (*compare)(const eleType, const eleType))
+void selectionSort(pType array, int n, int size, int (*compare)(const pType, const pType))
 {
     if(array==NULL)
         return;
