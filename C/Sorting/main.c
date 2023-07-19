@@ -4,15 +4,15 @@
 #include "sort.h"
 #define COUNT 1000000
 #define SIZE sizeof(int)
-#define N 10
+#define N 15
 #define RANDOM_CASE \
     if(randomFlag==1){  \
         srand(time(NULL));  \
         int index=0;    \
         for(int i=0;i<N;i++){   \
-            index=rand()%10;    \
+            index=rand()%N;    \
             while(arrayCopy[index]!=0)  \
-                index=rand()%10;    \
+                index=rand()%N;    \
             arrayCopy[index]=i+1; \
         }   \
     }
