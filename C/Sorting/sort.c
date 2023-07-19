@@ -45,7 +45,7 @@ void selectionSort(pType array, int n, int size, int (*compare)(const pType, con
         return;
     for(int i=0;i<n-1;i++){
         int min=i;
-        for(int j=i;j<n-1;j++){
+        for(int j=i+1;j<n;j++){
             // if(compare((char*)array+min*size,(char*)array+j*size)>0)
             if(compare(P_ARRAY(array,min,size),P_ARRAY(array,j,size))>0)
                 min=j;
