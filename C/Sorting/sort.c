@@ -105,8 +105,6 @@ void mergeSort(pType array, int n, int size, int (*compare)(const pType, const p
             if(mid>=n)
                 break;
             //merge start
-            if(right+1-left<2)
-                break;
             char temp[(right+1-left)*size];
             int i=0;
             int p1=left;
@@ -145,4 +143,54 @@ void mergeSort(pType array, int n, int size, int (*compare)(const pType, const p
         if(mergeSize>n/2)
             break;
     }
+}
+
+static void _mergeRecursive(pType array, int left, int right, int size, int (*compare)(const pType, const pType))
+{
+    if(left==right)
+        return;
+    int mid=left+((right-left)>>1);
+    _mergeRecursive(array,left,mid,size,compare);
+    _mergeRecursive(array,mid+1,right,size,compare);
+    //merge start
+    char temp[(right+1-left)*size];
+    int i=0;
+    int p1=left;
+    int p2=mid+1;
+    while(p1<=mid&&p2<=right){
+        // if(compare((char*)array+p1*size,(char*)array+p2*size)<=0){
+        if(compare(P_ARRAY(array,p1,size),P_ARRAY(array,p2,size))<=0){
+            // copy(temp,(char*)array+p1*size,size);
+            copy(P_ARRAY(temp,i,size),P_ARRAY(array,p1,size),size);
+            i++;
+            p1++;
+        }else{
+            // copy(temp,(char*)array+p2*size,size);
+            copy(P_ARRAY(temp,i,size),P_ARRAY(array,p2,size),size);
+            i++;
+            p2++;
+        }
+    }
+    while(p1<=mid){
+        // copy(temp,(char*)array+p1*size,size);
+        copy(P_ARRAY(temp,i,size),P_ARRAY(array,p1,size),size);
+        i++;
+        p1++;
+    }
+    while(p2<=right){
+        // copy(temp,(char*)array+p2*size,size);
+        copy(P_ARRAY(temp,i,size),P_ARRAY(array,p2,size),size);
+        i++;
+        p2++;
+    }
+    // copy((char*)array+left*size,temp,size);
+    copy(P_ARRAY(array,left,size),P_ARRAY(temp,0,size),sizeof(temp));
+    //merge end
+}
+
+void mergeSortRecursive(pType array, int n, int size, int (*compare)(const pType, const pType))
+{
+    if(array==NULL&&n<2)
+        return;
+    _mergeRecursive(array,0,n-1,size,compare);
 }

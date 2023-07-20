@@ -14,6 +14,7 @@ void selectionSort(pType array,int n,int size,int(*compare)(const pType,const pT
 void insertionSort(pType array,int n,int size,int(*compare)(const pType,const pType));
 void shellSort(pType array,int n,int size,int(*compare)(const pType,const pType));
 void mergeSort(pType array,int n,int size,int(*compare)(const pType,const pType));
+void mergeSortRecursive(pType array,int n,int size,int(*compare)(const pType,const pType));
 
 #ifdef __cplusplus
 }

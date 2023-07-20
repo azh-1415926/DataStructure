@@ -98,6 +98,16 @@ void func5(int count)
         SHOW_CASE;
 }
 
+void func6(int count)
+{
+    RESET_CASE;
+    if(count==0)
+        SHOW_CASE;
+    mergeSortRecursive(array,N,SIZE,compare);
+    if(count==COUNT-1)
+        SHOW_CASE;
+}
+
 void countTime(int count,void(*func)(int))
 {
     clock_t startTime,endTime;
@@ -123,5 +133,7 @@ int main(){
     countTime(COUNT,func4);
     printf("MergeSort\n");
     countTime(COUNT,func5);
+    printf("MergeSortRecursive\n");
+    countTime(COUNT,func6);
     return 0;
 }
