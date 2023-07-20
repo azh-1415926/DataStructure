@@ -73,3 +73,23 @@ void insertionSort(pType array, int n, int size, int (*compare)(const pType, con
         swap(P_ARRAY(array,j,size),temp,size);
     }
 }
+
+void shellSort(pType array, int n, int size, int (*compare)(const pType, const pType))
+{
+    if(array==NULL)
+        return;
+    for(int gap=n>>1;gap>0;gap>>=1){
+        for(int i=gap;i<n;i++){
+            int j;
+            char temp[size];
+            // copy(temp,(char*)array+i*size,size);
+            // for(j=i-gap;j>=0&&(compare((char*)array+j*size,temp)>0);j-=gap)
+            //     swap((char*)array+(j+gap)*size,(char*)array+j*size,size);
+            // swap((char*)array+(j+gap)*size,temp,size);
+            copy(temp,P_ARRAY(array,i,size),size);
+            for(j=i-gap;j>=0&&(compare(P_ARRAY(array,j,size),temp)>0);j-=gap)
+                swap(P_ARRAY(array,j+gap,size),P_ARRAY(array,j,size),size);
+            swap(P_ARRAY(array,j+gap,size),temp,size);
+        }
+    }
+}
