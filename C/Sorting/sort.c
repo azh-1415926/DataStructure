@@ -194,3 +194,56 @@ void mergeSortRecursive(pType array, int n, int size, int (*compare)(const pType
         return;
     _mergeRecursive(array,0,n-1,size,compare);
 }
+
+void quickSort(pType array, int n, int size, int (*compare)(const pType, const pType))
+{
+    if(array==NULL)
+        return;
+    //stack start
+    int lStack[n/2];
+    int rStack[n/2];
+    int p=-1;
+    //stack end
+    int pivot,flag;
+    //push 0-n-1
+    p++;
+    lStack[p]=0;
+    rStack[p]=n-1;
+    while(p>=0){
+        pivot=rStack[p];
+        int l=lStack[p];
+        int r=pivot-1;
+        while(l<r){
+            //compare to left
+            flag=compare(P_ARRAY(array,l,size),P_ARRAY(array,pivot,size));
+            if(flag<=0){
+                l++;
+                continue;
+            }
+            //compare to right
+            while(l<r&&flag>=0){
+                flag=compare(P_ARRAY(array,r,size),P_ARRAY(array,pivot,size));
+                if(flag>=0)
+                    r--;
+            }
+            swap(P_ARRAY(array,l,size),P_ARRAY(array,r,size),size);
+        }
+        flag=compare(P_ARRAY(array,l,size),P_ARRAY(array,pivot,size));
+        if(l>=r&&flag>0)
+            swap(P_ARRAY(array,l,size),P_ARRAY(array,pivot,size),size);
+        else
+            l++;
+        if(l>lStack[p]+1&&l<rStack[p]-1){
+            rStack[p+1]=rStack[p];
+            rStack[p]=l-1;
+            lStack[p+1]=l+1;
+            p++;
+        }else if(l>lStack[p]+1){
+            rStack[p]=l-1;
+        }else if(l<rStack[p]-1){
+            lStack[p]=l+1;
+        }else{
+            p--;
+        }
+    }
+}

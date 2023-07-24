@@ -8,13 +8,16 @@
 #define SIZE sizeof(int)
 #define N 15
 
-//#define JUDGE
+#define JUDGE
 #define RANDOM
 
+#define RANDOM_INI  \
+    if(randomFlag)  \
+            srand(time(NULL));
 #define RANDOM_CASE \
     if(randomFlag){  \
-        srand(time(NULL));  \
         int index=0;    \
+        memset(arrayCopy,0,sizeof(arrayCopy));  \
         for(int i=0;i<N;i++){   \
             index=rand()%N;    \
             while(arrayCopy[index]!=0)  \
@@ -29,8 +32,10 @@
 #define SHOW_CASE show(array,N)
 #define JUDGE_CASE \
     if(judgeFlag){   \
-        if(!judge(array,N)) \
-                printf("error!");   \
+        if(!judge(array,N)){    \
+            printf("error!");   \
+            exit(1);    \
+        }   \
     }
 
 #ifdef JUDGE
@@ -111,15 +116,28 @@ void export(const char* log)
     fprintf(f,"%d\nCount:%d\n%s---END---\n",arrayCopy[N-1],COUNT,log);
 }
 
+void func0(int count)
+{
+    RESET_CASE;
+    if(count==0)
+        SHOW_CASE;
+    qsort(array,N,SIZE,compare);
+    if(count==COUNT-1){
+        SHOW_CASE;
+        JUDGE_CASE;
+    }
+}
+
 void func1(int count)
 {
     RESET_CASE;
     if(count==0)
         SHOW_CASE;
     bubbleSort(array,N,SIZE,compare);
-    if(count==COUNT-1)
+    if(count==COUNT-1){
         SHOW_CASE;
-    JUDGE_CASE;
+        JUDGE_CASE;
+    }
 }
 
 void func2(int count)
@@ -128,9 +146,10 @@ void func2(int count)
     if(count==0)
         SHOW_CASE;
     selectionSort(array,N,SIZE,compare);
-    if(count==COUNT-1)
+    if(count==COUNT-1){
         SHOW_CASE;
-    JUDGE_CASE;
+        JUDGE_CASE;
+    }
 }
 
 void func3(int count)
@@ -139,9 +158,10 @@ void func3(int count)
     if(count==0)
         SHOW_CASE;
     insertionSort(array,N,SIZE,compare);
-    if(count==COUNT-1)
+    if(count==COUNT-1){
         SHOW_CASE;
-    JUDGE_CASE;
+        JUDGE_CASE;
+    }
 }
 
 void func4(int count)
@@ -150,9 +170,10 @@ void func4(int count)
     if(count==0)
         SHOW_CASE;
     shellSort(array,N,SIZE,compare);
-    if(count==COUNT-1)
+    if(count==COUNT-1){
         SHOW_CASE;
-    JUDGE_CASE;
+        JUDGE_CASE;
+    }
 }
 
 void func5(int count)
@@ -161,9 +182,10 @@ void func5(int count)
     if(count==0)
         SHOW_CASE;
     mergeSort(array,N,SIZE,compare);
-    if(count==COUNT-1)
+    if(count==COUNT-1){
         SHOW_CASE;
-    JUDGE_CASE;
+        JUDGE_CASE;
+    }
 }
 
 void func6(int count)
@@ -172,9 +194,22 @@ void func6(int count)
     if(count==0)
         SHOW_CASE;
     mergeSortRecursive(array,N,SIZE,compare);
-    if(count==COUNT-1)
+    if(count==COUNT-1){
         SHOW_CASE;
-    JUDGE_CASE;
+        JUDGE_CASE;
+    }
+}
+
+void func7(int count)
+{
+    RESET_CASE;
+    if(count==0)
+        SHOW_CASE;
+    quickSort(array,N,SIZE,compare);
+    if(count==COUNT-1){
+        SHOW_CASE;
+        JUDGE_CASE;
+    }
 }
 
 double countTime(int count,void(*func)(int))
@@ -192,31 +227,40 @@ double countTime(int count,void(*func)(int))
 }
 
 int main(){
+    RANDOM_INI;
     RANDOM_CASE;
     char log[4096]={0};
     char buf[50]={0};
     char* sortInfo[]={
+        "qsort",
         "BubbleSort",
         "SelectionSort",
         "InsectionSort",
         "ShellSort",
         "MergeSort",
-        "MergeSortRecursive"
+        "MergeSortRecursive",
+        "QuickSort"
     };
     int n=sizeof(sortInfo)/sizeof(char*);
     void(*funcInfo[n])(int);
-    funcInfo[0]=func1;
-    funcInfo[1]=func2;
-    funcInfo[2]=func3;
-    funcInfo[3]=func4;
-    funcInfo[4]=func5;
-    funcInfo[5]=func6;
+    funcInfo[0]=func0;
+    funcInfo[1]=func1;
+    funcInfo[2]=func2;
+    funcInfo[3]=func3;
+    funcInfo[4]=func4;
+    funcInfo[5]=func5;
+    funcInfo[6]=func6;
+    funcInfo[7]=func7;
     double costTime=0.0;
     for(int i=0;i<n;i++){
         costTime=countTime(COUNT,funcInfo[i]);
         sprintf(buf,"%s %.3lf\n",sortInfo[i],costTime);
         strcat(log,buf);
     }
+    // for(int i=0;i<50;i++){
+    //     countTime(COUNT,func7);
+    //     RANDOM_CASE;
+    // }
     export(log);
     return 0;
 }
