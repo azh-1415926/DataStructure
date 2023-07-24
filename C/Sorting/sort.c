@@ -247,3 +247,44 @@ void quickSort(pType array, int n, int size, int (*compare)(const pType, const p
         }
     }
 }
+
+static void _quickRecursive(pType array, int left, int right, int size, int (*compare)(const pType, const pType))
+{
+    if(left>=right)
+        return;
+    int pivot=right;
+    int l=left;
+    int r=right-1;
+    int flag;
+    while(l<r){
+        //compare to left
+        flag=compare(P_ARRAY(array,l,size),P_ARRAY(array,pivot,size));
+        if(flag<=0){
+            l++;
+            continue;
+        }
+        //compare to right
+        while(l<r&&flag>=0){
+            flag=compare(P_ARRAY(array,r,size),P_ARRAY(array,pivot,size));
+            if(flag>=0)
+                r--;
+        }
+        swap(P_ARRAY(array,l,size),P_ARRAY(array,r,size),size);
+    }
+    flag=compare(P_ARRAY(array,l,size),P_ARRAY(array,pivot,size));
+    if(l>=r&&flag>0)
+        swap(P_ARRAY(array,l,size),P_ARRAY(array,pivot,size),size);
+    else
+        l++;
+    if(left<l-1)
+        _quickRecursive(array,left,l-1,size,compare);
+    if(l+1<right)
+        _quickRecursive(array,l+1,right,size,compare);
+}
+
+void quickSortRecursive(pType array, int n, int size, int (*compare)(const pType, const pType))
+{
+    if(array==NULL)
+        return;
+    _quickRecursive(array,0,n-1,size,compare);
+}
