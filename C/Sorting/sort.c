@@ -288,3 +288,37 @@ void quickSortRecursive(pType array, int n, int size, int (*compare)(const pType
         return;
     _quickRecursive(array,0,n-1,size,compare);
 }
+
+static void heapify(pType array, int index, int heapSize, int size, int (*compare)(const pType, const pType))
+{
+    int pre=index;
+    int curr=index*2+1;
+    int flag;
+    while(curr<=heapSize){
+        if(curr+1<=heapSize){
+            flag=compare(P_ARRAY(array,curr+1,size),P_ARRAY(array,curr,size));
+            if(flag>0)
+                curr++;
+        }
+        flag=compare(P_ARRAY(array,pre,size),P_ARRAY(array,curr,size));
+        if(flag>0)
+            return;
+        else{
+            swap(P_ARRAY(array,pre,size),P_ARRAY(array,curr,size),size);
+            pre=curr;
+            curr=pre*2+1;
+        }
+    }
+}
+
+void heapSort(pType array, int n, int size, int (*compare)(const pType, const pType))
+{
+    if(array==NULL)
+        return;
+    for(int i=n/2-1;i>=0;i--)
+        heapify(array,i,n-1,size,compare);
+    for(int i=n-1;i>0;i--){
+        swap(P_ARRAY(array,0,size),P_ARRAY(array,i,size),size);
+        heapify(array,0,i-1,size,compare);
+    }
+}

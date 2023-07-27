@@ -224,6 +224,18 @@ void func8(int count)
     }
 }
 
+void func9(int count)
+{
+    RESET_CASE;
+    if(count==0)
+        SHOW_CASE;
+    heapSort(array,N,SIZE,compare);
+    if(count==COUNT-1){
+        SHOW_CASE;
+        JUDGE_CASE;
+    }
+}
+
 double countTime(int count,void(*func)(int))
 {
     clock_t startTime,endTime;
@@ -252,7 +264,8 @@ int main(){
         "MergeSort",
         "MergeSortRecursive",
         "QuickSort",
-        "QuickSortRecursive"
+        "QuickSortRecursive",
+        "HeapSort"
     };
     int n=sizeof(sortInfo)/sizeof(char*);
     void(*funcInfo[n])(int);
@@ -265,6 +278,7 @@ int main(){
     funcInfo[6]=func6;
     funcInfo[7]=func7;
     funcInfo[8]=func8;
+    funcInfo[9]=func9;
     double costTime=0.0;
     for(int i=0;i<n;i++){
         costTime=countTime(COUNT,funcInfo[i]);

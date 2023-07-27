@@ -17,6 +17,7 @@ void mergeSort(pType array,int n,int size,int(*compare)(const pType,const pType)
 void mergeSortRecursive(pType array,int n,int size,int(*compare)(const pType,const pType));
 void quickSort(pType array,int n,int size,int(*compare)(const pType,const pType));
 void quickSortRecursive(pType array, int n, int size, int (*compare)(const pType, const pType));
+void heapSort(pType array, int n, int size, int (*compare)(const pType, const pType));
 
 #ifdef __cplusplus
 }
