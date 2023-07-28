@@ -1,4 +1,6 @@
 #include "sort.h"
+#include <stdlib.h>
+
 #define ARRAY(p,i) (*((char*)(p)+(i)))
 #define P_ARRAY(p,i,size) ((char*)(p)+(i)*size)
 
@@ -98,6 +100,7 @@ void mergeSort(pType array, int n, int size, int (*compare)(const pType, const p
 {
     if(array==NULL)
         return;
+    char *temp=(char*)malloc(n*size);
     for(int mergeSize=1;mergeSize<n;mergeSize<<=1){
         for(int left=0;left<n;){
             int mid=left+mergeSize-1;
@@ -105,8 +108,7 @@ void mergeSort(pType array, int n, int size, int (*compare)(const pType, const p
             if(mid>=n)
                 break;
             //merge start
-            char temp[(right+1-left)*size];
-            int i=0;
+            int i=left;
             int p1=left;
             int p2=mid+1;
             while(p1<=mid&&p2<=right){
@@ -136,25 +138,25 @@ void mergeSort(pType array, int n, int size, int (*compare)(const pType, const p
                 p2++;
             }
             // copy((char*)array+left*size,temp,size);
-            copy(P_ARRAY(array,left,size),P_ARRAY(temp,0,size),sizeof(temp));
+            copy(P_ARRAY(array,left,size),P_ARRAY(temp,left,size),(right+1-left)*size);
             //merge end
             left=right+1;
         }
         if(mergeSize>n/2)
             break;
     }
+    free(temp);
 }
 
-static void _mergeRecursive(pType array, int left, int right, int size, int (*compare)(const pType, const pType))
+static void _mergeRecursive(pType array, char* temp,int left, int right, int size, int (*compare)(const pType, const pType))
 {
     if(left==right)
         return;
     int mid=left+((right-left)>>1);
-    _mergeRecursive(array,left,mid,size,compare);
-    _mergeRecursive(array,mid+1,right,size,compare);
+    _mergeRecursive(array,temp,left,mid,size,compare);
+    _mergeRecursive(array,temp,mid+1,right,size,compare);
     //merge start
-    char temp[(right+1-left)*size];
-    int i=0;
+    int i=left;
     int p1=left;
     int p2=mid+1;
     while(p1<=mid&&p2<=right){
@@ -184,7 +186,7 @@ static void _mergeRecursive(pType array, int left, int right, int size, int (*co
         p2++;
     }
     // copy((char*)array+left*size,temp,size);
-    copy(P_ARRAY(array,left,size),P_ARRAY(temp,0,size),sizeof(temp));
+    copy(P_ARRAY(array,left,size),P_ARRAY(temp,left,size),(right+1-left)*size);
     //merge end
 }
 
@@ -192,7 +194,9 @@ void mergeSortRecursive(pType array, int n, int size, int (*compare)(const pType
 {
     if(array==NULL&&n<2)
         return;
-    _mergeRecursive(array,0,n-1,size,compare);
+    char *temp=(char*)malloc(n*size);
+    _mergeRecursive(array,temp,0,n-1,size,compare);
+    free(temp);
 }
 
 void quickSort(pType array, int n, int size, int (*compare)(const pType, const pType))
@@ -200,8 +204,8 @@ void quickSort(pType array, int n, int size, int (*compare)(const pType, const p
     if(array==NULL)
         return;
     //stack start
-    int lStack[n/2];
-    int rStack[n/2];
+    int *lStack=(int*)malloc((n/2)*sizeof(int));
+    int *rStack=(int*)malloc((n/2)*sizeof(int));
     int p=-1;
     //stack end
     int pivot,flag;
@@ -251,6 +255,8 @@ void quickSort(pType array, int n, int size, int (*compare)(const pType, const p
             p--;
         }
     }
+    free(lStack);
+    free(rStack);
 }
 
 static void _quickRecursive(pType array, int left, int right, int size, int (*compare)(const pType, const pType))
