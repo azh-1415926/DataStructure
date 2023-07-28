@@ -7,8 +7,8 @@
 extern "C" {
 #endif
 
-typedef void eleType;
-typedef eleType* pType;
+typedef void Type;
+typedef Type* pType;
 void bubbleSort(pType array,int n,int size,int(*compare)(const pType,const pType));
 void selectionSort(pType array,int n,int size,int(*compare)(const pType,const pType));
 void insertionSort(pType array,int n,int size,int(*compare)(const pType,const pType));
