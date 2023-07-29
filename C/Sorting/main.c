@@ -7,9 +7,9 @@
 #include "sort.h"
 #include "testCase.h"
 
-#define COUNT 10000000
+#define COUNT 1000000
 #define SIZE sizeof(int)
-#define N 20
+#define N 15
 #define LEFT_RANGE 0
 #define RIGHT_RANGE 100
 
@@ -117,6 +117,7 @@ double countTime(int count,void(*func)(int))
     double costTime=0.0;
     startTime=clock();
     for(int i=0;i<count;i++){
+        memcpy(array,arrayCopy,N*SIZE);
         func(i);
     }
     endTime=clock();
@@ -134,10 +135,7 @@ void testAllCase(char** sortInfo,void(**funcInfo)(int),int n)
     showCase(arrayCopy,N,showData);
     for(int i=0;i<n;i++){
         sprintf(currFunc,sortInfo[i]);
-        memcpy(array,arrayCopy,N*SIZE);
         costTime=countTime(COUNT,funcInfo[i]);
-        //showCase(arrayCopy,N,showData);
-        //showCase(array,N,showData);
         if(!verifyCase(array,N,compare)){
             showCase(array,N,showData);
             printf("%s error!",sortInfo[i]);
@@ -204,7 +202,7 @@ int main(){
     createCase(arrayCopy,N);
     // createCaseNoRepeat(arrayCopy,N);
     testAllCase(sortInfo,funcInfo,n);
-    // testOneCase(sortInfo[2],funcInfo[2],10);
+    testOneCase(sortInfo[9],funcInfo[9],10);
     free(array);
     free(arrayCopy);
     return 0;
