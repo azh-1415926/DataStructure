@@ -25,13 +25,15 @@ eleType *createCase(eleType *array, int n)
     return array;
 }
 
-eleType *createCaseNoRepeat(eleType *array, int n)
+eleType *createCaseNoRepeat(eleType *array, int n, int leftRange, int rightRange)
 {
     int index;
     memset(array,0,n*sizeof(eleType));
+    if(rightRange-leftRange<n)
+        n=rightRange-leftRange;
     for(int i=0;i<n;i++){
-        index=rand()%n;
-        while(array[index]!=0)
+        index=rand()%(rightRange-leftRange)+leftRange;
+        while(index>=n||array[index]!=0)
             index=rand()%n;
         array[index]=i+1;
     }

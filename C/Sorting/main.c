@@ -162,6 +162,7 @@ void testOneCase(char* sortName,void(*func)(int),int count)
             exit(1);
         }
         createCase(arrayCopy,N);
+        // createCaseNoRepeat(arrayCopy,N,LEFT_RANGE,RIGHT_RANGE);
     }
 }
 
@@ -195,7 +196,7 @@ int main(){
     arrayCopy=malloc(N*SIZE);
     initalCase(inital);
     createCase(arrayCopy,N);
-    // createCaseNoRepeat(arrayCopy,N);
+    // createCaseNoRepeat(arrayCopy,N,LEFT_RANGE,RIGHT_RANGE);
     testAllCase(sortInfo,funcInfo,n);
     testOneCase(sortInfo[9],funcInfo[9],10);
     free(array);

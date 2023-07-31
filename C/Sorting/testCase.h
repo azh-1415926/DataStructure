@@ -12,7 +12,7 @@ typedef int eleType;
 
 void initalCase(void(*inital)(void*,int));
 eleType* createCase(eleType* array,int n);
-eleType* createCaseNoRepeat(eleType* array,int n);
+eleType* createCaseNoRepeat(eleType* array,int n,int leftRange,int rightRange);
 void showCase(eleType* array,int n,void(*show)(void*));
 bool verifyCase(eleType* array,int n,int(*compare)(void*,void*));
 
