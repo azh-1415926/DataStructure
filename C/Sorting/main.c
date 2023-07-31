@@ -6,6 +6,7 @@
 
 #include "sort.h"
 #include "testCase.h"
+#include "log.h"
 
 #define COUNT 1000000
 #define SIZE sizeof(int)
@@ -34,31 +35,25 @@ void inital(void* data,int num)
 
 void export(const char* log)
 {
-    time_t now=time(NULL);
-    struct tm* time;
-    time=localtime(&now);
-    char* format="%Y-%m-%d %H:%M:%S";
-    char str[20];
-    strftime(str,sizeof(str),format,time);
-    FILE* f=NULL;
-    f=fopen("log.txt","a");
-    if(f==NULL)
-        return;
-    //show
-    printf("%s\nSize   : %d\nData   : ",str,N);
-    showCase(arrayCopy,N,showData);
-    printf("Sorted : ");
-    showCase(array,N,showData);
-    printf("Count:%d\n",COUNT);
-    printf("%s",log);
-    //save
-    fprintf(f,"%s\nSize   : %d\nData   : ",str,N);
-    for(int i=0;i<N-1;i++)
-        fprintf(f,"%d ",arrayCopy[i]);
-    fprintf(f,"%d\nSorted : ",arrayCopy[N-1]);
-    for(int i=0;i<N-1;i++)
-        fprintf(f,"%d ",array[i]);
-    fprintf(f,"%d\nCount:%d\n%s---END---\n",array[N-1],COUNT,log);
+    char buf[4096];
+    memset(buf,0,sizeof(buf));
+    int index=0;
+    sprintf(buf,"Size   : %d\nData   : ",N);
+    if(N<=50){
+        for(int i=0;i<N-1;i++){
+            index=strlen(buf);
+            sprintf(buf+index,"%d ",arrayCopy[i]);
+        }
+        index=strlen(buf);
+        sprintf(buf+index,"%d\n",arrayCopy[N-1]);
+    }else{
+        index=strlen(buf);
+        sprintf(buf+index,"%s\n","mass of data");
+    }
+    index=strlen(buf);
+    sprintf(buf+index,"Count  : %d\n%s",COUNT,log);
+    printf("%s\n",buf);
+    exportLog("sort.log",buf);
 }
 
 void func0()
