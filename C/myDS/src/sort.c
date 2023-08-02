@@ -1,4 +1,4 @@
-#include "sort.h"
+#include <myDS/sort.h>
 #include <stdlib.h>
 
 #define ARRAY(p,i) (*((char*)(p)+(i)))

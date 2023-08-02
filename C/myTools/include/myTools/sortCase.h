@@ -1,5 +1,5 @@
-#ifndef _TEST_CASE_H_
-#define _TEST_CASE_H_
+#ifndef _SORT_CASE_H_
+#define _SORT_CASE_H_
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -20,4 +20,4 @@ bool verifyCase(eleType* array,int n,int(*compare)(void*,void*));
 }
 #endif
 
-#endif /* _TEST_CASE_H_ */
+#endif /* _SORT_CASE_H_ */

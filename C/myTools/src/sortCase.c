@@ -1,4 +1,4 @@
-#include "testCase.h"
+#include <myTools/sortCase.h>
 
 #include <stdlib.h>
 #include <string.h>
