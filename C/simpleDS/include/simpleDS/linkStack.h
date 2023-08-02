@@ -7,6 +7,7 @@ extern "C" {
 
 #include<stdio.h>
 #include<stdbool.h>
+
 typedef struct linkStackNode {
     void* data;
     struct linkStackNode *next;
@@ -15,6 +16,7 @@ typedef struct linkStack {
     struct linkStackNode *top;
     struct linkStackNode *bottom;
 }*linkStack;
+
 void linkStackInitalize(linkStack* ppStack);
 void linkStackFree(linkStack* ppStack);
 bool linkStackIsEmpty(linkStack const stack);

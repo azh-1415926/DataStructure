@@ -1,10 +1,14 @@
-#include "linkList.h"
+#include <simpleDS/linkList.h>
 #include<stdlib.h>
-void linkListInitalize(linkList* ppList){
+
+void linkListInitalize(linkList* ppList)
+{
 	*ppList=(linkList)malloc(sizeof(linkNode));
 	(*ppList)->next=NULL;
 }
-void linkListFree(linkList* ppList){
+
+void linkListFree(linkList* ppList)
+{
 	linkList temp=NULL;
 	while((*ppList)->next){
 		temp=(*ppList)->next;
@@ -14,13 +18,17 @@ void linkListFree(linkList* ppList){
 	free(*ppList);
 	*ppList=NULL;
 }
-void linkListHeadInsert(linkList list,void* const data){
+
+void linkListHeadInsert(linkList list,void* const data)
+{
 	linkList temp=list->next;
 	list->next=(linkNode*)malloc(sizeof(linkNode));
 	list->next->data=data;
 	list->next->next=temp;
 }
-void linkListTailInsert(linkList list,void* const data){
+
+void linkListTailInsert(linkList list,void* const data)
+{
 	linkList pList=list;
 	while(pList->next)
 		pList=pList->next;
@@ -29,7 +37,9 @@ void linkListTailInsert(linkList list,void* const data){
 	pList->data=data;
 	pList->next=NULL;
 }
-void linkListInsert(linkList list,void* const data,int pos){
+
+void linkListInsert(linkList list,void* const data,int pos)
+{
 	linkList pList=list;
 	int i=0;
 	while(i++<pos&&pList->next)
@@ -42,7 +52,9 @@ void linkListInsert(linkList list,void* const data,int pos){
 	pList->next=temp;
 	pList->data=data;
 }
-void* linkListErase(linkList list,int pos){
+
+void* linkListErase(linkList list,int pos)
+{
 	linkList pList=list;
 	int i=0;
 	while(i++<pos&&pList->next)
@@ -55,7 +67,9 @@ void* linkListErase(linkList list,int pos){
 	free(temp);
 	return data;
 }
-void* linkListIndexSearch(linkList const list,int pos){
+
+void* linkListIndexSearch(linkList const list,int pos)
+{
 	linkList pList=list;
 	int i=0;
 	while(i++<pos&&pList->next)
@@ -64,7 +78,9 @@ void* linkListIndexSearch(linkList const list,int pos){
 		return NULL;
 	return pList->data;
 }
-int linkListDataSearch(linkList const list,void* const data,bool(*compare)(void*,void* const)){
+
+int linkListDataSearch(linkList const list,void* const data,bool(*compare)(void*,void* const))
+{
 	if(list==NULL)
 		return -1;
 	linkList pList=list;
@@ -77,7 +93,9 @@ int linkListDataSearch(linkList const list,void* const data,bool(*compare)(void*
 	}
 	return -1;
 }
-linkList linkListCombine(linkList firstList,linkList const lastList){
+
+linkList linkListCombine(linkList firstList,linkList const lastList)
+{
 	if(lastList==NULL)
 		return firstList;
 	if(firstList==NULL)

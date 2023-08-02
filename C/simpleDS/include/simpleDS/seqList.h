@@ -8,11 +8,13 @@ extern "C" {
 #include<stdio.h>
 #include<stdlib.h>
 #include<stdbool.h>
+
 typedef struct seqList {		
 	void** pList;
 	int capacity;
 	int length;
 }*seqList;
+
 void seqListInitalize(seqList* ppList,int capacity);
 void seqListFree(seqList* list);
 void seqListInsert(seqList list,void* data,int pos);

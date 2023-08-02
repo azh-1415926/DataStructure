@@ -1,16 +1,23 @@
-#include "seqList.h"
-void seqListInitalize(seqList* ppList,int capacity){
+#include <simpleDS/seqList.h>
+#include <stdlib.h>
+
+void seqListInitalize(seqList* ppList,int capacity)
+{
     *ppList=(seqList)malloc(sizeof(struct seqList));
 	(*ppList)->pList=malloc(sizeof(void*)*capacity);
 	(*ppList)->capacity=capacity;
 	(*ppList)->length=0;
 }
-void seqListFree(seqList* ppList){
+
+void seqListFree(seqList* ppList)
+{
 	free((*ppList)->pList);
 	free(*ppList);
 	*ppList=NULL;
 }
-void seqListInsert(seqList list,void* data,int pos){
+
+void seqListInsert(seqList list,void* data,int pos)
+{
 	if(pos<0||pos>=list->capacity)
 		return;
 	++list->length;
@@ -19,7 +26,9 @@ void seqListInsert(seqList list,void* data,int pos){
 	}
 	list->pList[pos]=data;
 }
-void* seqListErase(seqList list,int pos){
+
+void* seqListErase(seqList list,int pos)
+{
 	if(pos<0||pos>=list->capacity)
 		return NULL;
 	--list->length;
@@ -28,18 +37,23 @@ void* seqListErase(seqList list,int pos){
 		list->pList[i]=list->pList[i+1];
 	return data;
 }
-void* seqListIndexSearch(seqList const list,int pos){
+
+void* seqListIndexSearch(seqList const list,int pos)
+{
 	if(pos<0||pos>=list->length)
 		return NULL;
 	return list->pList[pos];
 }
-int seqListDataSearch(seqList list,void* const data,bool(*compare)(void*,void* const)){
+
+int seqListDataSearch(seqList list,void* const data,bool(*compare)(void*,void* const))
+{
 	for(int i=0;i<list->length;++i)
 		if(compare(list->pList[i],data))
 			return i;
 	return -1;
 }
-seqList seqListCombine(seqList firstList,seqList const endList){
+seqList seqListCombine(seqList firstList,seqList const endList)
+{
 	seqList list;
 	seqListInitalize(&list,firstList->length+endList->length);
 	for(int i=0,j=0;i<list->capacity;++i){
@@ -51,7 +65,9 @@ seqList seqListCombine(seqList firstList,seqList const endList){
 	list->length=list->capacity;
 	return list;
 }
-seqList seqListCombineNoRepeat(seqList firstList,seqList const endList,bool(*compare)(void*,void* const)){
+
+seqList seqListCombineNoRepeat(seqList firstList,seqList const endList,bool(*compare)(void*,void* const))
+{
 	seqList list=seqListCombine(firstList,endList);
 	for(int i=0;i<list->length-1;++i){
 		for(int j=i+1;j<list->length;++j){

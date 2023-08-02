@@ -7,8 +7,10 @@ extern "C" {
 
 #include<stdio.h>
 #include<stdbool.h>
+
 #define QUEUE_PUSH 1
 #define QUEUE_POP 0
+
 typedef struct seqQueue {
     int rear;
     int front;
@@ -16,6 +18,7 @@ typedef struct seqQueue {
     int capacity;
     int flag;
 }*seqQueue;
+
 void seqQueueInitalize(seqQueue* ppQueue,int capacity);
 void seqQueueFree(seqQueue* queue);
 bool seqQueueIsEmpty(seqQueue const queue);

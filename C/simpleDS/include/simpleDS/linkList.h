@@ -11,6 +11,7 @@ typedef struct linkNode{
 	void* data;
 	struct linkNode *next;
 }linkNode,*linkList;
+
 void linkListInitalize(linkList* ppList);
 void linkListFree(linkList* ppList);
 void linkListHeadInsert(linkList list,void* const data);

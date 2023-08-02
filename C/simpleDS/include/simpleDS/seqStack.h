@@ -7,11 +7,13 @@ extern "C" {
 
 #include<stdio.h>
 #include<stdbool.h>
+
 typedef struct seqStack {
     int top;
     void** bottom;
     int capacity;
 }*seqStack;
+
 void seqStackInitalize(seqStack* ppStack,int capacity);
 void seqStackFree(seqStack* stack);
 bool seqStackIsEmpty(seqStack const stack);

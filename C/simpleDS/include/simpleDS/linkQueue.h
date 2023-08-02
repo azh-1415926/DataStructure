@@ -11,6 +11,7 @@ typedef struct linkQueueNode {
     void* data;
     struct linkQueueNode *next;
 }linkQueueNode,*linkQueue;
+
 void linkQueueInitalize(linkQueue* ppQueue);
 void linkQueueFree(linkQueue* ppQueue);
 bool linkQueueIsEmpty(linkQueue const queue);
