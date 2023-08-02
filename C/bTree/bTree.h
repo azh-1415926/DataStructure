@@ -1,16 +1,18 @@
 #ifndef _B_TREE_H_
 #define _B_TREE_H_
-#include <stdio.h>
-#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#include <stdio.h>
+#include <stdbool.h>
+
 #define M 3
 #define MAX_KEY (M-1)
 #define MIN_KEY ((M-1)/2)
 #define MID_KEY ((M+1)/2)
+
 typedef int Key;
 typedef void* eleType;
 typedef struct BTNode {
@@ -20,7 +22,9 @@ typedef struct BTNode {
     struct BTNode* parent;
     struct BTNode* child[M+1];
 }BTNode,*BTree;
+
 void bTreeInitalize(BTree* tree);
+void bTreeShowNode(BTNode* node);
 void bTreeShow(BTree tree);
 void bTreePreOrderTraversal(BTree tree, void (*traversal)(void *));
 void bTreeInOrderTraversal(BTree tree, void (*traversal)(void *));
