@@ -33,7 +33,7 @@ void* seqListErase(seqList list,int pos)
 		return NULL;
 	--list->length;
 	void* data=list->pList[pos];
-	for(int i=pos;i<list->length;--i)
+	for(int i=pos;i<list->length;++i)
 		list->pList[i]=list->pList[i+1];
 	return data;
 }
@@ -45,15 +45,20 @@ void* seqListIndexSearch(seqList const list,int pos)
 	return list->pList[pos];
 }
 
-int seqListDataSearch(seqList list,void* const data,bool(*compare)(void*,void* const))
+int seqListDataSearch(seqList list,void* const data,int (*compare)(void*,void* const))
 {
 	for(int i=0;i<list->length;++i)
-		if(compare(list->pList[i],data))
+		if(!compare(list->pList[i],data))
 			return i;
 	return -1;
 }
 seqList seqListCombine(seqList firstList,seqList const endList)
 {
+	
+	if(firstList==NULL)
+		return endList;
+	if(endList==NULL)
+		return firstList;
 	seqList list;
 	seqListInitalize(&list,firstList->length+endList->length);
 	for(int i=0,j=0;i<list->capacity;++i){
@@ -66,12 +71,12 @@ seqList seqListCombine(seqList firstList,seqList const endList)
 	return list;
 }
 
-seqList seqListCombineNoRepeat(seqList firstList,seqList const endList,bool(*compare)(void*,void* const))
+seqList seqListCombineNoRepeat(seqList firstList,seqList const endList,int (*compare)(void*,void* const))
 {
 	seqList list=seqListCombine(firstList,endList);
 	for(int i=0;i<list->length-1;++i){
 		for(int j=i+1;j<list->length;++j){
-			if(compare(list->pList[i],list->pList[j])){
+			if(!compare(list->pList[i],list->pList[j])){
 				for(int k=j;k<list->length-1;k++){
 					list->pList[k]=list->pList[k+1];
 				}
