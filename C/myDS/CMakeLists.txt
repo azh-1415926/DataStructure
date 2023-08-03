@@ -1,6 +1,0 @@
-file(GLOB_RECURSE srcs CONFIGURE_DEPENDS src/*.c include/*.h)
-set(ROOT_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
-add_library(myDS STATIC ${srcs})
-add_subdirectory(${ROOT_DIR}/simpleDS simpleDS_binnary_dir)
-target_include_directories(myDS PUBLIC include)
-target_link_libraries(myDS simpleDS)
