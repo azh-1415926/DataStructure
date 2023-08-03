@@ -1,5 +1,5 @@
 #include <simpleDS/seqQueue.h>
-#include<stdlib.h>
+#include <stdlib.h>
 
 void seqQueueInitalize(seqQueue* ppQueue,int capacity)
 {

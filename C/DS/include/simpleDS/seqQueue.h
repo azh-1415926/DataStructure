@@ -5,8 +5,8 @@
 extern "C" {
 #endif
 
-#include<stdio.h>
-#include<stdbool.h>
+#include <stdio.h>
+#include <stdbool.h>
 
 #define QUEUE_PUSH 1
 #define QUEUE_POP 0

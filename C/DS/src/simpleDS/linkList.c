@@ -1,5 +1,5 @@
 #include <simpleDS/linkList.h>
-#include<stdlib.h>
+#include <stdlib.h>
 
 void linkListInitalize(linkList* ppList)
 {

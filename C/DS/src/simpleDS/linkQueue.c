@@ -1,5 +1,5 @@
 #include <simpleDS/linkQueue.h>
-#include<stdlib.h>
+#include <stdlib.h>
 
 void linkQueueInitalize(linkQueue* ppQueue){
     *ppQueue=(linkQueueNode*)malloc(sizeof(struct linkQueueNode));

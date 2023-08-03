@@ -5,8 +5,9 @@
 extern "C" {
 #endif
 
-#include<stdio.h>
-#include<stdbool.h>
+#include <stdio.h>
+#include <stdbool.h>
+
 typedef struct linkQueueNode {
     void* data;
     struct linkQueueNode *next;

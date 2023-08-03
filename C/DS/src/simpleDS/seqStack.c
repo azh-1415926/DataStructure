@@ -1,5 +1,5 @@
 #include <simpleDS/seqStack.h>
-#include<stdlib.h>
+#include <stdlib.h>
 
 void seqStackInitalize(seqStack* ppStack,int capacity)
 {

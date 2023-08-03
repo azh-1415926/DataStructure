@@ -1,5 +1,5 @@
 #include <simpleDS/linkStack.h>
-#include<stdlib.h>
+#include <stdlib.h>
 
 void linkStackInitalize(linkStack* ppStack)
 {
