@@ -20,6 +20,7 @@ void trieInsert(Trie tree,const char* str);
 void trieDelete(Trie tree,const char* str);
 int trieSearch(Trie tree,const char* str);
 int trieSearchByPrefix(Trie tree,const char* prefix);
+int trieGetSum(Trie tree);
 
 #ifdef __cplusplus
 }

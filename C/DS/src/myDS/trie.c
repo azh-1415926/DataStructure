@@ -39,20 +39,72 @@ void trieFree(Trie *tree)
 
 void trieInsert(Trie tree, const char *str)
 {
-
+    if(tree==NULL)
+        return;
+    trieNode* currNode=tree;
+    for(int i=0;str[i]!='\0';i++){
+        // no that road
+        if(currNode->next[str[i]-'a']==NULL){
+            currNode->next[str[i]-'a']=createTrieNode();
+        }
+        currNode->pass++;
+        currNode=currNode->next[str[i]-'a'];
+    }
+    if(currNode!=tree){
+        currNode->pass++;
+        currNode->end++;
+    }
 }
 
 void trieDelete(Trie tree, const char *str)
 {
-
+    if(tree==NULL||trieSearch(tree,str)==0)
+        return;
+    trieNode* currNode=tree;
+    for(int i=0;str[i]!='\0';i++){
+        if(--currNode->pass==0){
+            if(currNode!=tree)
+                trieFree(&currNode);
+            else
+                trieFree(&currNode->next[str[i]-'a']);
+            return;
+        }
+        currNode=currNode->next[str[i]-'a'];
+    }
+    currNode->pass--;
+    currNode->end--;
 }
 
 int trieSearch(Trie tree, const char *str)
 {
-    return 0;
+    if(tree==NULL)
+        return 0;
+    trieNode* currNode=tree;
+    for(int i=0;str[i]!='\0';i++){
+        // no that road
+        if(currNode->next[str[i]-'a']==NULL)
+            break;
+        currNode=currNode->next[str[i]-'a'];
+    }
+    return currNode->end;
 }
 
 int trieSearchByPrefix(Trie tree, const char *prefix)
 {
-    return 0;
+    if(tree==NULL)
+        return 0;
+    trieNode* currNode=tree;
+    for(int i=0;prefix[i]!='\0';i++){
+        // no that road
+        if(currNode->next[prefix[i]-'a']==NULL)
+            break;
+        currNode=currNode->next[prefix[i]-'a'];
+    }
+    return currNode->pass;
+}
+int trieGetSum(Trie tree)
+{
+    if(tree==NULL)
+        return 0;
+    return tree->pass;
 }
