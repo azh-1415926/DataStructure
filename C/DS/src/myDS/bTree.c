@@ -609,6 +609,7 @@ void bTreeFree(BTree *tree)
     BTNode* currNode=NULL;
     linkQueueInitalize(&queue);
     linkQueueEnqueue(queue,*tree);
+    *tree=NULL;
     int i=1;
     while(!linkQueueIsEmpty(queue)){
         currNode=(BTNode*)linkQueueFront(queue);
@@ -621,7 +622,6 @@ void bTreeFree(BTree *tree)
                 i++;
             }
         }
-
         free(currNode);
         i=1;
     }
