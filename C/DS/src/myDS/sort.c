@@ -1,46 +1,58 @@
 #include <myDS/sort.h>
 #include <stdlib.h>
 
+/* 取出数组 p 中，下标为 i 的值 */
 #define ARRAY(p,i) (*((char*)(p)+(i)))
+/* 取出数组 p 中，下标为 i (元素大小为 size) 的指针 */
 #define P_ARRAY(p,i,size) ((char*)(p)+(i)*size)
 
+/* 交换两个变量值，需传入指针和大小 */
 static void swap(void* first,void* second,int size)
 {
+    /* 地址相同立即返回 */
     if(first==second)
         return;
     for(int i=0;i<size;i++){
-        // *((char*)first+i)^=*((char*)second+i);
-        // *((char*)second+i)^=*((char*)first+i);
-        // *((char*)first+i)^=*((char*)second+i);
+        /*
+            以下宏等同于
+            *((char*)first+i)^=*((char*)second+i);
+            *((char*)second+i)^=*((char*)first+i);
+            *((char*)first+i)^=*((char*)second+i);
+        */
         ARRAY(first,i)^=ARRAY(second,i);
         ARRAY(second,i)^=ARRAY(first,i);
         ARRAY(first,i)^=ARRAY(second,i);
     }
 }
 
+/* 拷贝 second 位置的值到 first 位置 */
 static void copy(void* first,const void* second,int size)
 {
     if(!(first&&second))
         return;
     for(int i=0;i<size;i++)
-        // *((char*)first+i)=*((char*)second+i);
         ARRAY(first,i)=ARRAY(second,i);
 }
 
+/* 冒泡排序 */
 void bubbleSort(pType array, int n, int size,int (*compare)(const pType, const pType))
 {
     if(array==NULL)
         return;
     for(int i=0;i<n-1;i++){
         for(int j=0;j<n-1-i;j++){
-            // if(compare((char*)array+j*size,(char*)array+(j+1)*size)>0)
-            //     swap((char*)array+j*size,(char*)array+(j+1)*size,size);
+            /*
+                等同于
+                if(compare((char*)array+j*size,(char*)array+(j+1)*size)>0)
+                    swap((char*)array+j*size,(char*)array+(j+1)*size,size);
+            */
             if(compare(P_ARRAY(array,j,size),P_ARRAY(array,j+1,size))>0)
                 swap(P_ARRAY(array,j,size),P_ARRAY(array,j+1,size),size);
         }
     }
 }
 
+/* 选择排序 */
 void selectionSort(pType array, int n, int size, int (*compare)(const pType, const pType))
 {
     if(array==NULL)
@@ -48,16 +60,15 @@ void selectionSort(pType array, int n, int size, int (*compare)(const pType, con
     for(int i=0;i<n-1;i++){
         int min=i;
         for(int j=i+1;j<n;j++){
-            // if(compare((char*)array+min*size,(char*)array+j*size)>0)
             if(compare(P_ARRAY(array,min,size),P_ARRAY(array,j,size))>0)
                 min=j;
         }
         if(i!=min)
-            // swap((char*)array+i*size,(char*)array+min*size,size);
             swap(P_ARRAY(array,i,size), P_ARRAY(array,min,size),size);  
     }
 }
 
+/* 插入排序 */
 void insertionSort(pType array, int n, int size, int (*compare)(const pType, const pType))
 {
     if(array==NULL)
@@ -65,10 +76,6 @@ void insertionSort(pType array, int n, int size, int (*compare)(const pType, con
     for(int i=1;i<n;i++){
         int j;
         char temp[size];
-        // copy(temp,(char*)array+i*size,size);
-        // for(j=i;j>0&&(compare((char*)array+(j-1)*size,temp)>0);j--)
-        //     swap((char*)array+j*size,(char*)array+(j-1)*size,size);
-        // swap((char*)array+j*size,temp,size);
         copy(temp,P_ARRAY(array,i,size),size);
         for(j=i;j>0&&(compare(P_ARRAY(array,j-1,size),temp)>0);j--)
             swap(P_ARRAY(array,j,size),P_ARRAY(array,j-1,size),size);
@@ -76,6 +83,7 @@ void insertionSort(pType array, int n, int size, int (*compare)(const pType, con
     }
 }
 
+/* 希尔排序 */
 void shellSort(pType array, int n, int size, int (*compare)(const pType, const pType))
 {
     if(array==NULL)
@@ -84,10 +92,6 @@ void shellSort(pType array, int n, int size, int (*compare)(const pType, const p
         for(int i=gap;i<n;i++){
             int j;
             char temp[size];
-            // copy(temp,(char*)array+i*size,size);
-            // for(j=i-gap;j>=0&&(compare((char*)array+j*size,temp)>0);j-=gap)
-            //     swap((char*)array+(j+gap)*size,(char*)array+j*size,size);
-            // swap((char*)array+(j+gap)*size,temp,size);
             copy(temp,P_ARRAY(array,i,size),size);
             for(j=i-gap;j>=0&&(compare(P_ARRAY(array,j,size),temp)>0);j-=gap)
                 swap(P_ARRAY(array,j+gap,size),P_ARRAY(array,j,size),size);
@@ -96,6 +100,7 @@ void shellSort(pType array, int n, int size, int (*compare)(const pType, const p
     }
 }
 
+/* 归并排序 */
 void mergeSort(pType array, int n, int size, int (*compare)(const pType, const pType))
 {
     if(array==NULL)
@@ -107,39 +112,33 @@ void mergeSort(pType array, int n, int size, int (*compare)(const pType, const p
             int right=(mid+mergeSize)<(n-1)?(mid+mergeSize):(n-1);
             if(mid>=n)
                 break;
-            //merge start
+            /* 归并开始 */
             int i=left;
             int p1=left;
             int p2=mid+1;
             while(p1<=mid&&p2<=right){
-                // if(compare((char*)array+p1*size,(char*)array+p2*size)<=0){
                 if(compare(P_ARRAY(array,p1,size),P_ARRAY(array,p2,size))<=0){
-                    // copy(temp,(char*)array+p1*size,size);
                     copy(P_ARRAY(temp,i,size),P_ARRAY(array,p1,size),size);
                     i++;
                     p1++;
                 }else{
-                    // copy(temp,(char*)array+p2*size,size);
                     copy(P_ARRAY(temp,i,size),P_ARRAY(array,p2,size),size);
                     i++;
                     p2++;
                 }
             }
             while(p1<=mid){
-                // copy(temp,(char*)array+p1*size,size);
                 copy(P_ARRAY(temp,i,size),P_ARRAY(array,p1,size),size);
                 i++;
                 p1++;
             }
             while(p2<=right){
-                // copy(temp,(char*)array+p2*size,size);
                 copy(P_ARRAY(temp,i,size),P_ARRAY(array,p2,size),size);
                 i++;
                 p2++;
             }
-            // copy((char*)array+left*size,temp,size);
             copy(P_ARRAY(array,left,size),P_ARRAY(temp,left,size),(right+1-left)*size);
-            //merge end
+            /* 归并结束 */
             left=right+1;
         }
         if(mergeSize>n/2)
@@ -148,6 +147,7 @@ void mergeSort(pType array, int n, int size, int (*compare)(const pType, const p
     free(temp);
 }
 
+/* 归并排序 递归部分 */
 static void _mergeRecursive(pType array, char* temp,int left, int right, int size, int (*compare)(const pType, const pType))
 {
     if(left==right)
@@ -155,41 +155,36 @@ static void _mergeRecursive(pType array, char* temp,int left, int right, int siz
     int mid=left+((right-left)>>1);
     _mergeRecursive(array,temp,left,mid,size,compare);
     _mergeRecursive(array,temp,mid+1,right,size,compare);
-    //merge start
+    /* 归并开始 */
     int i=left;
     int p1=left;
     int p2=mid+1;
     while(p1<=mid&&p2<=right){
-        // if(compare((char*)array+p1*size,(char*)array+p2*size)<=0){
         if(compare(P_ARRAY(array,p1,size),P_ARRAY(array,p2,size))<=0){
-            // copy(temp,(char*)array+p1*size,size);
             copy(P_ARRAY(temp,i,size),P_ARRAY(array,p1,size),size);
             i++;
             p1++;
         }else{
-            // copy(temp,(char*)array+p2*size,size);
             copy(P_ARRAY(temp,i,size),P_ARRAY(array,p2,size),size);
             i++;
             p2++;
         }
     }
     while(p1<=mid){
-        // copy(temp,(char*)array+p1*size,size);
         copy(P_ARRAY(temp,i,size),P_ARRAY(array,p1,size),size);
         i++;
         p1++;
     }
     while(p2<=right){
-        // copy(temp,(char*)array+p2*size,size);
         copy(P_ARRAY(temp,i,size),P_ARRAY(array,p2,size),size);
         i++;
         p2++;
     }
-    // copy((char*)array+left*size,temp,size);
     copy(P_ARRAY(array,left,size),P_ARRAY(temp,left,size),(right+1-left)*size);
-    //merge end
+    /* 归并结束 */
 }
 
+/* 归并排序 递归版 */
 void mergeSortRecursive(pType array, int n, int size, int (*compare)(const pType, const pType))
 {
     if(array==NULL&&n<2)
@@ -199,15 +194,14 @@ void mergeSortRecursive(pType array, int n, int size, int (*compare)(const pType
     free(temp);
 }
 
+/* 快速排序 */
 void quickSort(pType array, int n, int size, int (*compare)(const pType, const pType))
 {
     if(array==NULL)
         return;
-    //stack start
     int *lStack=(int*)malloc((n/2)*sizeof(int));
     int *rStack=(int*)malloc((n/2)*sizeof(int));
     int p=-1;
-    //stack end
     int pivot,flag;
     //push 0-n-1
     p++;
@@ -219,7 +213,6 @@ void quickSort(pType array, int n, int size, int (*compare)(const pType, const p
         int r=pivot-1;
         while(l<r){
             //compare to left
-            // flag=compare((char*)array+l*size,(char*)array+pivot*size);
             flag=compare(P_ARRAY(array,l,size),P_ARRAY(array,pivot,size));
             if(flag<=0){
                 l++;
@@ -227,18 +220,14 @@ void quickSort(pType array, int n, int size, int (*compare)(const pType, const p
             }
             //compare to right
             while(l<r&&flag>=0){
-                // flag=compare((char*)array+r*size,(char*)array+pivot*size);
                 flag=compare(P_ARRAY(array,r,size),P_ARRAY(array,pivot,size));
                 if(flag>=0)
                     r--;
             }
-            // swap((char*)array+l*size,(char*)array+r*size,size);
             swap(P_ARRAY(array,l,size),P_ARRAY(array,r,size),size);
         }
-        // flag=compare((char*)array+l*size,(char*)array+pivot*size);
         flag=compare(P_ARRAY(array,l,size),P_ARRAY(array,pivot,size));
         if(l>=r&&flag>0)
-            // swap((char*)array+l*size,(char*)array+pivot*size,size);
             swap(P_ARRAY(array,l,size),P_ARRAY(array,pivot,size),size);
         else
             l++;
@@ -259,6 +248,7 @@ void quickSort(pType array, int n, int size, int (*compare)(const pType, const p
     free(rStack);
 }
 
+/* 快速排序 递归部分 */
 static void _quickRecursive(pType array, int left, int right, int size, int (*compare)(const pType, const pType))
 {
     if(left>=right)
@@ -269,7 +259,6 @@ static void _quickRecursive(pType array, int left, int right, int size, int (*co
     int flag;
     while(l<r){
         //compare to left
-        // flag=compare((char*)array+l*size,(char*)array+pivot*size);
         flag=compare(P_ARRAY(array,l,size),P_ARRAY(array,pivot,size));
         if(flag<=0){
             l++;
@@ -277,18 +266,14 @@ static void _quickRecursive(pType array, int left, int right, int size, int (*co
         }
         //compare to right
         while(l<r&&flag>=0){
-            // flag=compare((char*)array+r*size,(char*)array+pivot*size);
             flag=compare(P_ARRAY(array,r,size),P_ARRAY(array,pivot,size));
             if(flag>=0)
                 r--;
         }
-        // swap((char*)array+l*size,(char*)array+r*size,size);
         swap(P_ARRAY(array,l,size),P_ARRAY(array,r,size),size);
     }
-    // flag=compare((char*)array+l*size,(char*)array+pivot*size);
     flag=compare(P_ARRAY(array,l,size),P_ARRAY(array,pivot,size));
     if(l>=r&&flag>0)
-        // swap((char*)array+l*size,(char*)array+pivot*size,size);
         swap(P_ARRAY(array,l,size),P_ARRAY(array,pivot,size),size);
     else
         l++;
@@ -298,6 +283,7 @@ static void _quickRecursive(pType array, int left, int right, int size, int (*co
         _quickRecursive(array,l+1,right,size,compare);
 }
 
+/* 快速排序 递归版 */
 void quickSortRecursive(pType array, int n, int size, int (*compare)(const pType, const pType))
 {
     if(array==NULL)
@@ -305,6 +291,7 @@ void quickSortRecursive(pType array, int n, int size, int (*compare)(const pType
     _quickRecursive(array,0,n-1,size,compare);
 }
 
+/* 堆排序 堆调整部分 */
 static void heapify(pType array, int index, int heapSize, int size, int (*compare)(const pType, const pType))
 {
     int pre=index;
@@ -312,17 +299,14 @@ static void heapify(pType array, int index, int heapSize, int size, int (*compar
     int flag;
     while(curr<=heapSize){
         if(curr+1<=heapSize){
-            // flag=compare((char*)array+(curr+1)*size,(char*)array+curr*size);
             flag=compare(P_ARRAY(array,curr+1,size),P_ARRAY(array,curr,size));
             if(flag>0)
                 curr++;
         }
-        // flag=compare((char*)array+pre*size,(char*)array+curr*size);
         flag=compare(P_ARRAY(array,pre,size),P_ARRAY(array,curr,size));
         if(flag>0)
             return;
         else{
-            // swap((char*)array+pre*size,(char*)array+curr*size,size);
             swap(P_ARRAY(array,pre,size),P_ARRAY(array,curr,size),size);
             pre=curr;
             curr=pre*2+1;
@@ -330,6 +314,7 @@ static void heapify(pType array, int index, int heapSize, int size, int (*compar
     }
 }
 
+/* 堆排序 */
 void heapSort(pType array, int n, int size, int (*compare)(const pType, const pType))
 {
     if(array==NULL)
@@ -337,7 +322,6 @@ void heapSort(pType array, int n, int size, int (*compare)(const pType, const pT
     for(int i=n/2-1;i>=0;i--)
         heapify(array,i,n-1,size,compare);
     for(int i=n-1;i>0;i--){
-        // swap((char*)array+0*size,(char*)array+i*size,size);
         swap(P_ARRAY(array,0,size),P_ARRAY(array,i,size),size);
         heapify(array,0,i-1,size,compare);
     }

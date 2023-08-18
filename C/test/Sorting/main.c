@@ -8,31 +8,43 @@
 #include <myTools/sortCase.h>
 #include <myTools/log.h>
 
+/*
+    测试数据参数，我们以 int 类型数据为例
+    COUNT 测试排序次数
+    SIZE 排序数据的大小
+    N 排序数组元素个数
+    LEFT_RANGE 和 RIGHT_RANGE 为 int 数据的范围，[LEFT_RANGE,RIGHT_RANGE)
+*/
 #define COUNT 1000000
 #define SIZE sizeof(int)
 #define N 15
 #define LEFT_RANGE 0
 #define RIGHT_RANGE 100
 
+/* 测试排序的数组、用于还原的备用数组 */
 static int* array=NULL;
 static int* arrayCopy=NULL;
 static char currFunc[100];
 
+/* 比较两个数据的大小关系，first > second 返回大于 0，first < second 返回小于 0，相等返回 0 */
 int compare(void* first,void* second)
 {
     return *(int*)first-*(int*)second;
 }
 
+/* 显示数据函数 */
 void showData(void* data)
 {
     printf("%d ",*(int*)data);
 }
 
+/* 用于初始化数据的函数 */
 void inital(void* data,int num)
 {
     *(int*)data=num%(RIGHT_RANGE-LEFT_RANGE)+LEFT_RANGE;
 }
 
+/* 导出测试数据 */
 void export(const char* log)
 {
     char buf[4096];
@@ -106,6 +118,7 @@ void func9()
     heapSort(array,N,SIZE,compare);
 }
 
+/* 计时排序 count 次数的时间 */
 double countTime(int count,void(*func)(int))
 {
     clock_t startTime,endTime;
@@ -121,6 +134,7 @@ double countTime(int count,void(*func)(int))
     return costTime;
 }
 
+/* 测试所有排序，以相同数据序列测试 */
 void testAllCase(char** sortInfo,void(**funcInfo)(int),int n)
 {
     char log[4096]={0};
@@ -144,6 +158,7 @@ void testAllCase(char** sortInfo,void(**funcInfo)(int),int n)
     export(log);
 }
 
+/* 测试单个排序 count 次随机数据 */
 void testOneCase(char* sortName,void(*func)(int),int count)
 {
     printf("------ Name : %s Count : %d ------\n",sortName,count);
