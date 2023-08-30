@@ -1,7 +1,7 @@
 #ifndef _B_TREE_H_
 #define _B_TREE_H_
 #include <iostream>
-#include "linkQueue.hpp"
+#include <simpleDS/linkQueue.hpp>
 
 const int M=3;
 const int MAX_KEY=(M-1);

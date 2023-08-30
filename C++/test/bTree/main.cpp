@@ -1,8 +1,10 @@
 #include <iostream>
-#include "bTree.hpp"
+#include <myDS/bTree.hpp>
+
 void visit(int data){
     std::cout<<data;
 }
+
 int main(){
     BTree<int> tree;
     tree.insert(35,35);
