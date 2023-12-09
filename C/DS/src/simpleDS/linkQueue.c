@@ -1,43 +1,50 @@
 #include <simpleDS/linkQueue.h>
 #include <stdlib.h>
 
-void linkQueueInitalize(linkQueue* ppQueue){
-    *ppQueue=(linkQueueNode*)malloc(sizeof(struct linkQueueNode));
-    (*ppQueue)->next=NULL;
+linkQueue linkQueueInitalize(linkQueue* pQueue)
+{
+    *pQueue=(linkQueueNode*)malloc(sizeof(struct linkQueueNode));
+    (*pQueue)->next=(eleType)0;
+    return *pQueue;
 }
 
-void linkQueueFree(linkQueue* ppQueue){
-    linkQueue pQueue=NULL;
-    while((*ppQueue)->next){
-        pQueue=(*ppQueue)->next;
-        (*ppQueue)->next=pQueue->next;
-        free(pQueue);
+void linkQueueFree(linkQueue* pQueue)
+{
+    linkQueue temp=(eleType)0;
+    while((*pQueue)->next)
+    {
+        temp=(*pQueue)->next;
+        (*pQueue)->next=temp->next;
+        free(temp);
     }
-    free(*ppQueue);
-    *ppQueue=NULL;
+    free(*pQueue);
+    *pQueue=(eleType)0;
 }
 
-bool linkQueueIsEmpty(linkQueue queue){
-    return queue->next==NULL;
+bool linkQueueIsEmpty(linkQueue queue)
+{
+    return queue->next==(eleType)0;
 }
 
-void linkQueueEnqueue(linkQueue queue,void* const data){
-    linkQueue pQueue=queue;
-    while(pQueue->next){
-        pQueue=pQueue->next;
-    }
-    pQueue->next=(linkQueueNode*)malloc(sizeof(struct linkQueueNode));
-    pQueue=pQueue->next;
-    pQueue->next=NULL;
-    pQueue->data=data;
-}
-
-void* linkQueueFront(linkQueue const queue){
+eleType linkQueueFront(const linkQueue queue)
+{
     return queue->next->data;
 }
 
-void linkQueueDequeue(linkQueue queue){
-    linkQueue pQueue=queue->next;
-    queue->next=pQueue->next;
-    free(pQueue);
+void linkQueueEnqueue(linkQueue queue,const eleType data)
+{
+    linkQueue temp=queue;
+    while(temp->next)
+        temp=temp->next;
+    temp->next=(linkQueueNode*)malloc(sizeof(struct linkQueueNode));
+    temp=temp->next;
+    temp->next=(eleType)0;
+    temp->data=data;
+}
+
+void linkQueueDequeue(linkQueue pQueue)
+{
+    linkQueue temp=pQueue->next;
+    pQueue->next=temp->next;
+    free(temp);
 }

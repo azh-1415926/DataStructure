@@ -8,16 +8,19 @@ extern "C" {
 #include <stdio.h>
 #include <stdbool.h>
 
-typedef struct linkQueueNode {
-    void* data;
+typedef void* eleType;
+
+typedef struct linkQueueNode
+{
+    eleType data;
     struct linkQueueNode *next;
 }linkQueueNode,*linkQueue;
 
-void linkQueueInitalize(linkQueue* ppQueue);
-void linkQueueFree(linkQueue* ppQueue);
-bool linkQueueIsEmpty(linkQueue const queue);
-void linkQueueEnqueue(linkQueue queue,void* const data);
-void* linkQueueFront(linkQueue const queue);
+linkQueue linkQueueInitalize(linkQueue* pQueue);
+void linkQueueFree(linkQueue* pQueue);
+bool linkQueueIsEmpty(const linkQueue queue);
+eleType linkQueueFront(const linkQueue queue);
+void linkQueueEnqueue(linkQueue queue,const eleType data);
 void linkQueueDequeue(linkQueue queue);
 
 #ifdef __cplusplus
