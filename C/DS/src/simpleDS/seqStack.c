@@ -1,43 +1,43 @@
 #include <simpleDS/seqStack.h>
 #include <stdlib.h>
 
-void seqStackInitalize(seqStack* ppStack,int capacity)
+seqStack seqStackInitalize(seqStack* pStack,int capacity)
 {
-    *ppStack=(seqStack)malloc(sizeof(struct seqStack));
-    (*ppStack)->bottom=(void**)malloc(sizeof(void*)*capacity);
-    (*ppStack)->top=capacity;
-    (*ppStack)->capacity=capacity;
+    *pStack=(seqStack)malloc(sizeof(struct seqStack));
+    (*pStack)->data=(eleType*)malloc(sizeof(eleType)*capacity);
+    (*pStack)->top=capacity;
+    (*pStack)->capacity=capacity;
 }
 
-void seqStackFree(seqStack* ppStack)
+void seqStackFree(seqStack* pStack)
 {
-    free((*ppStack)->bottom);
-    free(*ppStack);
-    *ppStack=NULL;
+    free((*pStack)->data);
+    free(*pStack);
+    *pStack=(eleType)0;
 }
 
-bool seqStackIsEmpty(seqStack const stack)
+bool seqStackIsEmpty(const seqStack stack)
 {
     return stack->top==stack->capacity;
 }
 
-bool seqStackIsFull(seqStack const stack)
+bool seqStackIsFull(const seqStack stack)
 {
     return stack->top==0;
 }
 
-void seqStackPush(seqStack stack,void* const data)
+void seqStackPush(seqStack stack,eleType const data)
 {
     if(stack->top==0)
         return;
-    stack->bottom[--stack->top]=data;
+    stack->data[--stack->top]=data;
 }
 
-void* seqStackTop(seqStack const stack)
+eleType seqStackTop(const seqStack stack)
 {
     if(stack->top==stack->capacity)
-        return NULL;
-    return stack->bottom[stack->top];
+        return (eleType)0;
+    return stack->data[stack->top];
 }
 
 void seqStackPop(seqStack stack)

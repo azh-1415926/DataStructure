@@ -8,18 +8,21 @@ extern "C" {
 #include <stdio.h>
 #include <stdbool.h>
 
-typedef struct seqStack {
+typedef void* eleType;
+
+typedef struct seqStack
+{
+    eleType* data;
     int top;
-    void** bottom;
     int capacity;
 }*seqStack;
 
-void seqStackInitalize(seqStack* ppStack,int capacity);
-void seqStackFree(seqStack* stack);
-bool seqStackIsEmpty(seqStack const stack);
-bool seqStackIsFull(seqStack const stack);
-void seqStackPush(seqStack stack,void* const data);
-void* seqStackTop(seqStack const stack);
+seqStack seqStackInitalize(seqStack* pStack,int capacity);
+void seqStackFree(seqStack* pStack);
+bool seqStackIsEmpty(const seqStack stack);
+bool seqStackIsFull(const seqStack stack);
+void seqStackPush(seqStack stack,const eleType data);
+eleType seqStackTop(const seqStack stack);
 void seqStackPop(seqStack stack);
 
 #ifdef __cplusplus
