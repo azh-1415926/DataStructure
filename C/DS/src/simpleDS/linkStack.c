@@ -1,32 +1,40 @@
 #include <simpleDS/linkStack.h>
 #include <stdlib.h>
 
-void linkStackInitalize(linkStack* ppStack)
+linkStack linkStackInitalize(linkStack* pStack)
 {
-    *ppStack=(linkStack)malloc(sizeof(struct linkStack));
-    (*ppStack)->bottom=(linkStackNode*)malloc(sizeof(struct linkStackNode));
-    (*ppStack)->bottom->next=NULL;
-    (*ppStack)->top=(*ppStack)->bottom->next;
+    *pStack=(linkStack)malloc(sizeof(struct linkStack));
+    (*pStack)->bottom=(linkStackNode*)malloc(sizeof(struct linkStackNode));
+    (*pStack)->bottom->next=(eleType)0;
+    (*pStack)->top=(*pStack)->bottom->next;
 }
 
-void linkStackFree(linkStack* ppStack)
+void linkStackFree(linkStack* pStack)
 {
-    linkStackNode* pStack=NULL;
-    while((*ppStack)->top){
-        pStack=(*ppStack)->top;
-        (*ppStack)->top=pStack->next;
-        free(pStack);
+    linkStackNode* temp=(eleType)0;
+    while((*pStack)->top)
+    {
+        temp=(*pStack)->top;
+        (*pStack)->top=temp->next;
+        free(temp);
     }
-    free(*ppStack);
-    *ppStack=NULL;
+    free(*pStack);
+    *pStack=(eleType)0;
 }
 
-bool linkStackIsEmpty(linkStack const stack)
+bool linkStackIsEmpty(const linkStack stack)
 {
-    return stack->top==NULL;
+    return stack->top==(eleType)0;
 }
 
-void linkStackPush(linkStack stack,void* const data)
+eleType linkStackTop(const linkStack stack)
+{
+    if(stack->top==(eleType)0)
+        return (eleType)0;
+    return stack->top->data;
+}
+
+void linkStackPush(linkStack stack,const eleType data)
 {
     linkStackNode* pStack=stack->top;
     stack->top=(linkStackNode*)malloc(sizeof(struct linkStackNode));
@@ -34,16 +42,9 @@ void linkStackPush(linkStack stack,void* const data)
     stack->top->data=data;
 }
 
-void* linkStackTop(linkStack const stack)
-{
-    if(stack->top==NULL)
-        return NULL;
-    return stack->top->data;
-}
-
 void linkStackPop(linkStack stack)
 {
-    if(stack->top==NULL)
+    if(stack->top==(eleType)0)
         return;
     linkStackNode* pStack=stack->top;
     stack->top=pStack->next;
