@@ -1,21 +1,21 @@
 #include <simpleDS/seqQueue.h>
 #include <stdlib.h>
 
-void seqQueueInitalize(seqQueue* ppQueue,int capacity)
+void seqQueueInitalize(seqQueue* pQueue,int capacity)
 {
-    *ppQueue=(seqQueue)malloc(sizeof(struct seqQueue));
-    (*ppQueue)->rear=0;
-    (*ppQueue)->front=0;
-    (*ppQueue)->pQueue=(void**)malloc(sizeof(void*)*capacity);
-    (*ppQueue)->capacity=capacity;
-    (*ppQueue)->flag=QUEUE_POP;
+    *pQueue=(seqQueue)malloc(sizeof(struct seqQueue));
+    (*pQueue)->rear=0;
+    (*pQueue)->front=0;
+    (*pQueue)->pQueue=(eleType*)malloc(sizeof(eleType)*capacity);
+    (*pQueue)->capacity=capacity;
+    (*pQueue)->flag=QUEUE_POP;
 }
 
-void seqQueueFree(seqQueue* ppQueue)
+void seqQueueFree(seqQueue* pQueue)
 {
-    free((*ppQueue)->pQueue);
-    free(*ppQueue);
-    *ppQueue=NULL;
+    free((*pQueue)->pQueue);
+    free(*pQueue);
+    *pQueue=(eleType)0;
 }
 
 bool seqQueueIsEmpty(seqQueue queue)
@@ -28,7 +28,7 @@ bool seqQueueIsFull(seqQueue queue)
     return (queue->rear==queue->front)&&(queue->flag==QUEUE_PUSH);
 }
 
-void seqQueueEnqueue(seqQueue const queue,void* const data)
+void seqQueueEnqueue(const seqQueue queue,eleType const data)
 {
     if((queue->rear==queue->front)&&(queue->flag==QUEUE_PUSH))
         return;
@@ -37,10 +37,10 @@ void seqQueueEnqueue(seqQueue const queue,void* const data)
     queue->flag=QUEUE_PUSH;
 }
 
-void* seqQueueFront(seqQueue const queue)
+eleType seqQueueFront(const seqQueue queue)
 {
     if((queue->rear==queue->front)&&(queue->flag==QUEUE_POP))
-        return NULL;
+        return (eleType)0;
     return queue->pQueue[queue->front];
 }
 

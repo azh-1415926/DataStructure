@@ -11,20 +11,23 @@ extern "C" {
 #define QUEUE_PUSH 1
 #define QUEUE_POP 0
 
-typedef struct seqQueue {
+typedef void* eleType;
+
+typedef struct seqQueue
+{
+    eleType* pQueue;
     int rear;
     int front;
-    void** pQueue;
     int capacity;
     int flag;
 }*seqQueue;
 
-void seqQueueInitalize(seqQueue* ppQueue,int capacity);
-void seqQueueFree(seqQueue* queue);
-bool seqQueueIsEmpty(seqQueue const queue);
-bool seqQueueIsFull(seqQueue const queue);
-void seqQueueEnqueue(seqQueue queue,void* const data);
-void* seqQueueFront(seqQueue const queue);
+void seqQueueInitalize(seqQueue* pQueue,int capacity);
+void seqQueueFree(seqQueue* pQueue);
+bool seqQueueIsEmpty(const seqQueue queue);
+bool seqQueueIsFull(const seqQueue queue);
+void seqQueueEnqueue(seqQueue queue,const eleType data);
+eleType seqQueueFront(const seqQueue queue);
 void seqQueueDequeue(seqQueue queue);
 
 #ifdef __cplusplus
