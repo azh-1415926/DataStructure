@@ -8,20 +8,23 @@ extern "C" {
 #include <stdio.h>
 #include <stdbool.h>
 
-typedef struct linkNode{
-	void* data;
+typedef void* eleType;
+
+typedef struct linkNode
+{
+	eleType data;
 	struct linkNode *next;
 }linkNode,*linkList;
 
-void linkListInitalize(linkList* ppList);
-void linkListFree(linkList* ppList);
-void linkListHeadInsert(linkList list,void* const data);
-void linkListTailInsert(linkList list,void* const data);
-void linkListInsert(linkList list,void* const data,int pos);
-void* linkListErase(linkList list,int pos);
-void* linkListIndexSearch(linkList const list,int pos);
-int linkListDataSearch(linkList const list,void* const data,bool(*compare)(void*,void* const));
-linkList linkListCombine(linkList firstList,linkList const lastList);
+linkList linkListInitalize(linkList* pList);
+void linkListFree(linkList* pList);
+void linkListHeadInsert(linkList list,const eleType data);
+void linkListTailInsert(linkList list,const eleType data);
+void linkListInsert(linkList list,const eleType data,int pos);
+eleType linkListErase(linkList list,int pos);
+eleType linkListIndexSearch(const linkList list,int pos);
+int linkListDataSearch(const linkList list,const eleType data,bool(*compare)(const eleType,const eleType));
+linkList linkListCombine(linkList firstList,const linkList lastList);
 
 #ifdef __cplusplus
 }

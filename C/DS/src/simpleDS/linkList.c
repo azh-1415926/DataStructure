@@ -1,25 +1,26 @@
 #include <simpleDS/linkList.h>
 #include <stdlib.h>
 
-void linkListInitalize(linkList* ppList)
+linkList linkListInitalize(linkList* pList)
 {
-	*ppList=(linkList)malloc(sizeof(linkNode));
-	(*ppList)->next=NULL;
+	*pList=(linkList)malloc(sizeof(linkNode));
+	(*pList)->next=(eleType)0;
 }
 
-void linkListFree(linkList* ppList)
+void linkListFree(linkList* pList)
 {
-	linkList temp=NULL;
-	while((*ppList)->next){
-		temp=(*ppList)->next;
-		(*ppList)->next=temp->next;
+	linkList temp=(eleType)0;
+	while((*pList)->next)
+	{
+		temp=(*pList)->next;
+		(*pList)->next=temp->next;
 		free(temp);
 	}
-	free(*ppList);
-	*ppList=NULL;
+	free(*pList);
+	*pList=(eleType)0;
 }
 
-void linkListHeadInsert(linkList list,void* const data)
+void linkListHeadInsert(linkList list,const eleType data)
 {
 	linkList temp=list->next;
 	list->next=(linkNode*)malloc(sizeof(linkNode));
@@ -27,7 +28,7 @@ void linkListHeadInsert(linkList list,void* const data)
 	list->next->next=temp;
 }
 
-void linkListTailInsert(linkList list,void* const data)
+void linkListTailInsert(linkList list,const eleType data)
 {
 	linkList pList=list;
 	while(pList->next)
@@ -35,16 +36,16 @@ void linkListTailInsert(linkList list,void* const data)
 	pList->next=(linkNode*)malloc(sizeof(linkNode));
 	pList=pList->next;
 	pList->data=data;
-	pList->next=NULL;
+	pList->next=(eleType)0;
 }
 
-void linkListInsert(linkList list,void* const data,int pos)
+void linkListInsert(linkList list,const eleType data,int pos)
 {
 	linkList pList=list;
 	int i=0;
 	while(i++<pos&&pList->next)
 		pList=pList->next;
-	if(i<pos&&pList->next==NULL)
+	if(i<pos&&pList->next==(eleType)0)
 		return;
 	linkList temp=pList->next;
 	pList->next=(linkNode*)malloc(sizeof(linkNode));
@@ -59,8 +60,8 @@ void* linkListErase(linkList list,int pos)
 	int i=0;
 	while(i++<pos&&pList->next)
 		pList=pList->next;
-	if(i<pos&&pList->next==NULL)
-		return NULL;
+	if(i<pos&&pList->next==(eleType)0)
+		return (eleType)0;
 	linkList temp=pList->next;
 	void* data=temp->data;
 	pList->next=temp->next;
@@ -68,24 +69,25 @@ void* linkListErase(linkList list,int pos)
 	return data;
 }
 
-void* linkListIndexSearch(linkList const list,int pos)
+void* linkListIndexSearch(const linkList list,int pos)
 {
 	linkList pList=list;
 	int i=0;
 	while(i++<pos&&pList->next)
 		pList=pList->next;
-	if(i<pos&&pList->next==NULL)
-		return NULL;
+	if(i<pos&&pList->next==(eleType)0)
+		return (eleType)0;
 	return pList->data;
 }
 
-int linkListDataSearch(linkList const list,void* const data,bool(*compare)(void*,void* const))
+int linkListDataSearch(const linkList list,const eleType data,bool(*compare)(const eleType,const eleType))
 {
-	if(list==NULL)
+	if(list==(eleType)0)
 		return -1;
 	linkList pList=list;
 	int i=0;
-	while(pList->next){
+	while(pList->next)
+	{
 		pList=pList->next;
 		if(compare(pList->data,data))
 			return i;
@@ -94,11 +96,11 @@ int linkListDataSearch(linkList const list,void* const data,bool(*compare)(void*
 	return -1;
 }
 
-linkList linkListCombine(linkList firstList,linkList const lastList)
+linkList linkListCombine(linkList firstList,const linkList lastList)
 {
-	if(lastList==NULL)
+	if(lastList==(eleType)0)
 		return firstList;
-	if(firstList==NULL)
+	if(firstList==(eleType)0)
 		return lastList;
 	linkList pList=firstList;
 	while(pList->next)
@@ -109,7 +111,7 @@ linkList linkListCombine(linkList firstList,linkList const lastList)
 		pList->next=(linkNode*)malloc(sizeof(linkNode));
 		pList=pList->next;
 		pList->data=temp->data;
-		pList->next=NULL;
+		pList->next=(eleType)0;
 	}
 	return firstList;
 }
