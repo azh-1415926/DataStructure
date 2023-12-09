@@ -1,85 +1,87 @@
 #include <simpleDS/seqList.h>
 #include <stdlib.h>
 
-void seqListInitalize(seqList* ppList,int capacity)
+seqList seqListInitalize(seqList* pList,int capacity)
 {
-    *ppList=(seqList)malloc(sizeof(struct seqList));
-	(*ppList)->pList=malloc(sizeof(void*)*capacity);
-	(*ppList)->capacity=capacity;
-	(*ppList)->length=0;
+    *pList=(seqList)malloc(sizeof(struct seqList));
+	(*pList)->data=malloc(sizeof(eleType)*capacity);
+	(*pList)->capacity=capacity;
+	(*pList)->length=0;
 }
 
-void seqListFree(seqList* ppList)
+void seqListFree(seqList* pList)
 {
-	free((*ppList)->pList);
-	free(*ppList);
-	*ppList=NULL;
+	free((*pList)->data);
+	free(*pList);
+	*pList=(eleType)0;
 }
 
-void seqListInsert(seqList list,void* data,int pos)
+void seqListInsert(seqList list,const eleType data,int pos)
 {
 	if(pos<0||pos>=list->capacity)
 		return;
 	++list->length;
-	for(int i=list->length-1;i>pos;--i){
-		list->pList[i]=list->pList[i-1];
-	}
-	list->pList[pos]=data;
+	for(int i=list->length-1;i>pos;--i)
+		list->data[i]=list->data[i-1];
+	list->data[pos]=data;
 }
 
-void* seqListErase(seqList list,int pos)
+eleType seqListErase(seqList list,int pos)
 {
 	if(pos<0||pos>=list->capacity)
-		return NULL;
+		return (eleType)0;
 	--list->length;
-	void* data=list->pList[pos];
+	eleType data=list->data[pos];
 	for(int i=pos;i<list->length;++i)
-		list->pList[i]=list->pList[i+1];
+		list->data[i]=list->data[i+1];
 	return data;
 }
 
-void* seqListIndexSearch(seqList const list,int pos)
+eleType seqListIndexSearch(const seqList list,int pos)
 {
 	if(pos<0||pos>=list->length)
-		return NULL;
-	return list->pList[pos];
+		return (eleType)0;
+	return list->data[pos];
 }
 
-int seqListDataSearch(seqList list,void* const data,int (*compare)(void*,void* const))
+int seqListDataSearch(const seqList list,const eleType data,int (*compare)(const eleType,const eleType))
 {
 	for(int i=0;i<list->length;++i)
-		if(!compare(list->pList[i],data))
+		if(!compare(list->data[i],data))
 			return i;
 	return -1;
 }
-seqList seqListCombine(seqList firstList,seqList const endList)
+seqList seqListCombine(seqList firstList,const seqList endList)
 {
 	
-	if(firstList==NULL)
+	if(firstList==(eleType)0)
 		return endList;
-	if(endList==NULL)
+	if(endList==(eleType)0)
 		return firstList;
 	seqList list;
 	seqListInitalize(&list,firstList->length+endList->length);
-	for(int i=0,j=0;i<list->capacity;++i){
+	for(int i=0,j=0;i<list->capacity;++i)
+	{
 		if(i<firstList->capacity)
-			list->pList[i]=firstList->pList[i];
+			list->data[i]=firstList->data[i];
 		else
-			list->pList[i]=endList->pList[j++];
+			list->data[i]=endList->data[j++];
 	}
 	list->length=list->capacity;
 	return list;
 }
 
-seqList seqListCombineNoRepeat(seqList firstList,seqList const endList,int (*compare)(void*,void* const))
+seqList seqListCombineNoRepeat(seqList firstList,const seqList endList,int (*compare)(const eleType,const eleType))
 {
 	seqList list=seqListCombine(firstList,endList);
-	for(int i=0;i<list->length-1;++i){
-		for(int j=i+1;j<list->length;++j){
-			if(!compare(list->pList[i],list->pList[j])){
-				for(int k=j;k<list->length-1;k++){
-					list->pList[k]=list->pList[k+1];
-				}
+	for(int i=0;i<list->length-1;++i)
+	{
+		for(int j=i+1;j<list->length;++j)
+		{
+			if(!compare(list->data[i],list->data[j]))
+			{
+				for(int k=j;k<list->length-1;k++)
+					list->data[k]=list->data[k+1];
 				--j;
 				--list->length;
 			}

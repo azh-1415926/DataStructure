@@ -8,20 +8,23 @@ extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct seqList {		
-	void** pList;
+typedef void* eleType;
+
+typedef struct seqList
+{		
+	eleType* data;
 	int capacity;
 	int length;
 }*seqList;
 
-void seqListInitalize(seqList* ppList,int capacity);
-void seqListFree(seqList* list);
-void seqListInsert(seqList list,void* data,int pos);
-void* seqListErase(seqList list,int pos);
-void* seqListIndexSearch(seqList list,int pos);
-int seqListDataSearch(seqList list,void* const data,int (*compare)(void*,void* const));
-seqList seqListCombine(seqList firstList,seqList const endList);
-seqList seqListCombineNoRepeat(seqList firstList,seqList const endList,int (*compare)(void*,void* const));
+seqList seqListInitalize(seqList* pList,int capacity);
+void seqListFree(seqList* pList);
+void seqListInsert(seqList list,const eleType data,int pos);
+eleType seqListErase(seqList list,int pos);
+eleType seqListIndexSearch(seqList list,int pos);
+int seqListDataSearch(const seqList list,const eleType data,int (*compare)(const eleType,const eleType));
+seqList seqListCombine(seqList firstList,const seqList endList);
+seqList seqListCombineNoRepeat(seqList firstList,const seqList endList,int (*compare)(const eleType,const eleType));
 
 #ifdef __cplusplus
 }

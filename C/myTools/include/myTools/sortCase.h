@@ -8,13 +8,13 @@
 extern "C" {
 #endif
 
-typedef int eleType;
+typedef void* eleType;
 
-void initalCase(void(*inital)(void*,int));
+void initalCase(void(*inital)(eleType,int));
 eleType* createCase(eleType* array,int n);
 eleType* createCaseNoRepeat(eleType* array,int n,int leftRange,int rightRange);
-void showCase(eleType* array,int n,void(*show)(void*));
-bool verifyCase(eleType* array,int n,int(*compare)(void*,void*));
+void showCase(eleType* array,int n,void(*show)(const eleType));
+bool verifyCase(eleType* array,int n,int(*compare)(const eleType,const eleType));
 
 #ifdef __cplusplus
 }

@@ -4,19 +4,20 @@
 #include <string.h>
 #include <time.h>
 
-static void(*Inital)(void*,int)=NULL;
+static void(*Inital)(eleType,int)=NULL;
 
-void initalCase(void (*inital)(void*,int))
+void initalCase(void (*inital)(eleType,int))
 {
     Inital=inital;
     srand(time(NULL));
 }
 
-eleType *createCase(eleType *array, int n)
+eleType* createCase(eleType *array, int n)
 {
     int i=0;
     int num;
-    while(i<n){
+    while(i<n)
+    {
         num=rand();
         if(Inital)
             Inital(&array[i],num);
@@ -25,13 +26,14 @@ eleType *createCase(eleType *array, int n)
     return array;
 }
 
-eleType *createCaseNoRepeat(eleType *array, int n, int leftRange, int rightRange)
+eleType* createCaseNoRepeat(eleType *array, int n, int leftRange, int rightRange)
 {
     int index;
     memset(array,0,n*sizeof(eleType));
     if(rightRange-leftRange<n)
         n=rightRange-leftRange;
-    for(int i=0;i<n;i++){
+    for(int i=0;i<n;i++)
+    {
         index=rand()%(rightRange-leftRange)+leftRange;
         while(index>=n||array[index]!=0)
             index=rand()%n;
@@ -40,17 +42,18 @@ eleType *createCaseNoRepeat(eleType *array, int n, int leftRange, int rightRange
     return array;
 }
 
-void showCase(eleType *array, int n, void (*show)(void *))
+void showCase(eleType *array, int n, void (*show)(const eleType))
 {
     for(int i=0;i<n;i++)
         show(&array[i]);
     printf("\n");
 }
 
-bool verifyCase(eleType *array, int n, int (*compare)(void *, void *))
+bool verifyCase(eleType *array, int n, int (*compare)(const eleType,const eleType))
 {
     int flag;
-    for(int i=0;i<n-1;i++){
+    for(int i=0;i<n-1;i++)
+    {
         flag=compare(&array[i],&array[i+1]);
         if(flag>0)
             return false;
