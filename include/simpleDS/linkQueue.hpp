@@ -3,43 +3,43 @@
 
 #include<iostream>
 
-template<class Type>
+template<class T>
 class linkQueue
 {
 private:
     struct Node
     {
         public:
-        Type data;
+        T data;
         Node *next;
-        Node(Type _data,Node *_next=nullptr):data(_data),next(_next){}
+        Node(T _data,Node *_next=nullptr):data(_data),next(_next){}
     };
     Node* m_Head;
 public:
     linkQueue();
     ~linkQueue();
     bool empty() const { return m_Head->next==nullptr; }
-    inline Type front() const
+    inline T front() const
     {
         if(empty())
             throw std::out_of_range("front() error:queue is empty!");
         return m_Head->next->data;
     };
-    void enqueue(const Type& data);
+    void enqueue(const T& data);
     void dequeue();
 };
 
-template<class Type>
-linkQueue<Type>::linkQueue()
+template<class T>
+linkQueue<T>::linkQueue()
 {
-    m_Head=new linkQueue<Type>::Node(0);
+    m_Head=new linkQueue<T>::Node(0);
 }
 
-template<class Type>
-linkQueue<Type>::~linkQueue()
+template<class T>
+linkQueue<T>::~linkQueue()
 {
-    linkQueue<Type>::Node* pNode=m_Head;
-    linkQueue<Type>::Node* temp;
+    linkQueue<T>::Node* pNode=m_Head;
+    linkQueue<T>::Node* temp;
     while(pNode)
     {
         temp=pNode;
@@ -48,21 +48,21 @@ linkQueue<Type>::~linkQueue()
     }
 }
 
-template<class Type>
-void linkQueue<Type>::enqueue(const Type& data)
+template<class T>
+void linkQueue<T>::enqueue(const T& data)
 {
-    linkQueue<Type>::Node* pNode=m_Head;
+    linkQueue<T>::Node* pNode=m_Head;
     while(pNode&&pNode->next)
         pNode=pNode->next;
-    pNode->next=new linkQueue<Type>::Node(data);
+    pNode->next=new linkQueue<T>::Node(data);
 }
 
-template<class Type>
-void linkQueue<Type>::dequeue()
+template<class T>
+void linkQueue<T>::dequeue()
 {
     if(empty())
         throw std::out_of_range("dequeue() error:queue is empty!");
-    linkQueue<Type>::Node* pNode=m_Head->next;
+    linkQueue<T>::Node* pNode=m_Head->next;
     m_Head->next=pNode->next;
     delete pNode;
 }

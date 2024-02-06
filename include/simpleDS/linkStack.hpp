@@ -3,60 +3,60 @@
 
 #include <iostream>
 
-template<class Type>
+template<class T>
 class linkStack
 {
 private:
     struct Node
     {   
-        Type data;
+        T data;
         Node* next;
-        Node(Type _data,Node* _next=nullptr):data(_data),next(_next){};
+        Node(T _data,Node* _next=nullptr):data(_data),next(_next){};
     };
     Node* m_Stack;
 public:
     linkStack();
     ~linkStack();
     inline bool empty() const { return m_Stack->next==NULL; };
-    inline Type top() const 
+    inline T top() const 
     {
         if(empty())
             throw std::out_of_range("top() error,stack is empty!");
         return m_Stack->data;
     }
-    void push(const Type&  data);
+    void push(const T&  data);
     void pop();
 };
 
-template<class Type>
-linkStack<Type>::linkStack()
+template<class T>
+linkStack<T>::linkStack()
 {
-    m_Stack=new linkStack<Type>::Node(0);
+    m_Stack=new linkStack<T>::Node(0);
     m_Stack->next=nullptr;
 }
 
-template<class Type>
-linkStack<Type>::~linkStack(){
-    linkStack<Type>::Node* temp=m_Stack;
+template<class T>
+linkStack<T>::~linkStack(){
+    linkStack<T>::Node* temp=m_Stack;
     while(m_Stack->next){
         m_Stack=m_Stack->next;
         delete temp;
     }
 }
 
-template<class Type>
-void linkStack<Type>::push(Type const& data)
+template<class T>
+void linkStack<T>::push(T const& data)
 {
-    linkStack<Type>::Node* temp=m_Stack;
-    m_Stack=new linkStack<Type>::Node(data,temp);
+    linkStack<T>::Node* temp=m_Stack;
+    m_Stack=new linkStack<T>::Node(data,temp);
 }
 
-template<class Type>
-void linkStack<Type>::pop()
+template<class T>
+void linkStack<T>::pop()
 {
     if(empty())
         throw std::out_of_range("pop() error,stack is empty!");
-    linkStack<Type>::Node* temp=m_Stack;
+    linkStack<T>::Node* temp=m_Stack;
     m_Stack=m_Stack->next;
     delete temp;
 }

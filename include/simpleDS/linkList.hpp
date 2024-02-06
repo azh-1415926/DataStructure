@@ -3,40 +3,40 @@
 
 #include<iostream>
 
-template<class Type>
+template<class T>
 class linkList
 {
 private:
 	struct Node
 	{
 		public:
-		Type data;
+		T data;
 		Node *next;
-		Node(const Type& data=0,Node* next=nullptr):data(data),next(next){}
+		Node(const T& data=0,Node* next=nullptr):data(data),next(next){}
 	};
 	Node* m_Head;
 	int m_Length;
 public:
 	linkList();
-	linkList(Type *pArray,int size);
+	linkList(T *pArray,int size);
 	~linkList();
 	inline bool empty() const { return m_Head->next==NULL; }
 	void show() const;
-	int indexOf(const Type& data) const;
-	Type at(int pos=-1) const;
-	bool insert(const Type& data,int pos=-1);
-	Type erase(int pos=-1);
+	int indexOf(const T& data) const;
+	T at(int pos=-1) const;
+	bool insert(const T& data,int pos=-1);
+	T erase(int pos=-1);
 	linkList& split(linkList &list);
 };
 
-template<class Type>
-linkList<Type>::linkList()
+template<class T>
+linkList<T>::linkList()
 	: m_Head(new Node), m_Length(0)
 {
 }
 
-template<class Type>
-linkList<Type>::linkList(Type *pArray,int size)
+template<class T>
+linkList<T>::linkList(T *pArray,int size)
 	: m_Head(new Node)
 {
 	Node* pList=m_Head;
@@ -48,8 +48,8 @@ linkList<Type>::linkList(Type *pArray,int size)
 	m_Length=size;
 }
 
-template <class Type>
-inline linkList<Type>::~linkList()
+template <class T>
+inline linkList<T>::~linkList()
 {
 	Node* pList=m_Head;
 	Node* temp=nullptr;
@@ -61,8 +61,8 @@ inline linkList<Type>::~linkList()
 	}
 }
 
-template<class Type>
-void linkList<Type>::show() const
+template<class T>
+void linkList<T>::show() const
 {
 	Node* pList=m_Head->next;
 	if(pList==NULL)
@@ -75,8 +75,8 @@ void linkList<Type>::show() const
 	std::cout<<std::endl;
 }
 
-template<class Type>
-int linkList<Type>::indexOf(const Type& data) const
+template<class T>
+int linkList<T>::indexOf(const T& data) const
 {
 	Node* pList=m_Head->next;
 	int i=0;
@@ -90,8 +90,8 @@ int linkList<Type>::indexOf(const Type& data) const
 	return -1;
 }
 
-template<class Type>
-Type linkList<Type>::at(int pos) const
+template<class T>
+T linkList<T>::at(int pos) const
 {
 	if(pos==-1)
 		pos=0;
@@ -106,8 +106,8 @@ Type linkList<Type>::at(int pos) const
 	return pList->data;
 }
 
-template<class Type>
-bool linkList<Type>::insert(const Type& data,int pos)
+template<class T>
+bool linkList<T>::insert(const T& data,int pos)
 {
 	if(pos==-1)
 		pos=0;
@@ -128,8 +128,8 @@ bool linkList<Type>::insert(const Type& data,int pos)
 	return true;
 }
 
-template<class Type>
-Type linkList<Type>::erase(int pos)
+template<class T>
+T linkList<T>::erase(int pos)
 {
 	if((pos<-1&&pos>=m_Length)||empty())
 		throw std::out_of_range("erase() error,out of range!");
@@ -142,7 +142,7 @@ Type linkList<Type>::erase(int pos)
 	if(i<pos&&pList==nullptr)
 		throw std::out_of_range("erase() error,out of range!");
 	Node* pTemp;
-	Type e;
+	T e;
 	pTemp=pList->next;
 	e=pTemp->data;
 	pList->next=pTemp->next;
@@ -151,8 +151,8 @@ Type linkList<Type>::erase(int pos)
 	return e;
 }
 
-template<class Type>
-linkList<Type>& linkList<Type>::split(linkList<Type> &list)
+template<class T>
+linkList<T>& linkList<T>::split(linkList<T> &list)
 {
 	m_Length=m_Length+list.m_Length;
 	Node* pList=m_Head;

@@ -3,62 +3,62 @@
 
 #include<iostream>
 
-template<class Type,int size=10>
+template<class T,int size=10>
 class seqStack
 {
-    Type *m_Stack;
+    T *m_Stack;
     int m_top;
     int m_capacity;
     public:
     seqStack();
-    seqStack(const seqStack<Type,size>& stack);
+    seqStack(const seqStack<T,size>& stack);
     ~seqStack();
     inline bool empty() const { return m_top==m_capacity; }
     inline bool full() const { return m_top==0; }
-    inline Type top() const
+    inline T top() const
     {
         if(empty())
             throw std::out_of_range("top() error:stack is empty!");
         return m_Stack[m_top];
     }
-    void push(Type const& data);
+    void push(T const& data);
     void pop();
 };
 
-template<class Type,int size>
-seqStack<Type,size>::seqStack()
+template<class T,int size>
+seqStack<T,size>::seqStack()
 {
     this->m_capacity=size;
     this->m_top=size;
-    m_Stack=new Type[this->m_capacity];
+    m_Stack=new T[this->m_capacity];
 }
 
-template<class Type,int size>
-seqStack<Type,size>::seqStack(const seqStack<Type,size>& stack)
+template<class T,int size>
+seqStack<T,size>::seqStack(const seqStack<T,size>& stack)
     : m_top(stack.m_top)
     , m_capacity(size)
 {
-    m_Stack=new Type[m_capacity];
+    m_Stack=new T[m_capacity];
     for(int i=0;i<m_capacity;i++)
         m_Stack[i]=stack.m_Stack[i];
 }
 
-template<class Type,int size>
-seqStack<Type,size>::~seqStack()
+template<class T,int size>
+seqStack<T,size>::~seqStack()
 {
     delete[] m_Stack;
 }
 
-template<class Type,int size>
-void seqStack<Type,size>::push(Type const& data)
+template<class T,int size>
+void seqStack<T,size>::push(T const& data)
 {
     if(full())
         throw std::out_of_range("push() error:stack is full!");
     m_Stack[--m_top]=data;
 }
 
-template<class Type,int size>
-void seqStack<Type,size>::pop()
+template<class T,int size>
+void seqStack<T,size>::pop()
 {
     if(empty())
         throw std::out_of_range("pop() error:stack is empty!");
