@@ -27,19 +27,19 @@ static int* arrayCopy=NULL;
 static char currFunc[100];
 
 /* 比较两个数据的大小关系，first > second 返回大于 0，first < second 返回小于 0，相等返回 0 */
-int compare(void* first,void* second)
+int compare(const eleType first,const eleType second)
 {
     return *(int*)first-*(int*)second;
 }
 
 /* 显示数据函数 */
-void showData(void* data)
+void showData(eleType data)
 {
     printf("%d ",*(int*)data);
 }
 
 /* 用于初始化数据的函数 */
-void inital(void* data,int num)
+void inital(eleType data,int num)
 {
     *(int*)data=num%(RIGHT_RANGE-LEFT_RANGE)+LEFT_RANGE;
 }
@@ -141,12 +141,12 @@ void testAllCase(char** sortInfo,void(**funcInfo)(int),int n)
     char buf[50]={0};
     double costTime=0.0;
     printf("Array : ");
-    showCase(arrayCopy,N,showData);
+    showCase((void*)arrayCopy,N,showData);
     for(int i=0;i<n;i++){
         sprintf(currFunc,sortInfo[i]);
         costTime=countTime(COUNT,funcInfo[i]);
-        if(!verifyCase(array,N,compare)){
-            showCase(array,N,showData);
+        if(!verifyCase((void*)array,N,compare)){
+            showCase((void*)array,N,showData);
             printf("%s error!",sortInfo[i]);
             free(array);
             free(arrayCopy);
@@ -167,16 +167,16 @@ void testOneCase(char* sortName,void(*func)(int),int count)
         memcpy(array,arrayCopy,N*SIZE);
         countTime(COUNT,func);
         printf("Array : ");
-        showCase(arrayCopy,N,showData);
+        showCase((void*)arrayCopy,N,showData);
         printf("Sorted : ");
-        showCase(array,N,showData);
-        if(!verifyCase(array,N,compare)){
+        showCase((void*)array,N,showData);
+        if(!verifyCase((void*)array,N,compare)){
             printf("%s error!",sortName);
             free(array);
             free(arrayCopy);
             exit(1);
         }
-        createCase(arrayCopy,N);
+        createCase((void*)arrayCopy,N);
         // createCaseNoRepeat(arrayCopy,N,LEFT_RANGE,RIGHT_RANGE);
     }
 }
@@ -210,7 +210,7 @@ int main(){
     array=malloc(N*SIZE);
     arrayCopy=malloc(N*SIZE);
     initalCase(inital);
-    createCase(arrayCopy,N);
+    createCase((void*)arrayCopy,N);
     // createCaseNoRepeat(arrayCopy,N,LEFT_RANGE,RIGHT_RANGE);
     testAllCase(sortInfo,funcInfo,n);
     testOneCase(sortInfo[9],funcInfo[9],10);

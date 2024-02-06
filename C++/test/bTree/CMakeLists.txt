@@ -1,7 +1,0 @@
-cmake_minimum_required(VERSION 2.8.0)
-set(PROJECT_NAME bTree)
-set(ROOT_DIR ${CMAKE_CURRENT_LIST_DIR}/../..)
-project(${PROJECT_NAME} LANGUAGES CXX)
-add_subdirectory(${ROOT_DIR}/DS DS_binnary_dir)
-add_executable(${PROJECT_NAME} main.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE DS)
