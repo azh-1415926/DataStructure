@@ -1,5 +1,5 @@
-#ifndef _LINK_QUEUE_H_
-#define _LINK_QUEUE_H_
+#ifndef LINK_QUEUE_H
+#define LINK_QUEUE_H
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,5 +1,5 @@
-#ifndef _B_TREE_H_
-#define _B_TREE_H_
+#ifndef B_TREE_H
+#define B_TREE_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,4 +39,4 @@ void bTreeFree(BTree* tree);
 }
 #endif
 
-#endif /* _B_TREE_H_ */
+#endif /* B_TREE_H */

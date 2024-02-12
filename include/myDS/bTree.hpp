@@ -1,5 +1,5 @@
-#ifndef _B_TREE_H_
-#define _B_TREE_H_
+#ifndef B_TREE_H
+#define B_TREE_H
 
 #include <iostream>
 #include <simpleDS/linkQueue.hpp>
@@ -501,4 +501,4 @@ namespace azh
     };
 };
 
-#endif /* _B_TREE_H_ */
+#endif /* B_TREE_H */

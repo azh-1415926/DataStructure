@@ -1,5 +1,5 @@
-#ifndef _LOG_H_
-#define _LOG_H_
+#ifndef LOG_H
+#define LOG_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -19,4 +19,4 @@ void freeLogs(char** str,int n);
 }
 #endif
 
-#endif /* _LOG_H_ */
+#endif /* LOG_H */

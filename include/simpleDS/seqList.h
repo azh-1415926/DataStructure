@@ -1,5 +1,5 @@
-#ifndef _SEQ_LIST_H_
-#define _SEQ_LIST_H_
+#ifndef SEQ_LIST_H
+#define SEQ_LIST_H
 
 #ifdef __cplusplus
 extern "C" {

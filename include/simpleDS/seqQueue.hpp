@@ -1,5 +1,5 @@
-#ifndef _SEQ_QUEUE_H_
-#define _SEQ_QUEUE_H_
+#ifndef SEQ_QUEUE_H
+#define SEQ_QUEUE_H
 
 #include<iostream>
 

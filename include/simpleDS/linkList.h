@@ -1,5 +1,5 @@
-#ifndef _LINK_LIST_H_
-#define _LINK_LIST_H_
+#ifndef LINK_LIST_H
+#define LINK_LIST_H
 
 #ifdef __cplusplus
 extern "C" {

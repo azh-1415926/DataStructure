@@ -1,5 +1,5 @@
-#ifndef _LINK_STACK_H_
-#define _LINK_STACK_H_
+#ifndef LINK_STACK_H
+#define LINK_STACK_H
 
 #ifdef __cplusplus
 extern "C" {

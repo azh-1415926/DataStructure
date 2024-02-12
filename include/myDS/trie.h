@@ -1,5 +1,5 @@
-#ifndef _TRIE_H_
-#define _TRIE_H_
+#ifndef TRIE_H
+#define TRIE_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,4 +26,4 @@ int trieGetSum(Trie tree);
 }
 #endif
 
-#endif /* _TRIE_H_ */
+#endif /* TRIE_H */

@@ -1,5 +1,5 @@
-#ifndef _SORT_H_
-#define _SORT_H_
+#ifndef SORT_H
+#define SORT_H
 
 #include <stdio.h>
 
@@ -23,4 +23,4 @@ void heapSort(pType array, int n, int size, int (*compare)(const pType, const pT
 }
 #endif
 
-#endif /* _SORT_H_ */
+#endif /* SORT_H */

@@ -1,5 +1,5 @@
-#ifndef _BINARY_TREE_H_
-#define _BINARY_TREE_H_
+#ifndef BINARY_TREE_H
+#define BINARY_TREE_H
 
 #include <iostream>
 #include <simpleDS/linkQueue.hpp>
