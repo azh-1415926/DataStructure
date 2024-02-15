@@ -2,6 +2,7 @@
 #define B_TREE_H
 
 #include <iostream>
+#include <functional>
 #include <simpleDS/linkQueue.hpp>
 
 namespace azh
@@ -37,7 +38,9 @@ namespace azh
     class BTree
     {
         private:
+            std::function<void(eleType)> m_FuncOfTraversal;
             BTNode<eleType,Key>* root;
+
             BTNode<eleType,Key>* searchBTNode(Key key);
             static void splitBTNode(BTNode<eleType,Key>* node);
             static void moveLeft(BTNode<eleType,Key>* parent,int index,BTNode<eleType,Key>* leftChild,int dataPos);
@@ -48,13 +51,16 @@ namespace azh
         public:
             BTree();
             ~BTree();
+
+            inline void setTraversalFunction(const std::function<void(eleType)>& func) { m_FuncOfTraversal=func; }
+
             eleType search(Key key);
             bool insert(Key key,eleType value);
             bool erase(Key key);
             void show();
-            void preOrderTraversal(void (*traversal)(eleType),BTNode<eleType,Key>* node=nullptr);
-            void inOrderTraversal(void (*traversal)(eleType),BTNode<eleType,Key>* node=nullptr);
-            void levelOrderTraversal(void(*traversal)(eleType));
+            void preOrderTraversal(BTNode<eleType,Key>* node=nullptr);
+            void inOrderTraversal(BTNode<eleType,Key>* node=nullptr);
+            void levelOrderTraversal();
     };
 
     template<class eleType,class Key>
@@ -581,8 +587,10 @@ namespace azh
     }
 
     template<class eleType,class Key>
-    void BTree<eleType,Key>::preOrderTraversal(void (*traversal)(eleType),BTNode<eleType,Key>* node)
+    void BTree<eleType,Key>::preOrderTraversal(BTNode<eleType,Key>* node)
     {
+        if(!m_FuncOfTraversal)
+            throw std::exception("not set function of traversal!");
         if(node==nullptr)
             node=root;
         BTNode<eleType,Key>* currNode=node;
@@ -590,28 +598,31 @@ namespace azh
         {
             if(i+1<=currNode->keynum)
             {
-                traversal(currNode->data[i+1]);
+                m_FuncOfTraversal(currNode->data[i+1]);
                 std::cout<<" ";
             }
             if(currNode->child[i]!=NULL)
-                preOrderTraversal(traversal,currNode->child[i]);
+                preOrderTraversal(currNode->child[i]);
         }
         if(currNode&&currNode->parent==NULL)
             std::cout<<"\n";
     }
 
     template<class eleType,class Key>
-    void BTree<eleType,Key>::inOrderTraversal(void (*traversal)(eleType),BTNode<eleType,Key>* node)
+    void BTree<eleType,Key>::inOrderTraversal(BTNode<eleType,Key>* node)
     {
+        if(!m_FuncOfTraversal)
+            throw std::exception("not set function of traversal!");
         if(node==nullptr)
             node=root;
         BTNode<eleType,Key>* currNode=node;
         for(int i=0;currNode&&i<=currNode->keynum;i++)
         {
             if(currNode->child[i]!=NULL)
-                inOrderTraversal(traversal,currNode->child[i]);
-            if(i+1<=currNode->keynum){
-                traversal(currNode->data[i+1]);
+                inOrderTraversal(currNode->child[i]);
+            if(i+1<=currNode->keynum)
+            {
+                m_FuncOfTraversal(currNode->data[i+1]);
                 std::cout<<" ";
             }
         }
@@ -620,8 +631,10 @@ namespace azh
     }
 
     template<class eleType,class Key>
-    void BTree<eleType,Key>::levelOrderTraversal(void(*traversal)(eleType))
+    void BTree<eleType,Key>::levelOrderTraversal()
     {
+        if(!m_FuncOfTraversal)
+            throw std::exception("not set function of traversal!");
         linkQueue<BTNode<eleType,Key>*> queue;
         BTNode<eleType,Key>* currNode=NULL;
         queue.enqueue(root);
@@ -636,7 +649,7 @@ namespace azh
             }
             while(i<=currNode->keynum)
             {
-                traversal(currNode->data[i]);
+                m_FuncOfTraversal(currNode->data[i]);
                 printf(" ");
                 if(currNode->child[i]!=NULL)
                     queue.enqueue(currNode->child[i]);

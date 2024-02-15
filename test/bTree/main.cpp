@@ -1,7 +1,8 @@
 #include <iostream>
 #include <myDS/bTree.hpp>
 
-void visit(int data){
+void visit(int data)
+{
     std::cout<<data;
 }
 
@@ -28,10 +29,11 @@ int main(){
     std::cout<<"Create bTree\n";
     std::cout<<"ShowKeys:";
     tree.show();
+    tree.setTraversalFunction(visit);
     std::cout<<"inOrderTraversal:";
-    tree.inOrderTraversal(visit);
+    tree.inOrderTraversal();
     std::cout<<"preOrderTraversal:";
-    tree.preOrderTraversal(visit);
+    tree.preOrderTraversal();
     std::cout<<"Delete some keys\n";
     tree.erase(45);
     tree.erase(90);
@@ -41,8 +43,8 @@ int main(){
     std::cout<<"ShowKeys:";
     tree.show();
     std::cout<<"inOrderTraversal:";
-    tree.inOrderTraversal(visit);
+    tree.inOrderTraversal();
     std::cout<<"preOrderTraversal:";
-    tree.preOrderTraversal(visit);
+    tree.preOrderTraversal();
     return 0;
 }
