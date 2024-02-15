@@ -7,7 +7,7 @@ void visit(int data)
 }
 
 int main(){
-    azh::BTree<int> tree;
+    azh::BTree<int,int> tree;
     tree.insert(35,35);
     tree.insert(16,16);
     tree.insert(18,18);
