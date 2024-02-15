@@ -59,28 +59,44 @@ namespace azh
     class BTree
     {
         private:
+            /* m_FuncOfTraversal 是用于遍历的函数，m_Root 为该 B 树的根节点 */
             std::function<void(eleType)> m_FuncOfTraversal;
-            BTNode<eleType,Key>* root;
+            BTNode<eleType,Key>* m_Root;
 
+            /* 根据 key 在全局查找指定节点，若不存在该关键字则返回 nullptr */
             BTNode<eleType,Key>* searchBTNode(Key key);
+            /* 分裂指定节点，传入的 node 仍然为分裂后的根节点 */
             static void splitBTNode(BTNode<eleType,Key>* node);
+            /* 将父节点中下标位置为 index 的关键字左移到 index 关键字对应的左子节点，到其 dataPos 位置停下（即覆盖 dataPos 位置的关键字、数据），若左子节点为空，则将父节点的第一个关键字覆盖，不处理左子节点 */
             static void moveLeft(BTNode<eleType,Key>* parent,int index,BTNode<eleType,Key>* leftChild,int dataPos);
+            /* 同理，将父节点中下标位置为 index 的关键字右移到 index 关键字对应的右子节点，到其 dataPos 位置停下，若右子节点为空，则将父节点的最后一个关键字覆盖，不处理右子节点 */
             static void moveRight(BTNode<eleType,Key>* parent,int index,BTNode<eleType,Key>* rightChild,int dataPos);
+            /* 合并父节点中指定下标位置的左右子节点 */
             static void combineBTNode(BTNode<eleType,Key>* parent,int index);
+            /* 平衡父节点中指定下标位置的左右子节点 */
             static void balanceBTNode(BTNode<eleType,Key>* parent,int index);
 
         public:
-            BTree();
+            /* 构造 B 树，即创建根节点 */
+            BTree(): m_Root(new BTNode<eleType,Key>) {  };
             ~BTree();
 
+            /* 设置遍历函数 */
             inline void setTraversalFunction(const std::function<void(eleType)>& func) { m_FuncOfTraversal=func; }
 
+            /* 查找 key 对应的数据 */
             eleType search(Key key);
+            /* 创建关键字为 key、数据为 value 的节点，并插入到 B 树中 */
             bool insert(Key key,eleType value);
+            /* 在 B 树中删除关键字为 key 的节点 */
             bool erase(Key key);
+            /* 遍历关键字 */
             void show();
+            /* 前序遍历 */
             void preOrderTraversal(BTNode<eleType,Key>* node=nullptr);
+            /* 中序遍历 */
             void inOrderTraversal(BTNode<eleType,Key>* node=nullptr);
+            /* 层序遍历 */
             void levelOrderTraversal();
     };
 
@@ -127,7 +143,7 @@ namespace azh
         for(int i=0;i<endPos-index;i++)
             m_Children[endPos-i]=m_Children[endPos-i-1];
         m_Children[index]=node;
-        if(node!=NULL)
+        if(node!=nullptr)
             node->m_Parent=this;
     }
 
@@ -141,7 +157,7 @@ namespace azh
             m_Data[i]=m_Data[i+1];
         }
         m_Keys[endPos]=0;
-        //m_Data[endPos]=NULL;
+        //m_Data[endPos]=nullptr;
         m_SumOfKey--;
         return data;
     }
@@ -151,11 +167,11 @@ namespace azh
     {
         int endPos=m_SumOfKey;
         BTNode<eleType,Key>* child=m_Children[index];
-        if(child!=NULL)
-            child->m_Parent=NULL;
+        if(child!=nullptr)
+            child->m_Parent=nullptr;
         for(int i=index;i<endPos;i++)
             m_Children[index]=m_Children[index+1];
-        m_Children[endPos]=NULL;
+        m_Children[endPos]=nullptr;
         return child;
     }
 
@@ -163,7 +179,7 @@ namespace azh
     BTNode<eleType,Key>* BTree<eleType,Key>::searchBTNode(Key key)
     {
         int i=1;
-        BTNode<eleType,Key>* currNode=root;
+        BTNode<eleType,Key>* currNode=m_Root;
         while(currNode)
         {
             i=currNode->searchIndex(key);
@@ -191,43 +207,43 @@ namespace azh
         Key key=0;
         eleType value;
         BTNode<eleType,Key>* parent=node->m_Parent;
-        BTNode<eleType,Key>* rightChild=NULL;
+        BTNode<eleType,Key>* rightChild=nullptr;
         //right child
         rightChild=new BTNode<eleType,Key>;
         rightChild->insertBTNode(0,node->m_Children[MID_KEY]);
-        node->m_Children[MID_KEY]=NULL;
+        node->m_Children[MID_KEY]=nullptr;
         for(int i=1;i<=node->m_SumOfKey-MID_KEY;i++)
         {
             key=node->m_Keys[MID_KEY+i];
             value=node->m_Data[MID_KEY+i];
             node->m_Keys[MID_KEY+i]=0;
-            //node->data[MID_KEY+i]=NULL;
+            //node->data[MID_KEY+i]=nullptr;
             rightChild->insertValue(i,key,value);
             rightChild->insertBTNode(i,node->m_Children[MID_KEY+i]);
-            node->m_Children[MID_KEY+i]=NULL;
+            node->m_Children[MID_KEY+i]=nullptr;
         }
         key=node->m_Keys[MID_KEY];
         value=node->m_Data[MID_KEY];
-        if(parent==NULL){
-            BTNode<eleType,Key>* leftChild=NULL;
+        if(parent==nullptr){
+            BTNode<eleType,Key>* leftChild=nullptr;
             //left child
             leftChild=new BTNode<eleType,Key>;
             leftChild->insertBTNode(0,node->m_Children[0]);
-            node->m_Children[0]=NULL;
+            node->m_Children[0]=nullptr;
             for(int i=1;i<MID_KEY;i++)
             {
                 key=node->m_Keys[i];
                 value=node->m_Data[i];
                 node->m_Keys[i]=0;
-                //node->data[i]=NULL;
+                //node->data[i]=nullptr;
                 leftChild->insertValue(i,key,value);
                 leftChild->insertBTNode(i,node->m_Children[i]);
-                node->m_Children[i]=NULL;
+                node->m_Children[i]=nullptr;
             }
             key=node->m_Keys[MID_KEY];
             value=node->m_Data[MID_KEY];
             node->m_Keys[MID_KEY]=0;
-            //node->data[MID_KEY]=NULL;
+            //node->data[MID_KEY]=nullptr;
             node->m_SumOfKey=0;
             node->insertBTNode(0,leftChild);
             node->insertValue(1,key,value);
@@ -239,7 +255,7 @@ namespace azh
             index=parent->searchIndex(key);
             node->m_SumOfKey=MID_KEY-1;
             node->m_Keys[MID_KEY]=0;
-            //node->data[MID_KEY]=NULL;
+            //node->data[MID_KEY]=nullptr;
             if(key>parent->m_Keys[index])
                 index++;
             parent->insertValue(index,key,value);
@@ -256,7 +272,7 @@ namespace azh
         BTNode<eleType,Key>* rightChild=parent->m_Children[index];
         if(!(parent&&rightChild))
             return;
-        if(leftChild!=NULL)
+        if(leftChild!=nullptr)
         {
             //left child move to left
             for(int i=dataPos;i<leftChild->m_SumOfKey;i++)
@@ -282,7 +298,7 @@ namespace azh
             rightChild->m_Data[i]=rightChild->m_Data[i+1];
         }
         rightChild->m_Keys[rightChild->m_SumOfKey]=0;
-        //rightChild->data[rightChild->m_SumOfKey]=NULL;
+        //rightChild->data[rightChild->m_SumOfKey]=nullptr;
         rightChild->m_SumOfKey--;
     }
 
@@ -291,7 +307,7 @@ namespace azh
         BTNode<eleType,Key>* leftChild=parent->m_Children[index-1];
         if(!(parent&&leftChild))
             return;
-        if(rightChild!=NULL){
+        if(rightChild!=nullptr){
             //right child move to left
             if(dataPos>rightChild->m_SumOfKey)
             {
@@ -312,7 +328,7 @@ namespace azh
         parent->m_Data[index]=leftChild->m_Data[leftChild->m_SumOfKey];
         //left child move to left
         leftChild->m_Keys[leftChild->m_SumOfKey]=0;
-        //leftChild->data[leftChild->m_SumOfKey]=NULL;
+        //leftChild->data[leftChild->m_SumOfKey]=nullptr;
         leftChild->m_SumOfKey--;
     }
 
@@ -357,7 +373,7 @@ namespace azh
             }
             free(parent->deleteBTNode(index-1));
         }
-        if(parent->m_Parent==NULL)
+        if(parent->m_Parent==nullptr)
         {
             parent->deleteValue(index);
             if(parent->m_SumOfKey==0)
@@ -366,14 +382,14 @@ namespace azh
                 //copy leftChild to parent
                 parent->m_SumOfKey=node->m_SumOfKey;
                 parent->m_Children[0]=node->m_Children[0];
-                if(node->m_Children[0]!=NULL)
+                if(node->m_Children[0]!=nullptr)
                     node->m_Children[0]->m_Parent=parent;
                 for(int i=1;i<=parent->m_SumOfKey;i++)
                 {
                     parent->m_Keys[i]=node->m_Keys[i];
                     parent->m_Data[i]=node->m_Data[i];
                     parent->m_Children[i]=node->m_Children[i];
-                    if(node->m_Children[i]!=NULL)
+                    if(node->m_Children[i]!=nullptr)
                         node->m_Children[i]->m_Parent=parent;
                 }
                 free(node);
@@ -398,7 +414,7 @@ namespace azh
     template<class eleType,class Key>
     void BTree<eleType,Key>::balanceBTNode(BTNode<eleType,Key>* parent,int index)
     {
-        if(parent==NULL)
+        if(parent==nullptr)
             return;
         //BTNode* parent=node->m_Parent;
         BTNode<eleType,Key>* node=parent->m_Children[index];
@@ -431,28 +447,22 @@ namespace azh
     }
 
     template<class eleType,class Key>
-    BTree<eleType,Key>::BTree()
-    {
-        root=new BTNode<eleType,Key>;
-    }
-
-    template<class eleType,class Key>
     BTree<eleType,Key>::~BTree()
     {
         linkQueue<BTNode<eleType,Key>*> queue;
-        BTNode<eleType,Key>* currNode=NULL;
-        queue.enqueue(root);
+        BTNode<eleType,Key>* currNode=nullptr;
+        queue.enqueue(m_Root);
         int i=1;
         while(!queue.empty())
         {
             currNode=queue.front();
             queue.dequeue();
-            if(currNode->m_Children[0]!=NULL)
+            if(currNode->m_Children[0]!=nullptr)
             {
                 queue.enqueue(currNode->m_Children[0]);
                 while(i<=currNode->m_SumOfKey)
                 {
-                    if(currNode->m_Children[i]!=NULL)
+                    if(currNode->m_Children[i]!=nullptr)
                         queue.enqueue(currNode->m_Children[i]);
                     i++;
                 }
@@ -479,8 +489,8 @@ namespace azh
     bool BTree<eleType,Key>::insert(Key key,eleType value)
     {
         int i=1;
-        BTNode<eleType,Key>* preNode=NULL;
-        BTNode<eleType,Key>* currNode=root;
+        BTNode<eleType,Key>* preNode=nullptr;
+        BTNode<eleType,Key>* currNode=m_Root;
         while(currNode){
             i=currNode->searchIndex(key);
             if(key>currNode->m_Keys[i])
@@ -498,7 +508,7 @@ namespace azh
                 currNode=currNode->m_Children[i-1];
             }
         }
-        if(currNode==NULL)
+        if(currNode==nullptr)
             currNode=preNode;
         i=currNode->searchIndex(key);
         if(i==currNode->m_SumOfKey&&key>currNode->m_Keys[i])
@@ -514,12 +524,12 @@ namespace azh
     template<class eleType,class Key>
     bool BTree<eleType,Key>::erase(Key key)
     {
-        if(root==nullptr)
+        if(m_Root==nullptr)
             throw std::out_of_range("earse() error,btree is empty!");
         //need to alter
         int i=1;
-        BTNode<eleType,Key>* parent=NULL;
-        BTNode<eleType,Key>* currNode=root;
+        BTNode<eleType,Key>* parent=nullptr;
+        BTNode<eleType,Key>* currNode=m_Root;
         //eleType data;
         currNode=searchBTNode(key);
         if(currNode==nullptr)
@@ -531,7 +541,7 @@ namespace azh
         //save data
         //data=currNode->data[i];
         //this node is leaf node
-        if(currNode->m_Children[0]==NULL)
+        if(currNode->m_Children[0]==nullptr)
         {
             //key greater than min
             if(currNode->m_SumOfKey>MIN_KEY)
@@ -542,8 +552,8 @@ namespace azh
             else
             {
                 parent=currNode->m_Parent;
-                //leaf node is root
-                if(parent==NULL)
+                //leaf node is m_Root
+                if(parent==nullptr)
                 {
                     currNode->deleteValue(1);
                     return true;
@@ -564,7 +574,7 @@ namespace azh
             int j=parent->searchIndex(target->m_Keys[target->m_SumOfKey]);
             if(target->m_Keys[target->m_SumOfKey]<parent->m_Keys[j])
                 j--;
-            while(target->m_Children[target->m_SumOfKey]!=NULL)
+            while(target->m_Children[target->m_SumOfKey]!=nullptr)
                 target=target->m_Children[target->m_SumOfKey];
             currNode->m_Keys[i]=target->m_Keys[target->m_SumOfKey];
             currNode->m_Data[i]=target->m_Data[target->m_SumOfKey];
@@ -581,14 +591,14 @@ namespace azh
     void BTree<eleType,Key>::show()
     {
         linkQueue<BTNode<eleType,Key>*> queue;
-        BTNode<eleType,Key>* currNode=NULL;
-        queue.enqueue(root);
+        BTNode<eleType,Key>* currNode=nullptr;
+        queue.enqueue(m_Root);
         int i=1;
         while(!queue.empty())
         {
             currNode=queue.front();
             queue.dequeue();
-            if(currNode->m_Children[0]!=NULL)
+            if(currNode->m_Children[0]!=nullptr)
             {
                 queue.enqueue(currNode->m_Children[0]);
             }
@@ -599,7 +609,7 @@ namespace azh
                     std::cout<<",";
                 else
                     std::cout<<" ";
-                if(currNode->m_Children[i]!=NULL)
+                if(currNode->m_Children[i]!=nullptr)
                     queue.enqueue(currNode->m_Children[i]);
                 i++;
             }
@@ -614,7 +624,7 @@ namespace azh
         if(!m_FuncOfTraversal)
             throw std::exception("not set function of traversal!");
         if(node==nullptr)
-            node=root;
+            node=m_Root;
         BTNode<eleType,Key>* currNode=node;
         for(int i=0;currNode&&i<=currNode->m_SumOfKey;i++)
         {
@@ -623,10 +633,10 @@ namespace azh
                 m_FuncOfTraversal(currNode->m_Data[i+1]);
                 std::cout<<" ";
             }
-            if(currNode->m_Children[i]!=NULL)
+            if(currNode->m_Children[i]!=nullptr)
                 preOrderTraversal(currNode->m_Children[i]);
         }
-        if(currNode&&currNode->m_Children==NULL)
+        if(currNode&&currNode->m_Children==nullptr)
             std::cout<<"\n";
     }
 
@@ -636,11 +646,11 @@ namespace azh
         if(!m_FuncOfTraversal)
             throw std::exception("not set function of traversal!");
         if(node==nullptr)
-            node=root;
+            node=m_Root;
         BTNode<eleType,Key>* currNode=node;
         for(int i=0;currNode&&i<=currNode->m_SumOfKey;i++)
         {
-            if(currNode->m_Children[i]!=NULL)
+            if(currNode->m_Children[i]!=nullptr)
                 inOrderTraversal(currNode->m_Children[i]);
             if(i+1<=currNode->m_SumOfKey)
             {
@@ -648,7 +658,7 @@ namespace azh
                 std::cout<<" ";
             }
         }
-        if(currNode&&currNode->m_Parent==NULL)
+        if(currNode&&currNode->m_Parent==nullptr)
             std::cout<<"\n";
     }
 
@@ -658,14 +668,14 @@ namespace azh
         if(!m_FuncOfTraversal)
             throw std::exception("not set function of traversal!");
         linkQueue<BTNode<eleType,Key>*> queue;
-        BTNode<eleType,Key>* currNode=NULL;
-        queue.enqueue(root);
+        BTNode<eleType,Key>* currNode=nullptr;
+        queue.enqueue(m_Root);
         int i=1;
         while(!queue.empty())
         {
             currNode=queue.front();
             queue.dequeue();
-            if(currNode->m_Children[0]!=NULL)
+            if(currNode->m_Children[0]!=nullptr)
             {
                 queue.enqueue(currNode->m_Children[0]);
             }
@@ -673,7 +683,7 @@ namespace azh
             {
                 m_FuncOfTraversal(currNode->data[i]);
                 printf(" ");
-                if(currNode->m_Children[i]!=NULL)
+                if(currNode->m_Children[i]!=nullptr)
                     queue.enqueue(currNode->m_Children[i]);
                 i++;
             }
