@@ -1,13 +1,55 @@
 #include <iostream>
 #include <myDS/bTree.hpp>
 
-void visit(int data)
+class Key
+{
+    private:
+        int m_ID;
+    public:
+        Key(int id=0): m_ID(id) {  }
+
+        bool operator<(const Key& key)
+        {
+            return this->m_ID<key.m_ID;
+        }
+
+        bool operator>(const Key& key)
+        {
+            return this->m_ID>key.m_ID;
+        }
+
+        Key& operator=(const Key& key)
+        {
+            this->m_ID=key.m_ID;
+            return *this;
+        }
+
+        bool operator==(const Key& key)
+        {
+            return this->m_ID==key.m_ID;
+        }
+
+        std::ostream& operator<<(std::ostream& cout)
+        {
+            cout<<this->m_ID;
+            return cout;
+        }
+        friend std::ostream& operator<<(std::ostream& cout,const Key& key);
+};
+
+std::ostream& operator<<(std::ostream& cout,const Key& key)
+{
+    cout<<key.m_ID;
+    return cout;
+}
+
+void traversal(int data)
 {
     std::cout<<data;
 }
 
 int main(){
-    azh::BTree<int,int> tree;
+    azh::BTree<Key,int> tree;
     tree.insert(35,35);
     tree.insert(16,16);
     tree.insert(18,18);
@@ -29,7 +71,7 @@ int main(){
     std::cout<<"Create bTree\n";
     std::cout<<"ShowKeys:";
     tree.show();
-    tree.setTraversalFunction(visit);
+    tree.setTraversalFunction(traversal);
     std::cout<<"inOrderTraversal:";
     tree.inOrderTraversal();
     std::cout<<"preOrderTraversal:";
