@@ -34,8 +34,8 @@ namespace azh
             /* m_SumOfKey 为当前节点的关键字数量 */
             int m_SumOfKey;
             /* keys、data 用于存放关键字、数据 */
-            Key keys[M+1];
-            eleType data[M+1];
+            Key m_Keys[M+1];
+            eleType m_Data[M+1];
             /* parent 为父节点，默认为空 */
             BTNode<eleType,Key>* parent;
             /* child 为所有子节点 */
@@ -91,8 +91,8 @@ namespace azh
         m_SumOfKey=0;
         for(int i=0;i<=M;i++)
         {
-            // this->keys[i]=0;
-            // this->data[i]=0;
+            // m_Keys[i]=0;
+            // m_Data[i]=0;
             this->child[i]=nullptr;
         }
     }
@@ -101,7 +101,7 @@ namespace azh
     int BTNode<eleType,Key>::searchIndex(Key key)
     {
         int i=1;
-        while(i<m_SumOfKey&&key>this->keys[i])
+        while(i<m_SumOfKey&&key>m_Keys[i])
             i++;
         return i;
     }
@@ -112,11 +112,11 @@ namespace azh
         int endPos=m_SumOfKey+1;
         for(int i=0;i<endPos-index;i++)
         {
-            this->keys[endPos-i]=this->keys[endPos-i-1];
-            this->data[endPos-i]=this->data[endPos-i-1];
+            m_Keys[endPos-i]=m_Keys[endPos-i-1];
+            m_Data[endPos-i]=m_Data[endPos-i-1];
         }
-        this->keys[index]=key;
-        this->data[index]=value;
+        m_Keys[index]=key;
+        m_Data[index]=value;
         m_SumOfKey++;
     }
 
@@ -135,13 +135,13 @@ namespace azh
     eleType BTNode<eleType,Key>::deleteValue(int index)
     {
         int endPos=m_SumOfKey;
-        eleType data=this->data[index];
+        eleType data=m_Data[index];
         for(int i=index;i<endPos;i++){
-            this->keys[i]=this->keys[i+1];
-            this->data[i]=this->data[i+1];
+            this->m_Keys[i]=this->m_Keys[i+1];
+            m_Data[i]=m_Data[i+1];
         }
-        this->keys[endPos]=0;
-        //this->data[endPos]=NULL;
+        m_Keys[endPos]=0;
+        //m_Data[endPos]=NULL;
         m_SumOfKey--;
         return data;
     }
@@ -168,15 +168,15 @@ namespace azh
         {
             i=currNode->searchIndex(key);
             //i range is [1,m_SumOfKey]
-            if(key>currNode->keys[i])
+            if(key>currNode->m_Keys[i])
             {
                 //right
                 currNode=currNode->child[i];
-            }else if(key==currNode->keys[i])
+            }else if(key==currNode->m_Keys[i])
             {
                 //find it
                 break;
-            }else if(key<currNode->keys[i])
+            }else if(key<currNode->m_Keys[i])
             {
                 //key less than the first key
                 currNode=currNode->child[i-1];
@@ -198,16 +198,16 @@ namespace azh
         node->child[MID_KEY]=NULL;
         for(int i=1;i<=node->m_SumOfKey-MID_KEY;i++)
         {
-            key=node->keys[MID_KEY+i];
-            value=node->data[MID_KEY+i];
-            node->keys[MID_KEY+i]=0;
+            key=node->m_Keys[MID_KEY+i];
+            value=node->m_Data[MID_KEY+i];
+            node->m_Keys[MID_KEY+i]=0;
             //node->data[MID_KEY+i]=NULL;
             rightChild->insertValue(i,key,value);
             rightChild->insertBTNode(i,node->child[MID_KEY+i]);
             node->child[MID_KEY+i]=NULL;
         }
-        key=node->keys[MID_KEY];
-        value=node->data[MID_KEY];
+        key=node->m_Keys[MID_KEY];
+        value=node->m_Data[MID_KEY];
         if(parent==NULL){
             BTNode<eleType,Key>* leftChild=NULL;
             //left child
@@ -216,17 +216,17 @@ namespace azh
             node->child[0]=NULL;
             for(int i=1;i<MID_KEY;i++)
             {
-                key=node->keys[i];
-                value=node->data[i];
-                node->keys[i]=0;
+                key=node->m_Keys[i];
+                value=node->m_Data[i];
+                node->m_Keys[i]=0;
                 //node->data[i]=NULL;
                 leftChild->insertValue(i,key,value);
                 leftChild->insertBTNode(i,node->child[i]);
                 node->child[i]=NULL;
             }
-            key=node->keys[MID_KEY];
-            value=node->data[MID_KEY];
-            node->keys[MID_KEY]=0;
+            key=node->m_Keys[MID_KEY];
+            value=node->m_Data[MID_KEY];
+            node->m_Keys[MID_KEY]=0;
             //node->data[MID_KEY]=NULL;
             node->m_SumOfKey=0;
             node->insertBTNode(0,leftChild);
@@ -238,9 +238,9 @@ namespace azh
             int index=1;
             index=parent->searchIndex(key);
             node->m_SumOfKey=MID_KEY-1;
-            node->keys[MID_KEY]=0;
+            node->m_Keys[MID_KEY]=0;
             //node->data[MID_KEY]=NULL;
-            if(key>parent->keys[index])
+            if(key>parent->m_Keys[index])
                 index++;
             parent->insertValue(index,key,value);
             //leftChild is node;
@@ -261,27 +261,27 @@ namespace azh
             //left child move to left
             for(int i=dataPos;i<leftChild->m_SumOfKey;i++)
             {
-                leftChild->keys[i]=leftChild->keys[i+1];
-                leftChild->data[i]=leftChild->data[i+1];
+                leftChild->m_Keys[i]=leftChild->m_Keys[i+1];
+                leftChild->m_Data[i]=leftChild->m_Data[i+1];
             }
             if(dataPos>leftChild->m_SumOfKey)
             {
                 leftChild->m_SumOfKey++;
             }
-            leftChild->keys[leftChild->m_SumOfKey]=parent->keys[index];
-            leftChild->data[leftChild->m_SumOfKey]=parent->data[index];
+            leftChild->m_Keys[leftChild->m_SumOfKey]=parent->m_Keys[index];
+            leftChild->m_Data[leftChild->m_SumOfKey]=parent->m_Data[index];
         }
         leftChild->insertBTNode(leftChild->m_SumOfKey,rightChild->deleteBTNode(0));
         //parent move to left
-        parent->keys[index]=rightChild->keys[1];
-        parent->data[index]=rightChild->data[1];
+        parent->m_Keys[index]=rightChild->m_Keys[1];
+        parent->m_Data[index]=rightChild->m_Data[1];
         //right child move to left
         for(int i=1;i<rightChild->m_SumOfKey;i++)
         {
-            rightChild->keys[i]=rightChild->keys[i+1];
-            rightChild->data[i]=rightChild->data[i+1];
+            rightChild->m_Keys[i]=rightChild->m_Keys[i+1];
+            rightChild->m_Data[i]=rightChild->m_Data[i+1];
         }
-        rightChild->keys[rightChild->m_SumOfKey]=0;
+        rightChild->m_Keys[rightChild->m_SumOfKey]=0;
         //rightChild->data[rightChild->m_SumOfKey]=NULL;
         rightChild->m_SumOfKey--;
     }
@@ -300,18 +300,18 @@ namespace azh
             }
             for(int i=dataPos;i>1;i--)
             {
-                rightChild->keys[i]=rightChild->keys[i-1];
-                rightChild->data[i]=rightChild->data[i-1];
+                rightChild->m_Keys[i]=rightChild->m_Keys[i-1];
+                rightChild->m_Data[i]=rightChild->m_Data[i-1];
             }
-            rightChild->keys[1]=parent->keys[index];
-            rightChild->data[1]=parent->data[index];
+            rightChild->m_Keys[1]=parent->m_Keys[index];
+            rightChild->m_Data[1]=parent->m_Data[index];
         }
         rightChild->insertBTNode(0,leftChild->deleteBTNode(leftChild->m_SumOfKey));
         //parent move to left
-        parent->keys[index]=leftChild->keys[leftChild->m_SumOfKey];
-        parent->data[index]=leftChild->data[leftChild->m_SumOfKey];
+        parent->m_Keys[index]=leftChild->m_Keys[leftChild->m_SumOfKey];
+        parent->m_Data[index]=leftChild->m_Data[leftChild->m_SumOfKey];
         //left child move to left
-        leftChild->keys[leftChild->m_SumOfKey]=0;
+        leftChild->m_Keys[leftChild->m_SumOfKey]=0;
         //leftChild->data[leftChild->m_SumOfKey]=NULL;
         leftChild->m_SumOfKey--;
     }
@@ -330,14 +330,14 @@ namespace azh
         if(leftChild->m_SumOfKey<MIN_KEY)
         {
             //parent key move to left node
-            leftChild->insertValue(leftChild->m_SumOfKey+1,parent->keys[index],parent->data[index]);
+            leftChild->insertValue(leftChild->m_SumOfKey+1,parent->m_Keys[index],parent->m_Data[index]);
             //right node's child move to left node
             leftChild->insertBTNode(leftChild->m_SumOfKey,rightChild->child[0]);
             //right children move to left node
             for(int i=1;i<=rightChild->m_SumOfKey;i++)
             {
-                key=rightChild->keys[i];
-                value=rightChild->data[i];
+                key=rightChild->m_Keys[i];
+                value=rightChild->m_Data[i];
                 leftChild->insertValue(leftChild->m_SumOfKey+1,key,value);
                 leftChild->insertBTNode(leftChild->m_SumOfKey,rightChild->child[i]);
             }
@@ -346,12 +346,12 @@ namespace azh
         else if(rightChild->m_SumOfKey<MIN_KEY)
         {
             //parent key move to right node
-            rightChild->insertValue(1,parent->keys[index],parent->data[index]);
+            rightChild->insertValue(1,parent->m_Keys[index],parent->m_Data[index]);
             rightChild->insertBTNode(0,leftChild->child[0]);
             for(int i=1;i<=leftChild->m_SumOfKey;i++)
             {
-                key=leftChild->keys[i];
-                value=leftChild->data[i];
+                key=leftChild->m_Keys[i];
+                value=leftChild->m_Data[i];
                 rightChild->insertValue(1,key,value);
                 rightChild->insertBTNode(i,leftChild->child[i]);
             }
@@ -370,8 +370,8 @@ namespace azh
                     node->child[0]->parent=parent;
                 for(int i=1;i<=parent->m_SumOfKey;i++)
                 {
-                    parent->keys[i]=node->keys[i];
-                    parent->data[i]=node->data[i];
+                    parent->m_Keys[i]=node->m_Keys[i];
+                    parent->m_Data[i]=node->m_Data[i];
                     parent->child[i]=node->child[i];
                     if(node->child[i]!=NULL)
                         node->child[i]->parent=parent;
@@ -384,8 +384,8 @@ namespace azh
             //update node
             BTNode<eleType,Key>* node=parent;
             parent=node->parent;
-            int j=parent->searchIndex(node->keys[index]);
-            if(node->keys[index]<parent->keys[j])
+            int j=parent->searchIndex(node->m_Keys[index]);
+            if(node->m_Keys[index]<parent->m_Keys[j])
                 j--;
             node->deleteValue(index);
             if(node->m_SumOfKey<MIN_KEY)
@@ -483,16 +483,16 @@ namespace azh
         BTNode<eleType,Key>* currNode=root;
         while(currNode){
             i=currNode->searchIndex(key);
-            if(key>currNode->keys[i])
+            if(key>currNode->m_Keys[i])
             {
                 preNode=currNode;
                 currNode=currNode->child[i];
             }
-            else if(key==currNode->keys[i])
+            else if(key==currNode->m_Keys[i])
             {
                 return false;
             }
-            else if(key<currNode->keys[i])
+            else if(key<currNode->m_Keys[i])
             {
                 preNode=currNode;
                 currNode=currNode->child[i-1];
@@ -501,7 +501,7 @@ namespace azh
         if(currNode==NULL)
             currNode=preNode;
         i=currNode->searchIndex(key);
-        if(i==currNode->m_SumOfKey&&key>currNode->keys[i])
+        if(i==currNode->m_SumOfKey&&key>currNode->m_Keys[i])
             i++;
         currNode->insertValue(i,key,value);
         if(currNode->m_SumOfKey>MAX_KEY)
@@ -549,8 +549,8 @@ namespace azh
                     return true;
                 }
                 //normal node
-                int j=parent->searchIndex(currNode->keys[i]);
-                if(currNode->keys[i]<parent->keys[j])
+                int j=parent->searchIndex(currNode->m_Keys[i]);
+                if(currNode->m_Keys[i]<parent->m_Keys[j])
                     j--;
                 currNode->deleteValue(i);
                 balanceBTNode(parent,j);
@@ -561,13 +561,13 @@ namespace azh
             //get precursor key-value
             BTNode<eleType,Key>* target=currNode->child[i-1];
             parent=target->parent;
-            int j=parent->searchIndex(target->keys[target->m_SumOfKey]);
-            if(target->keys[target->m_SumOfKey]<parent->keys[j])
+            int j=parent->searchIndex(target->m_Keys[target->m_SumOfKey]);
+            if(target->m_Keys[target->m_SumOfKey]<parent->m_Keys[j])
                 j--;
             while(target->child[target->m_SumOfKey]!=NULL)
                 target=target->child[target->m_SumOfKey];
-            currNode->keys[i]=target->keys[target->m_SumOfKey];
-            currNode->data[i]=target->data[target->m_SumOfKey];
+            currNode->m_Keys[i]=target->m_Keys[target->m_SumOfKey];
+            currNode->m_Data[i]=target->m_Data[target->m_SumOfKey];
             target->deleteValue(target->m_SumOfKey);
             if(target->m_SumOfKey<MIN_KEY)
             {
@@ -594,7 +594,7 @@ namespace azh
             }
             while(i<=currNode->m_SumOfKey)
             {
-                std::cout<<currNode->keys[i];
+                std::cout<<currNode->m_Keys[i];
                 if(i!=currNode->m_SumOfKey)
                     std::cout<<",";
                 else
@@ -620,7 +620,7 @@ namespace azh
         {
             if(i+1<=currNode->m_SumOfKey)
             {
-                m_FuncOfTraversal(currNode->data[i+1]);
+                m_FuncOfTraversal(currNode->m_Data[i+1]);
                 std::cout<<" ";
             }
             if(currNode->child[i]!=NULL)
@@ -644,7 +644,7 @@ namespace azh
                 inOrderTraversal(currNode->child[i]);
             if(i+1<=currNode->m_SumOfKey)
             {
-                m_FuncOfTraversal(currNode->data[i+1]);
+                m_FuncOfTraversal(currNode->m_Data[i+1]);
                 std::cout<<" ";
             }
         }
