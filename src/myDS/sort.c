@@ -73,14 +73,15 @@ void insertionSort(pType array, int n, int size, int (*compare)(const pType, con
 {
     if(array==NULL)
         return;
+    char* temp=(char*)malloc(size);
     for(int i=1;i<n;i++){
         int j;
-        char temp[size];
         copy(temp,P_ARRAY(array,i,size),size);
         for(j=i;j>0&&(compare(P_ARRAY(array,j-1,size),temp)>0);j--)
             swap(P_ARRAY(array,j,size),P_ARRAY(array,j-1,size),size);
         swap(P_ARRAY(array,j,size),temp,size);
     }
+    free(temp);
 }
 
 /* 希尔排序 */
@@ -88,16 +89,17 @@ void shellSort(pType array, int n, int size, int (*compare)(const pType, const p
 {
     if(array==NULL)
         return;
+    char* temp=(char*)malloc(size);
     for(int gap=n>>1;gap>0;gap>>=1){
         for(int i=gap;i<n;i++){
             int j;
-            char temp[size];
             copy(temp,P_ARRAY(array,i,size),size);
             for(j=i-gap;j>=0&&(compare(P_ARRAY(array,j,size),temp)>0);j-=gap)
                 swap(P_ARRAY(array,j+gap,size),P_ARRAY(array,j,size),size);
             swap(P_ARRAY(array,j+gap,size),temp,size);
         }
     }
+    free(temp);
 }
 
 /* 归并排序 */

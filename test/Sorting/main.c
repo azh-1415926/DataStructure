@@ -181,8 +181,10 @@ void testOneCase(char* sortName,void(*func)(int),int count)
     }
 }
 
-int main(){
-    char* sortInfo[]={
+int main()
+{
+    char* sortInfo[]=
+    {
         "qsort",
         "BubbleSort",
         "SelectionSort",
@@ -195,7 +197,7 @@ int main(){
         "HeapSort"
     };
     int n=sizeof(sortInfo)/sizeof(char*);
-    void(*funcInfo[n])(int);
+    void(**funcInfo)(int)=(void(**)(int))malloc(n*sizeof(void(*)(int)));
     funcInfo[0]=func0;
     funcInfo[1]=func1;
     funcInfo[2]=func2;
