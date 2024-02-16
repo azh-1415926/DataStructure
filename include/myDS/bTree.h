@@ -17,11 +17,11 @@ typedef int Key;
 typedef void* eleType;
 typedef struct BTNode
 {
-    int keynum;
+    int sumOfKey;
     Key keys[M+1];
     eleType data[M+1];
     struct BTNode* parent;
-    struct BTNode* child[M+1];
+    struct BTNode* children[M+1];
 } BTNode, *BTree;
 
 void bTreeInitalize(BTree* tree);
@@ -31,7 +31,7 @@ void bTreePreOrderTraversal(BTree tree, void (*traversal)(void *));
 void bTreeInOrderTraversal(BTree tree, void (*traversal)(void *));
 void bTreeLevelOrderTraversal(BTree tree,void(*traversal)(void*));
 eleType bTreeSearch(BTree tree,Key key);
-bool bTreeInsert(BTree tree,Key key,eleType value);
+bool bTreeInsert(BTree tree,Key key,eleType data);
 eleType bTreeDelete(BTree tree,Key key);
 void bTreeFree(BTree* tree);
 
