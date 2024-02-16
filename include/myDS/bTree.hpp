@@ -717,6 +717,6 @@ namespace azh
         }
         std::cout<<"\n";
     }
-};
+}
 
 #endif /* B_TREE_H */

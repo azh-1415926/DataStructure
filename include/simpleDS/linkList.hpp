@@ -168,7 +168,6 @@ namespace azh
 		}
 		return *this;
 	}
-
-};
+}
 
 #endif

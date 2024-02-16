@@ -66,6 +66,6 @@ namespace azh
             throw std::out_of_range("pop() error:stack is empty!");
         ++m_top;
     }
-};
+}
 
 #endif

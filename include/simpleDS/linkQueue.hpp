@@ -69,6 +69,6 @@ namespace azh
         m_Head->next=pNode->next;
         delete pNode;
     }
-};
+}
 
 #endif

@@ -192,6 +192,6 @@ namespace azh
         if(len<=0)
             throw std::invalid_argument("heapSort");
     }
-};
+}
 
 #endif /* SORT_H */

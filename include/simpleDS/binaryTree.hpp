@@ -112,7 +112,6 @@ namespace azh
         }
         std::cout<<std::endl;
     }
-
-};
+}
 
 #endif

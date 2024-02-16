@@ -63,6 +63,6 @@ namespace azh
         m_Stack=m_Stack->next;
         delete temp;
     }
-};
+}
 
 #endif

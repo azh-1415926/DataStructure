@@ -76,6 +76,6 @@ namespace azh
         m_Head=(m_Head+1)%m_Capacity;
         m_Flag=QUEUE_POP;
     }
-};
+}
 
 #endif
