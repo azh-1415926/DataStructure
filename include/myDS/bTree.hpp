@@ -8,13 +8,9 @@
 namespace azh
 {
     /* M 为 B 树的阶数，当前为 3 阶 B 树，即 2-3 树 */
-    const int M=3;
-    const int MAX_KEY=(M-1);
-    const int MIN_KEY=((M-1)/2);
-    const int MID_KEY=((M+1)/2);
 
     /* BTree 模板类的前置声明，方便 BTNode 将其设为友元类 */
-    template<class T1,class T2>
+    template<class T1,class T2,size_t T3=3>
     class BTree;
 
     /*
@@ -25,60 +21,66 @@ namespace azh
                     若需要使用其他关键字，请重载 T1 类型的一些运算符
                 后续将调整 eleType、Key 的顺序
     */
-    template<class T1,class T2>
+    template<class T1,class T2,size_t T3>
     class BTNode
     {
         /* 将 BTree 模板类设为友元类，方便访问当前类的私有成员 */
-        friend class BTree<T1,T2>;
+        friend class BTree<T1,T2,T3>;
         private:
             /* m_SumOfKey 为当前节点的关键字数量 */
-            int m_SumOfKey;
+            size_t m_SumOfKey;
             /* keys、data 用于存放关键字、数据 */
-            T1 m_Keys[M+1];
-            T2 m_Data[M+1];
+            T1* m_Keys;
+            T2* m_Data;
             /* parent 为父节点，默认为空 */
-            BTNode<T1,T2>* m_Parent;
+            BTNode<T1,T2,T3>* m_Parent;
             /* child 为所有子节点 */
-            BTNode<T1,T2>* m_Children[M+1];
+            BTNode<T1,T2,T3>** m_Children;
             /* 构造一个空的节点 */
-            BTNode(BTNode<T1,T2>* parent=nullptr);
-            ~BTNode() {  }
+            BTNode(BTNode<T1,T2,T3>* parent=nullptr);
+            ~BTNode();
             /* 查找当前节点中大于等于指定关键字 key 的最大下标 */
-            int searchIndex(T1 key);
+            size_t searchIndex(T1 key);
             /* 插入数据到指定下标位置，且将关键字数量加一 */
-            void insertData(int index,T1 key,T2 data);
+            void insertData(size_t index,T1 key,T2 data);
             /* 插入子节点指针到指定下标位置，关键字数量将不变 */
-            void insertBTNode(int index,BTNode<T1,T2>* node);
+            void insertBTNode(size_t index,BTNode<T1,T2,T3>* node);
             /* 删除指定下标位置的数据，关键字数量将减一 */
-            T2 deleteData(int index);
+            T2 deleteData(size_t index);
             /* 删除指定下标位置的子节点指针，关键字数量将不变，需要手动释放其返回删除的子节点 */
-            BTNode<T1,T2>* deleteBTNode(int index);
+            BTNode<T1,T2,T3>* deleteBTNode(size_t index);
     };
     
-    template<class T1,class T2>
+    template<class T1,class T2,size_t T3>
     class BTree
     {
         private:
-            /* m_FuncOfTraversal 是用于遍历的函数，m_Root 为该 B 树的根节点 */
+            /* m_Root 为该 B 树的根节点 */
+            BTNode<T1,T2,T3>* m_Root;
+            /* M 为阶数 */
+            static const size_t M=T3;
+            static const size_t MAX_KEY=M-1;
+            static const size_t MIN_KEY=(M-1)/2;
+            static const size_t MID_KEY=(M+1)/2;
+            /* m_FuncOfTraversal 是用于遍历的函数 */
             std::function<void(T2)> m_FuncOfTraversal;
-            BTNode<T1,T2>* m_Root;
 
             /* 根据 key 在全局查找指定节点，若不存在该关键字则返回 nullptr */
-            BTNode<T1,T2>* searchBTNode(T1 key);
+            BTNode<T1,T2,T3>* searchBTNode(T1 key);
             /* 分裂指定节点，传入的 node 仍然为分裂后的根节点 */
-            static void splitBTNode(BTNode<T1,T2>* node);
+            static void splitBTNode(BTNode<T1,T2,T3>* node);
             /* 将父节点中下标位置为 index 的关键字左移到 index 关键字对应的左子节点，到其 dataPos 位置停下（即覆盖 dataPos 位置的关键字、数据），若左子节点为空，则将父节点的第一个关键字覆盖，不处理左子节点 */
-            static void moveLeft(BTNode<T1,T2>* parent,int index,BTNode<T1,T2>* leftChild,int dataPos);
+            static void moveLeft(BTNode<T1,T2,T3>* parent,size_t index,BTNode<T1,T2,T3>* leftChild,size_t dataPos);
             /* 同理，将父节点中下标位置为 index 的关键字右移到 index 关键字对应的右子节点，到其 dataPos 位置停下，若右子节点为空，则将父节点的最后一个关键字覆盖，不处理右子节点 */
-            static void moveRight(BTNode<T1,T2>* parent,int index,BTNode<T1,T2>* rightChild,int dataPos);
+            static void moveRight(BTNode<T1,T2,T3>* parent,size_t index,BTNode<T1,T2,T3>* rightChild,size_t dataPos);
             /* 合并父节点中指定下标位置的左右子节点 */
-            static void combineBTNode(BTNode<T1,T2>* parent,int index);
+            static void combineBTNode(BTNode<T1,T2,T3>* parent,size_t index);
             /* 平衡父节点中指定下标位置的左右子节点 */
-            static void balanceBTNode(BTNode<T1,T2>* parent,int index);
+            static void balanceBTNode(BTNode<T1,T2,T3>* parent,size_t index);
 
         public:
             /* 构造 B 树，即创建根节点 */
-            BTree(): m_Root(new BTNode<T1,T2>) {  };
+            BTree(): m_Root(new BTNode<T1,T2,T3>){  };
             ~BTree();
 
             /* 设置遍历函数 */
@@ -93,37 +95,49 @@ namespace azh
             /* 遍历关键字 */
             void show();
             /* 前序遍历 */
-            void preOrderTraversal(BTNode<T1,T2>* node=nullptr);
+            void preOrderTraversal(BTNode<T1,T2,T3>* node=nullptr);
             /* 中序遍历 */
-            void inOrderTraversal(BTNode<T1,T2>* node=nullptr);
+            void inOrderTraversal(BTNode<T1,T2,T3>* node=nullptr);
             /* 层序遍历 */
             void levelOrderTraversal();
     };
 
-    template<class T1,class T2>
-    BTNode<T1,T2>::BTNode(BTNode<T1,T2>* parent)
+    template<class T1,class T2,size_t T3>
+    BTNode<T1,T2,T3>::BTNode(BTNode<T1,T2,T3>* parent)
         : m_Parent(parent)
+        , m_SumOfKey(0)
+        , m_Keys(new T1[T3+1])
+        , m_Data(new T2[T3+1])
+        , m_Children(new BTNode<T1,T2,T3>*[T3+1])
     {
-        /* 默认关键字数量为 0，子节点全部设为 nullptr */
-        m_SumOfKey=0;
-        for(int i=0;i<=M;i++) m_Children[i]=nullptr;
+        /* 子节点全部设为 nullptr */
+        for(size_t i=0;i<=T3;i++) m_Children[i]=nullptr;
     }
 
-    template<class T1,class T2>
-    int BTNode<T1,T2>::searchIndex(T1 key)
+    template<class T1,class T2,size_t T3>
+    BTNode<T1,T2,T3>::~BTNode()
+    {
+        /* 释放空间 */
+        delete[] m_Keys;
+        delete[] m_Data;
+        delete[] m_Children;
+    }
+
+    template<class T1,class T2,size_t T3>
+    size_t BTNode<T1,T2,T3>::searchIndex(T1 key)
     {
         /* 因为下标 0 弃用，从 1 开始检索，当 i 未超出关键字数量且小于 key 的值时，i++ */
-        int i=1;
+        size_t i=1;
         while(i<m_SumOfKey&&key>m_Keys[i]) i++;
         return i;
     }
 
-    template<class T1,class T2>
-    void BTNode<T1,T2>::insertData(int index,T1 key,T2 data)
+    template<class T1,class T2,size_t T3>
+    void BTNode<T1,T2,T3>::insertData(size_t index,T1 key,T2 data)
     {
         /* 往 index 下标插入 key、value，将 index 后的数据往后挪一位 */
-        int endPos=m_SumOfKey+1;
-        for(int i=0;i<endPos-index;i++)
+        size_t endPos=m_SumOfKey+1;
+        for(size_t i=0;i<endPos-index;i++)
         {
             m_Keys[endPos-i]=m_Keys[endPos-i-1];
             m_Data[endPos-i]=m_Data[endPos-i-1];
@@ -133,22 +147,22 @@ namespace azh
         m_SumOfKey++;
     }
 
-    template<class T1,class T2>
-    void BTNode<T1,T2>::insertBTNode(int index,BTNode<T1,T2>* node)
+    template<class T1,class T2,size_t T3>
+    void BTNode<T1,T2,T3>::insertBTNode(size_t index,BTNode<T1,T2,T3>* node)
     {
-        int endPos=m_SumOfKey;
-        for(int i=0;i<endPos-index;i++) m_Children[endPos-i]=m_Children[endPos-i-1];
+        size_t endPos=m_SumOfKey;
+        for(size_t i=0;i<endPos-index;i++) m_Children[endPos-i]=m_Children[endPos-i-1];
         m_Children[index]=node;
         if(node!=nullptr)
             node->m_Parent=this;
     }
 
-    template<class T1,class T2>
-    T2 BTNode<T1,T2>::deleteData(int index)
+    template<class T1,class T2,size_t T3>
+    T2 BTNode<T1,T2,T3>::deleteData(size_t index)
     {
-        int endPos=m_SumOfKey;
+        size_t endPos=m_SumOfKey;
         T2 data=m_Data[index];
-        for(int i=index;i<endPos;i++)
+        for(size_t i=index;i<endPos;i++)
         {
             m_Keys[i]=m_Keys[i+1];
             m_Data[i]=m_Data[i+1];
@@ -159,22 +173,22 @@ namespace azh
         return data;
     }
 
-    template<class T1,class T2>
-    BTNode<T1,T2>* BTNode<T1,T2>::deleteBTNode(int index)
+    template<class T1,class T2,size_t T3>
+    BTNode<T1,T2,T3>* BTNode<T1,T2,T3>::deleteBTNode(size_t index)
     {
-        int endPos=m_SumOfKey;
-        BTNode<T1,T2>* child=m_Children[index];
+        size_t endPos=m_SumOfKey;
+        BTNode<T1,T2,T3>* child=m_Children[index];
         if(child!=nullptr)              child->m_Parent=nullptr;
-        for(int i=index;i<endPos;i++)   m_Children[index]=m_Children[index+1];
+        for(size_t i=index;i<endPos;i++)   m_Children[index]=m_Children[index+1];
         m_Children[endPos]=nullptr;
         return child;
     }
 
-    template<class T1,class T2>
-    BTNode<T1,T2>* BTree<T1,T2>::searchBTNode(T1 key)
+    template<class T1,class T2,size_t T3>
+    BTNode<T1,T2,T3>* BTree<T1,T2,T3>::searchBTNode(T1 key)
     {
-        int i=1;
-        BTNode<T1,T2>* currNode=m_Root;
+        size_t i=1;
+        BTNode<T1,T2,T3>* currNode=m_Root;
         while(currNode)
         {
             /* i 下标位置的关键字大于等于 key
@@ -191,18 +205,18 @@ namespace azh
         return currNode;
     }
 
-    template<class T1,class T2>
-    void BTree<T1,T2>::splitBTNode(BTNode<T1,T2>* node)
+    template<class T1,class T2,size_t T3>
+    void BTree<T1,T2,T3>::splitBTNode(BTNode<T1,T2,T3>* node)
     {
         T1 key;
         T2 data;
-        BTNode<T1,T2>* parent=node->m_Parent;
-        BTNode<T1,T2>* rightChild=nullptr;
+        BTNode<T1,T2,T3>* parent=node->m_Parent;
+        BTNode<T1,T2,T3>* rightChild=nullptr;
         //right child
-        rightChild=new BTNode<T1,T2>;
+        rightChild=new BTNode<T1,T2,T3>;
         rightChild->insertBTNode(0,node->m_Children[MID_KEY]);
         node->m_Children[MID_KEY]=nullptr;
-        for(int i=1;i<=node->m_SumOfKey-MID_KEY;i++)
+        for(size_t i=1;i<=node->m_SumOfKey-MID_KEY;i++)
         {
             key=node->m_Keys[MID_KEY+i];
             data=node->m_Data[MID_KEY+i];
@@ -215,12 +229,12 @@ namespace azh
         key=node->m_Keys[MID_KEY];
         data=node->m_Data[MID_KEY];
         if(parent==nullptr){
-            BTNode<T1,T2>* leftChild=nullptr;
+            BTNode<T1,T2,T3>* leftChild=nullptr;
             //left child
-            leftChild=new BTNode<T1,T2>;
+            leftChild=new BTNode<T1,T2,T3>;
             leftChild->insertBTNode(0,node->m_Children[0]);
             node->m_Children[0]=nullptr;
-            for(int i=1;i<MID_KEY;i++)
+            for(size_t i=1;i<MID_KEY;i++)
             {
                 key=node->m_Keys[i];
                 data=node->m_Data[i];
@@ -241,7 +255,7 @@ namespace azh
         }
         else
         {
-            int index=1;
+            size_t index=1;
             index=parent->searchIndex(key);
             node->m_SumOfKey=MID_KEY-1;
             // node->m_Keys[MID_KEY]=0;
@@ -256,16 +270,16 @@ namespace azh
         }
     }
 
-    template<class T1,class T2>
-    void BTree<T1,T2>::moveLeft(BTNode<T1,T2>* parent,int index,BTNode<T1,T2>* leftChild,int dataPos)
+    template<class T1,class T2,size_t T3>
+    void BTree<T1,T2,T3>::moveLeft(BTNode<T1,T2,T3>* parent,size_t index,BTNode<T1,T2,T3>* leftChild,size_t dataPos)
     {
-        BTNode<T1,T2>* rightChild=parent->m_Children[index];
+        BTNode<T1,T2,T3>* rightChild=parent->m_Children[index];
         if(!(parent&&rightChild))
             return;
         if(leftChild!=nullptr)
         {
             //left child move to left
-            for(int i=dataPos;i<leftChild->m_SumOfKey;i++)
+            for(size_t i=dataPos;i<leftChild->m_SumOfKey;i++)
             {
                 leftChild->m_Keys[i]=leftChild->m_Keys[i+1];
                 leftChild->m_Data[i]=leftChild->m_Data[i+1];
@@ -282,7 +296,7 @@ namespace azh
         parent->m_Keys[index]=rightChild->m_Keys[1];
         parent->m_Data[index]=rightChild->m_Data[1];
         //right child move to left
-        for(int i=1;i<rightChild->m_SumOfKey;i++)
+        for(size_t i=1;i<rightChild->m_SumOfKey;i++)
         {
             rightChild->m_Keys[i]=rightChild->m_Keys[i+1];
             rightChild->m_Data[i]=rightChild->m_Data[i+1];
@@ -292,9 +306,10 @@ namespace azh
         rightChild->m_SumOfKey--;
     }
 
-    template<class T1,class T2>
-    void BTree<T1,T2>::moveRight(BTNode<T1,T2>* parent,int index,BTNode<T1,T2>* rightChild,int dataPos){
-        BTNode<T1,T2>* leftChild=parent->m_Children[index-1];
+    template<class T1,class T2,size_t T3>
+    void BTree<T1,T2,T3>::moveRight(BTNode<T1,T2,T3>* parent,size_t index,BTNode<T1,T2,T3>* rightChild,size_t dataPos)
+    {
+        BTNode<T1,T2,T3>* leftChild=parent->m_Children[index-1];
         if(!(parent&&leftChild))
             return;
         if(rightChild!=nullptr){
@@ -304,7 +319,7 @@ namespace azh
                 rightChild->m_SumOfKey++;
                 dataPos=rightChild->m_SumOfKey;
             }
-            for(int i=dataPos;i>1;i--)
+            for(size_t i=dataPos;i>1;i--)
             {
                 rightChild->m_Keys[i]=rightChild->m_Keys[i-1];
                 rightChild->m_Data[i]=rightChild->m_Data[i-1];
@@ -322,13 +337,13 @@ namespace azh
         leftChild->m_SumOfKey--;
     }
 
-    template<class T1,class T2>
-    void BTree<T1,T2>::combineBTNode(BTNode<T1,T2>* parent,int index)
+    template<class T1,class T2,size_t T3>
+    void BTree<T1,T2,T3>::combineBTNode(BTNode<T1,T2,T3>* parent,size_t index)
     {
         if(!parent||index<1)
             return;
-        BTNode<T1,T2>* leftChild=parent->m_Children[index-1];
-        BTNode<T1,T2>* rightChild=parent->m_Children[index];
+        BTNode<T1,T2,T3>* leftChild=parent->m_Children[index-1];
+        BTNode<T1,T2,T3>* rightChild=parent->m_Children[index];
         if(!(leftChild&&rightChild))
             return;
         T1 key;//=0;
@@ -340,41 +355,41 @@ namespace azh
             //right node's child move to left node
             leftChild->insertBTNode(leftChild->m_SumOfKey,rightChild->m_Children[0]);
             //right children move to left node
-            for(int i=1;i<=rightChild->m_SumOfKey;i++)
+            for(size_t i=1;i<=rightChild->m_SumOfKey;i++)
             {
                 key=rightChild->m_Keys[i];
                 data=rightChild->m_Data[i];
                 leftChild->insertData(leftChild->m_SumOfKey+1,key,data);
                 leftChild->insertBTNode(leftChild->m_SumOfKey,rightChild->m_Children[i]);
             }
-            free(parent->deleteBTNode(index));
+            delete parent->deleteBTNode(index);
         }
         else if(rightChild->m_SumOfKey<MIN_KEY)
         {
             //parent key move to right node
             rightChild->insertData(1,parent->m_Keys[index],parent->m_Data[index]);
             rightChild->insertBTNode(0,leftChild->m_Children[0]);
-            for(int i=1;i<=leftChild->m_SumOfKey;i++)
+            for(size_t i=1;i<=leftChild->m_SumOfKey;i++)
             {
                 key=leftChild->m_Keys[i];
                 data=leftChild->m_Data[i];
                 rightChild->insertData(1,key,data);
                 rightChild->insertBTNode(i,leftChild->m_Children[i]);
             }
-            free(parent->deleteBTNode(index-1));
+            delete parent->deleteBTNode(index-1);
         }
         if(parent->m_Parent==nullptr)
         {
             parent->deleteData(index);
             if(parent->m_SumOfKey==0)
             {
-                BTNode<T1,T2>* node=parent->m_Children[0];
+                BTNode<T1,T2,T3>* node=parent->m_Children[0];
                 //copy leftChild to parent
                 parent->m_SumOfKey=node->m_SumOfKey;
                 parent->m_Children[0]=node->m_Children[0];
                 if(node->m_Children[0]!=nullptr)
                     node->m_Children[0]->m_Parent=parent;
-                for(int i=1;i<=parent->m_SumOfKey;i++)
+                for(size_t i=1;i<=parent->m_SumOfKey;i++)
                 {
                     parent->m_Keys[i]=node->m_Keys[i];
                     parent->m_Data[i]=node->m_Data[i];
@@ -382,15 +397,15 @@ namespace azh
                     if(node->m_Children[i]!=nullptr)
                         node->m_Children[i]->m_Parent=parent;
                 }
-                free(node);
+                delete node;
             }
         }
         else
         {
             //update node
-            BTNode<T1,T2>* node=parent;
+            BTNode<T1,T2,T3>* node=parent;
             parent=node->m_Parent;
-            int j=parent->searchIndex(node->m_Keys[index]);
+            size_t j=parent->searchIndex(node->m_Keys[index]);
             if(node->m_Keys[index]<parent->m_Keys[j])
                 j--;
             node->deleteData(index);
@@ -401,13 +416,13 @@ namespace azh
         }
     }
 
-    template<class T1,class T2>
-    void BTree<T1,T2>::balanceBTNode(BTNode<T1,T2>* parent,int index)
+    template<class T1,class T2,size_t T3>
+    void BTree<T1,T2,T3>::balanceBTNode(BTNode<T1,T2,T3>* parent,size_t index)
     {
         if(parent==nullptr)
             return;
         //BTNode* parent=node->m_Parent;
-        BTNode<T1,T2>* node=parent->m_Children[index];
+        BTNode<T1,T2,T3>* node=parent->m_Children[index];
         //move to left
         if(index+1<=parent->m_SumOfKey&&parent->m_Children[index+1]->m_SumOfKey>MIN_KEY)
         {
@@ -415,7 +430,7 @@ namespace azh
             moveLeft(parent,index+1,node,node->m_SumOfKey+1);
         }
         //move to right
-        else if(index-1>=0&&parent->m_Children[index-1]->m_SumOfKey>MIN_KEY)
+        else if(index>=1&&parent->m_Children[index-1]->m_SumOfKey>MIN_KEY)
         {
             //left node is rich node
             moveRight(parent,index,node,node->m_SumOfKey+1);
@@ -423,7 +438,7 @@ namespace azh
         //right and left are not rich node
         else
         {
-            if(index-1>=0)
+            if(index>=1)
             {
                 //node is rightChild
             }
@@ -436,13 +451,13 @@ namespace azh
         }
     }
 
-    template<class T1,class T2>
-    BTree<T1,T2>::~BTree()
+    template<class T1,class T2,size_t T3>
+    BTree<T1,T2,T3>::~BTree()
     {
-        linkQueue<BTNode<T1,T2>*> queue;
-        BTNode<T1,T2>* currNode=nullptr;
+        linkQueue<BTNode<T1,T2,T3>*> queue;
+        BTNode<T1,T2,T3>* currNode=nullptr;
         queue.enqueue(m_Root);
-        int i=1;
+        size_t i=1;
         while(!queue.empty())
         {
             currNode=queue.front();
@@ -461,11 +476,11 @@ namespace azh
             i=1;
         }
     }
-    template<class T1,class T2>
-    T2 BTree<T1,T2>::search(T1 key)
+    template<class T1,class T2,size_t T3>
+    T2 BTree<T1,T2,T3>::search(T1 key)
     {
-        int i=1;
-        BTNode<T1,T2>* node=searchBTNode(key);
+        size_t i=1;
+        BTNode<T1,T2,T3>* node=searchBTNode(key);
         T2 data;
         if(node!=nullptr)
         {
@@ -475,12 +490,12 @@ namespace azh
         return data;
     }
 
-    template<class T1,class T2>
-    bool BTree<T1,T2>::insert(T1 key,T2 data)
+    template<class T1,class T2,size_t T3>
+    bool BTree<T1,T2,T3>::insert(T1 key,T2 data)
     {
-        int i=1;
-        BTNode<T1,T2>* preNode=nullptr;
-        BTNode<T1,T2>* currNode=m_Root;
+        size_t i=1;
+        BTNode<T1,T2,T3>* preNode=nullptr;
+        BTNode<T1,T2,T3>* currNode=m_Root;
         while(currNode){
             i=currNode->searchIndex(key);
             if(key>currNode->m_Keys[i])
@@ -511,15 +526,15 @@ namespace azh
         return true;
     }
 
-    template<class T1,class T2>
-    bool BTree<T1,T2>::erase(T1 key)
+    template<class T1,class T2,size_t T3>
+    bool BTree<T1,T2,T3>::erase(T1 key)
     {
         if(m_Root==nullptr)
             throw std::out_of_range("earse() error,btree is empty!");
         //need to alter
-        int i=1;
-        BTNode<T1,T2>* parent=nullptr;
-        BTNode<T1,T2>* currNode=m_Root;
+        size_t i=1;
+        BTNode<T1,T2,T3>* parent=nullptr;
+        BTNode<T1,T2,T3>* currNode=m_Root;
         //T2 data;
         currNode=searchBTNode(key);
         if(currNode==nullptr)
@@ -549,7 +564,7 @@ namespace azh
                     return true;
                 }
                 //normal node
-                int j=parent->searchIndex(currNode->m_Keys[i]);
+                size_t j=parent->searchIndex(currNode->m_Keys[i]);
                 if(currNode->m_Keys[i]<parent->m_Keys[j])
                     j--;
                 currNode->deleteData(i);
@@ -559,9 +574,9 @@ namespace azh
         else
         {
             //get precursor key-data
-            BTNode<T1,T2>* target=currNode->m_Children[i-1];
+            BTNode<T1,T2,T3>* target=currNode->m_Children[i-1];
             parent=target->m_Parent;
-            int j=parent->searchIndex(target->m_Keys[target->m_SumOfKey]);
+            size_t j=parent->searchIndex(target->m_Keys[target->m_SumOfKey]);
             if(target->m_Keys[target->m_SumOfKey]<parent->m_Keys[j])
                 j--;
             while(target->m_Children[target->m_SumOfKey]!=nullptr)
@@ -577,13 +592,13 @@ namespace azh
         return true;
     }
 
-    template<class T1,class T2>
-    void BTree<T1,T2>::show()
+    template<class T1,class T2,size_t T3>
+    void BTree<T1,T2,T3>::show()
     {
-        linkQueue<BTNode<T1,T2>*> queue;
-        BTNode<T1,T2>* currNode=nullptr;
+        linkQueue<BTNode<T1,T2,T3>*> queue;
+        BTNode<T1,T2,T3>* currNode=nullptr;
         queue.enqueue(m_Root);
-        int i=1;
+        size_t i=1;
         while(!queue.empty())
         {
             currNode=queue.front();
@@ -608,15 +623,15 @@ namespace azh
         std::cout<<"\n";
     }
 
-    template<class T1,class T2>
-    void BTree<T1,T2>::preOrderTraversal(BTNode<T1,T2>* node)
+    template<class T1,class T2,size_t T3>
+    void BTree<T1,T2,T3>::preOrderTraversal(BTNode<T1,T2,T3>* node)
     {
         if(!m_FuncOfTraversal)
-            throw std::exception("not set function of traversal!");
+            throw "not set function of traversal!";
         if(node==nullptr)
             node=m_Root;
-        BTNode<T1,T2>* currNode=node;
-        for(int i=0;currNode&&i<=currNode->m_SumOfKey;i++)
+        BTNode<T1,T2,T3>* currNode=node;
+        for(size_t i=0;currNode&&i<=currNode->m_SumOfKey;i++)
         {
             if(i+1<=currNode->m_SumOfKey)
             {
@@ -630,15 +645,15 @@ namespace azh
             std::cout<<"\n";
     }
 
-    template<class T1,class T2>
-    void BTree<T1,T2>::inOrderTraversal(BTNode<T1,T2>* node)
+    template<class T1,class T2,size_t T3>
+    void BTree<T1,T2,T3>::inOrderTraversal(BTNode<T1,T2,T3>* node)
     {
         if(!m_FuncOfTraversal)
-            throw std::exception("not set function of traversal!");
+            throw "not set function of traversal!";
         if(node==nullptr)
             node=m_Root;
-        BTNode<T1,T2>* currNode=node;
-        for(int i=0;currNode&&i<=currNode->m_SumOfKey;i++)
+        BTNode<T1,T2,T3>* currNode=node;
+        for(size_t i=0;currNode&&i<=currNode->m_SumOfKey;i++)
         {
             if(currNode->m_Children[i]!=nullptr)
                 inOrderTraversal(currNode->m_Children[i]);
@@ -652,15 +667,15 @@ namespace azh
             std::cout<<"\n";
     }
 
-    template<class T1,class T2>
-    void BTree<T1,T2>::levelOrderTraversal()
+    template<class T1,class T2,size_t T3>
+    void BTree<T1,T2,T3>::levelOrderTraversal()
     {
         if(!m_FuncOfTraversal)
-            throw std::exception("not set function of traversal!");
-        linkQueue<BTNode<T1,T2>*> queue;
-        BTNode<T1,T2>* currNode=nullptr;
+            throw "not set function of traversal!";
+        linkQueue<BTNode<T1,T2,T3>*> queue;
+        BTNode<T1,T2,T3>* currNode=nullptr;
         queue.enqueue(m_Root);
-        int i=1;
+        size_t i=1;
         while(!queue.empty())
         {
             currNode=queue.front();
