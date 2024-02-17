@@ -2,6 +2,7 @@
 #define VECTOR_H
 
 #include <iostream>
+#include <initializer_list>
 
 namespace azh
 {
@@ -17,6 +18,19 @@ namespace azh
         public:
             explicit vector(size_t capacity=10)
                 : m_Size(0), m_Capacity(10), m_Increments(20) { m_Data=new T[m_Capacity]; }
+
+            vector(std::initializer_list<T> list)
+                : m_Size(0), m_Capacity(list.size()), m_Increments(20)
+                {
+                    m_Data=new T[m_Capacity];
+                    size_t i=0;
+                    for(auto it=list.begin();it!=list.end();it++)
+                    {
+                        m_Data[i]=*it;
+                        i++;
+                    }
+                    m_Size=m_Capacity;
+                }
 
             vector(const vector& vec)
                 : m_Size(vec.m_Size), m_Capacity(vec.m_Capacity), m_Increments(vec.m_Increments)
@@ -100,6 +114,16 @@ namespace azh
                     bool operator!=(const iterator& it) { return !(m_Vector==it.m_Vector&&m_Index==it.m_Index); }
 
                     T& operator*() { return (*m_Vector)[m_Index]; }
+
+                    int operator-(const iterator& it)
+                    {
+                        if(m_Vector!=it.m_Vector)
+                            throw std::invalid_argument("vector iterator error!");
+                        return m_Index-it.m_Index;
+                    }
+                    
+                    iterator operator-(int i) { return iterator(m_Vector,m_Index-i); }
+                    iterator operator+(int i) { return iterator(m_Vector,m_Index+i); }
             };
 
             inline iterator begin() { return iterator(this,0); }
