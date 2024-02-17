@@ -12,15 +12,15 @@ namespace azh
     {
         public:
             Sort()=delete;
-            static void bubbleSort(T2 begin,T2 end,std::function<bool(const T1&,const T1&)> comparision);
-            static void selectionSort(T2 begin,T2 end,std::function<bool(const T1&,const T1&)> comparision);
-            static void insertionSort(T2 begin,T2 end,std::function<bool(const T1&,const T1&)> comparision);
-            static void shellSort(T2 begin,T2 end,std::function<bool(const T1&,const T1&)> comparision);
-            static void mergeSort(T2 begin,T2 end,std::function<bool(const T1&,const T1&)> comparision);
-            static void mergeSortRecursive(T2 begin,T2 end,std::function<bool(const T1&,const T1&)> comparision);
-            static void quickSort(T2 begin,T2 end,std::function<bool(const T1&,const T1&)> comparision);
-            static void quickSortRecursive(T2 begin,T2 end,std::function<bool(const T1&,const T1&)> comparision);
-            static void heapSort(T2 begin,T2 end, std::function<bool(const T1&,const T1&)> comparision);
+            static void bubbleSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision);
+            static void selectionSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision);
+            static void insertionSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision);
+            static void shellSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision);
+            static void mergeSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision);
+            static void mergeSortRecursive(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision);
+            static void quickSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision);
+            static void quickSortRecursive(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision);
+            static void heapSort(T2 begin,T2 end, std::function<int(const T1&,const T1&)> comparision);
         
         private:
             static void swap(T2 v1,T2 v2)
@@ -32,7 +32,7 @@ namespace azh
     };
 
     template<class T1,class T2>
-    void Sort<T1,T2>::bubbleSort(T2 begin,T2 end,std::function<bool(const T1&,const T1&)> comparision)
+    void Sort<T1,T2>::bubbleSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision)
     {
         int len=end-begin;
         if(len<=0)
@@ -41,14 +41,14 @@ namespace azh
         {
             for(int j=0;j<len-1-i;j++)
             {
-                if(comparision(*(begin+j),*(begin+j+1)))
+                if(comparision(*(begin+j),*(begin+j+1))>0)
                     swap(begin+j,begin+j+1);
             }
         }
     }
 
     template<class T1,class T2>
-    void Sort<T1,T2>::selectionSort(T2 begin,T2 end,std::function<bool(const T1&,const T1&)> comparision)
+    void Sort<T1,T2>::selectionSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision)
     {
         int len=end-begin;
         if(len<=0)
@@ -58,7 +58,7 @@ namespace azh
             int min=i;
             for(int j=i+1;j<len;j++)
             {
-                if(comparision(*(begin+min),*(begin+j)))
+                if(comparision(*(begin+min),*(begin+j))>0)
                     min=j;
             }
             if(i!=min)
@@ -67,16 +67,17 @@ namespace azh
     }
 
     template<class T1,class T2>
-    void Sort<T1,T2>::insertionSort(T2 begin,T2 end,std::function<bool(const T1&,const T1&)> comparision)
+    void Sort<T1,T2>::insertionSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision)
     {
         int len=end-begin;
         if(len<=0)
             throw std::invalid_argument("insertionSort");
         T2 temp=new T1;
-        for(int i=1;i<len;i++){
+        for(int i=1;i<len;i++)
+        {
             int j;
             *temp=*(begin+i);
-            for(j=i;j>0&&(comparision(*(begin+j-1),*temp));j--)
+            for(j=i;j>0&&(comparision(*(begin+j-1),*temp)>0);j--)
                 swap(begin+j,begin+j-1);
             swap(begin+j,temp);
         }
@@ -84,7 +85,7 @@ namespace azh
     }
 
     template<class T1,class T2>
-    void Sort<T1,T2>::shellSort(T2 begin,T2 end,std::function<bool(const T1&,const T1&)> comparision)
+    void Sort<T1,T2>::shellSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision)
     {
         int len=end-begin;
         if(len<=0)
@@ -96,7 +97,7 @@ namespace azh
             {
                 int j;
                 *temp=*(begin+i);
-                for(j=i-gap;j>=0&&(comparision(*(begin+j),*temp));j-=gap)
+                for(j=i-gap;j>=0&&(comparision(*(begin+j),*temp)>0);j-=gap)
                     swap(begin+j+gap,begin+j);
                 swap(begin+j+gap,temp);
             }
@@ -105,7 +106,7 @@ namespace azh
     }
 
     template<class T1,class T2>
-    void Sort<T1,T2>::mergeSort(T2 begin,T2 end,std::function<bool(const T1&,const T1&)> comparision)
+    void Sort<T1,T2>::mergeSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision)
     {
         int len=end-begin;
         if(len<=0)
@@ -125,7 +126,7 @@ namespace azh
                 int p2=mid+1;
                 while(p1<=mid&&p2<=right)
                 {
-                    if(!comparision(*(begin+p1),*(begin+p2)))
+                    if(comparision(*(begin+p1),*(begin+p2))<=0)
                     {
                         *(temp+i)=*(begin+p1);
                         i++;
@@ -162,7 +163,7 @@ namespace azh
     }
 
     template<class T1,class T2>
-    void Sort<T1,T2>::mergeSortRecursive(T2 begin,T2 end,std::function<bool(const T1&,const T1&)> comparision)
+    void Sort<T1,T2>::mergeSortRecursive(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision)
     {
         int len=end-begin;
         if(len<=0)
@@ -181,7 +182,7 @@ namespace azh
             int p2=mid+1;
             while(p1<=mid&&p2<=right)
             {
-                if(!comparision(*(begin+p1),*(begin+p2)))
+                if(comparision(*(begin+p1),*(begin+p2))<=0)
                 {
                     *(temp+i)=*(begin+p1);
                     i++;
@@ -215,7 +216,7 @@ namespace azh
     }
 
     template<class T1,class T2>
-    void Sort<T1,T2>::quickSort(T2 begin,T2 end,std::function<bool(const T1&,const T1&)> comparision)
+    void Sort<T1,T2>::quickSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision)
     {
         int len=end-begin;
         if(len<=0)
@@ -223,7 +224,7 @@ namespace azh
     }
 
     template<class T1,class T2>
-    void Sort<T1,T2>::quickSortRecursive(T2 begin,T2 end,std::function<bool(const T1&,const T1&)> comparision)
+    void Sort<T1,T2>::quickSortRecursive(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision)
     {
         int len=end-begin;
         if(len<=0)
@@ -231,7 +232,7 @@ namespace azh
     }
 
     template<class T1,class T2>
-    void Sort<T1,T2>::heapSort(T2 begin,T2 end, std::function<bool(const T1&,const T1&)> comparision)
+    void Sort<T1,T2>::heapSort(T2 begin,T2 end, std::function<int(const T1&,const T1&)> comparision)
     {
         int len=end-begin;
         if(len<=0)

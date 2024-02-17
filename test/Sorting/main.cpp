@@ -2,9 +2,9 @@
 #include <vector>
 #include <algorithm>
 
-bool comparisionForInt(const int& v1,const int& v2)
+int comparisionForInt(const int& v1,const int& v2)
 {
-    return (v1-v2)>0;
+    return v1-v2;
 };
 
 void printData(int data)
