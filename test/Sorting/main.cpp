@@ -21,7 +21,7 @@ int main()
     std::cout<<"vec1\n";
     std::for_each(vec1.begin(),vec1.end(),printData);
     // azh::Sort<int>::bubbleSort(vec,vec+sizeof(vec)/sizeof(int),comparisionForInt);
-    azh::Sort<int>::mergeSortRecursive(vec,vec+sizeof(vec)/sizeof(int),comparisionForInt);
+    azh::Sort<int>::heapSort(vec,vec+sizeof(vec)/sizeof(int),comparisionForInt);
     azh::Sort<int,std::vector<int>::iterator>::bubbleSort(vec1.begin(),vec1.end(),comparisionForInt);
     std::cout<<"vec\n";
     std::for_each(vec,vec+sizeof(vec)/sizeof(int),printData);

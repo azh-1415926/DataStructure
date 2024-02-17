@@ -6,21 +6,25 @@
 
 namespace azh
 {
-    /* T1 为所排序的数据类型、T2 为用于遍历的迭代器或指针，若未指定为迭代器，则默认为 T1 类型的指针 */
-    template<class T1,class T2=T1*>
+    /*
+        T1 为所排序的数据类型
+        T2 为用于遍历的迭代器或指针，若未指定为迭代器，则默认为 T1 类型的指针
+        T3 为用于存放数据比较函数的容器类型
+    */
+    template<class T1,class T2=T1*,class T3=std::function<int(const T1&,const T1&)>>
     class Sort
     {
         public:
             Sort()=delete;
-            static void bubbleSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision);
-            static void selectionSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision);
-            static void insertionSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision);
-            static void shellSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision);
-            static void mergeSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision);
-            static void mergeSortRecursive(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision);
-            static void quickSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision);
-            static void quickSortRecursive(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision);
-            static void heapSort(T2 begin,T2 end, std::function<int(const T1&,const T1&)> comparision);
+            static void bubbleSort(T2 begin,T2 end,T3 comparision);
+            static void selectionSort(T2 begin,T2 end,T3 comparision);
+            static void insertionSort(T2 begin,T2 end,T3 comparision);
+            static void shellSort(T2 begin,T2 end,T3 comparision);
+            static void mergeSort(T2 begin,T2 end,T3 comparision);
+            static void mergeSortRecursive(T2 begin,T2 end,T3 comparision);
+            static void quickSort(T2 begin,T2 end,T3 comparision);
+            static void quickSortRecursive(T2 begin,T2 end,T3 comparision);
+            static void heapSort(T2 begin,T2 end, T3 comparision);
         
         private:
             static void swap(T2 v1,T2 v2)
@@ -31,8 +35,8 @@ namespace azh
             }
     };
 
-    template<class T1,class T2>
-    void Sort<T1,T2>::bubbleSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision)
+    template<class T1,class T2,class T3>
+    void Sort<T1,T2,T3>::bubbleSort(T2 begin,T2 end,T3 comparision)
     {
         int len=end-begin;
         if(len<=0)
@@ -47,8 +51,8 @@ namespace azh
         }
     }
 
-    template<class T1,class T2>
-    void Sort<T1,T2>::selectionSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision)
+    template<class T1,class T2,class T3>
+    void Sort<T1,T2,T3>::selectionSort(T2 begin,T2 end,T3 comparision)
     {
         int len=end-begin;
         if(len<=0)
@@ -66,8 +70,8 @@ namespace azh
         }
     }
 
-    template<class T1,class T2>
-    void Sort<T1,T2>::insertionSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision)
+    template<class T1,class T2,class T3>
+    void Sort<T1,T2,T3>::insertionSort(T2 begin,T2 end,T3 comparision)
     {
         int len=end-begin;
         if(len<=0)
@@ -84,8 +88,8 @@ namespace azh
         delete temp;
     }
 
-    template<class T1,class T2>
-    void Sort<T1,T2>::shellSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision)
+    template<class T1,class T2,class T3>
+    void Sort<T1,T2,T3>::shellSort(T2 begin,T2 end,T3 comparision)
     {
         int len=end-begin;
         if(len<=0)
@@ -105,8 +109,8 @@ namespace azh
         delete temp;
     }
 
-    template<class T1,class T2>
-    void Sort<T1,T2>::mergeSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision)
+    template<class T1,class T2,class T3>
+    void Sort<T1,T2,T3>::mergeSort(T2 begin,T2 end,T3 comparision)
     {
         int len=end-begin;
         if(len<=0)
@@ -162,8 +166,8 @@ namespace azh
         delete[] temp;
     }
 
-    template<class T1,class T2>
-    void Sort<T1,T2>::mergeSortRecursive(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision)
+    template<class T1,class T2,class T3>
+    void Sort<T1,T2,T3>::mergeSortRecursive(T2 begin,T2 end,T3 comparision)
     {
         int len=end-begin;
         if(len<=0)
@@ -215,28 +219,148 @@ namespace azh
         delete[] temp;
     }
 
-    template<class T1,class T2>
-    void Sort<T1,T2>::quickSort(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision)
+    template<class T1,class T2,class T3>
+    void Sort<T1,T2,T3>::quickSort(T2 begin,T2 end,T3 comparision)
     {
         int len=end-begin;
         if(len<=0)
             throw std::invalid_argument("quickSort");
+        int* lStack=new int[len/2];
+        int* rStack=new int[len/2];
+        int p=-1;
+        int pivot,flag;
+        //push 0-len-1
+        p++;
+        lStack[p]=0;
+        rStack[p]=len-1;
+        while(p>=0)
+        {
+            pivot=rStack[p];
+            int l=lStack[p];
+            int r=pivot-1;
+            while(l<r)
+            {
+                //compare to left
+                flag=comparision(*(begin+l),*(begin+pivot));
+                if(flag<=0)
+                {
+                    l++;
+                    continue;
+                }
+                //compare to right
+                while(l<r&&flag>=0)
+                {
+                    flag=comparision(*(begin+r),*(begin+pivot));
+                    if(flag>=0)
+                        r--;
+                }
+                swap(begin+l,begin+r);
+            }
+            flag=comparision(*(begin+l),*(begin+pivot));
+            if(l>=r&&flag>0)
+                swap(begin+l,begin+pivot);
+            else
+                l++;
+            if(l>lStack[p]+1&&l<rStack[p]-1)
+            {
+                rStack[p+1]=rStack[p];
+                rStack[p]=l-1;
+                lStack[p+1]=l+1;
+                p++;
+            }  
+            else if(l>lStack[p]+1)
+                rStack[p]=l-1;
+            else if(l<rStack[p]-1)
+                lStack[p]=l+1;
+            else
+                p--;
+        }
+        delete[] lStack;
+        delete[] rStack;
     }
 
-    template<class T1,class T2>
-    void Sort<T1,T2>::quickSortRecursive(T2 begin,T2 end,std::function<int(const T1&,const T1&)> comparision)
+    template<class T1,class T2,class T3>
+    void Sort<T1,T2,T3>::quickSortRecursive(T2 begin,T2 end,T3 comparision)
     {
         int len=end-begin;
         if(len<=0)
             throw std::invalid_argument("quickSortRecursive");
+        static std::function<void(int,int)> _quickRecursive=[begin,comparision](int left,int right)
+        {
+            if(left>=right)
+                return;
+            int pivot=right;
+            int l=left;
+            int r=right-1;
+            int flag;
+            while(l<r)
+            {
+                //compare to left
+                flag=comparision(*(begin+l),*(begin+pivot));
+                if(flag<=0)
+                {
+                    l++;
+                    continue;
+                }
+                //compare to right
+                while(l<r&&flag>=0)
+                {
+                    flag=comparision(*(begin+r),*(begin+pivot));
+                    if(flag>=0)
+                        r--;
+                }
+                swap(begin+l,begin+r);
+            }
+            flag=comparision(*(begin+l),*(begin+pivot));
+            if(l>=r&&flag>0)
+                swap(begin+l,begin+pivot);
+            else
+                l++;
+            if(left<l-1)
+                _quickRecursive(left,l-1);
+            if(l+1<right)
+                _quickRecursive(l+1,right);
+        };
+        _quickRecursive(0,len-1);
     }
 
-    template<class T1,class T2>
-    void Sort<T1,T2>::heapSort(T2 begin,T2 end, std::function<int(const T1&,const T1&)> comparision)
+    template<class T1,class T2,class T3>
+    void Sort<T1,T2,T3>::heapSort(T2 begin,T2 end, T3 comparision)
     {
         int len=end-begin;
         if(len<=0)
             throw std::invalid_argument("heapSort");
+        static std::function<void(int,int)> heapify=[begin,comparision](int index, int heapSize)
+        {
+            int pre=index;
+            int curr=index*2+1;
+            int flag;
+            while(curr<=heapSize)
+            {
+                if(curr+1<=heapSize)
+                {
+                    flag=comparision(*(begin+curr+1),*(begin+curr));
+                    if(flag>0)
+                        curr++;
+                }
+                flag=comparision(*(begin+pre),*(begin+curr));
+                if(flag>0)
+                    return;
+                else
+                {
+                    swap(begin+pre,begin+curr);
+                    pre=curr;
+                    curr=pre*2+1;
+                }
+            }
+        };
+        for(int i=len/2-1;i>=0;i--)
+            heapify(i,len-1);
+        for(int i=len-1;i>0;i--)
+        {
+            swap(begin,begin+i);
+            heapify(0,i-1);
+        }
     }
 }
 
