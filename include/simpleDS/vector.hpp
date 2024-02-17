@@ -28,25 +28,26 @@ namespace azh
             
             ~vector() { delete[] m_Data; }
 
-            inline bool empty() { return m_Size==0; }
-            inline size_t size() { return m_Size; }
-            inline size_t capacity() { return m_Capacity; }
-            inline size_t increments() { return m_Increments; }
+            inline bool empty() const { return m_Size==0; }
+            inline size_t size() const { return m_Size; }
+            inline size_t capacity() const { return m_Capacity; }
+            inline size_t increments() const { return m_Increments; }
             
             inline void setIncrements(size_t increments) { m_Increments=increments; }
 
-            void resize(size_t size);
+            void reserve(size_t n);
             
             inline void push_back(const T& data)
             {
                 if(m_Size==m_Capacity)
-                    resize(m_Capacity+m_Increments);
+                    reserve(m_Capacity+m_Increments);
                 m_Data[m_Size++]=data;
             }
 
             inline void pop_back() { m_Size--; }
 
             T& operator[](size_t i) { return m_Data[i]; }
+            const T& operator[](size_t i) const { return m_Data[i]; }
 
             vector& operator=(const vector& vec)
             {
@@ -58,6 +59,7 @@ namespace azh
                 for(size_t i=0;i<m_Size;i++)
                     m_Data[i]=vec.m_Data[i];
             }
+            
             class iterator
             {
                 private:
@@ -105,16 +107,16 @@ namespace azh
     };
 
     template <class T>
-    void vector<T>::resize(size_t size)
+    void vector<T>::reserve(size_t n)
     {
-        if(size<m_Size)
+        if(n<m_Size)
             return;
-        T* temp=new T[size];
+        T* temp=new T[n];
         for(size_t i=0;i<m_Size;i++)
             temp[i]=m_Data[i];
         delete[] m_Data;
         m_Data=temp;
-        m_Capacity=size;
+        m_Capacity=n;
     }
 }
 
