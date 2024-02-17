@@ -37,7 +37,7 @@ namespace azh
             BTNode(BTNode<T1,T2,T3>* parent=nullptr);
             ~BTNode();
             /* 查找当前节点中大于等于指定关键字 key 的最大下标 */
-            size_t searchIndex(T1 key);
+            size_t searchIndex(T1 key) const;
             /* 插入数据到指定下标位置，且将关键字数量加一 */
             void insertData(size_t index,T1 key,T2 data);
             /* 将节点 node 插入当前节点下标 index 位置的右子节点处，关键字数量将不变 */
@@ -64,7 +64,7 @@ namespace azh
             std::function<void(T2)> m_FuncOfTraversal;
 
             /* 根据 key 在全局查找指定节点，若不存在该关键字则返回 nullptr */
-            BTNode<T1,T2,T3>* searchBTNode(T1 key);
+            BTNode<T1,T2,T3>* searchBTNode(T1 key) const;
             /* 分裂指定节点，传入的 node 仍然为分裂后的根节点 */
             static void splitBTNode(BTNode<T1,T2,T3>* node);
             /* 将父节点中下标位置为 index 的关键字左移到 index 关键字对应的左子节点，到其 removePos 位置停下（即覆盖 removePos 位置的关键字、数据），若左子节点为空，则将父节点的第一个关键字覆盖，不处理左子节点 */
@@ -87,19 +87,19 @@ namespace azh
             inline size_t order() const { return M; }
 
             /* 查找 key 对应的数据 */
-            T2 search(T1 key);
+            T2 search(T1 key) const;
             /* 创建关键字为 key、数据为 data 的节点，并插入到 B 树中 */
             bool insert(T1 key,T2 data);
             /* 在 B 树中删除关键字为 key 的节点 */
             bool erase(T1 key);
             /* 遍历关键字 */
-            void show();
+            void show() const;
             /* 前序遍历 */
-            void preOrderTraversal(BTNode<T1,T2,T3>* node=nullptr);
+            void preOrderTraversal(BTNode<T1,T2,T3>* node=nullptr) const;
             /* 中序遍历 */
-            void inOrderTraversal(BTNode<T1,T2,T3>* node=nullptr);
+            void inOrderTraversal(BTNode<T1,T2,T3>* node=nullptr) const;
             /* 层序遍历 */
-            void levelOrderTraversal();
+            void levelOrderTraversal() const;
     };
 
     template<class T1,class T2,size_t T3>
@@ -126,7 +126,7 @@ namespace azh
     }
 
     template<class T1,class T2,size_t T3>
-    size_t BTNode<T1,T2,T3>::searchIndex(T1 key)
+    size_t BTNode<T1,T2,T3>::searchIndex(T1 key) const
     {
         /* 因为下标 0 弃用，从 1 开始检索，当 i 未超出关键字数量且小于 key 的值时，i++ */
         size_t i=1;
@@ -203,7 +203,7 @@ namespace azh
     }
 
     template<class T1,class T2,size_t T3>
-    BTNode<T1,T2,T3>* BTree<T1,T2,T3>::searchBTNode(T1 key)
+    BTNode<T1,T2,T3>* BTree<T1,T2,T3>::searchBTNode(T1 key) const
     {
         size_t i=1;
         BTNode<T1,T2,T3>* currNode=m_Root;
@@ -497,7 +497,7 @@ namespace azh
         }
     }
     template<class T1,class T2,size_t T3>
-    T2 BTree<T1,T2,T3>::search(T1 key)
+    T2 BTree<T1,T2,T3>::search(T1 key) const
     {
         size_t i=1;
         BTNode<T1,T2,T3>* node=searchBTNode(key);
@@ -614,7 +614,7 @@ namespace azh
     }
 
     template<class T1,class T2,size_t T3>
-    void BTree<T1,T2,T3>::show()
+    void BTree<T1,T2,T3>::show() const
     {
         linkQueue<BTNode<T1,T2,T3>*> queue;
         BTNode<T1,T2,T3>* currNode=nullptr;
@@ -645,7 +645,7 @@ namespace azh
     }
 
     template<class T1,class T2,size_t T3>
-    void BTree<T1,T2,T3>::preOrderTraversal(BTNode<T1,T2,T3>* node)
+    void BTree<T1,T2,T3>::preOrderTraversal(BTNode<T1,T2,T3>* node) const
     {
         if(!m_FuncOfTraversal)
             throw "not set function of traversal!";
@@ -667,7 +667,7 @@ namespace azh
     }
 
     template<class T1,class T2,size_t T3>
-    void BTree<T1,T2,T3>::inOrderTraversal(BTNode<T1,T2,T3>* node)
+    void BTree<T1,T2,T3>::inOrderTraversal(BTNode<T1,T2,T3>* node) const
     {
         if(!m_FuncOfTraversal)
             throw "not set function of traversal!";
@@ -689,7 +689,7 @@ namespace azh
     }
 
     template<class T1,class T2,size_t T3>
-    void BTree<T1,T2,T3>::levelOrderTraversal()
+    void BTree<T1,T2,T3>::levelOrderTraversal() const
     {
         if(!m_FuncOfTraversal)
             throw "not set function of traversal!";
