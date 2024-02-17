@@ -1,15 +1,121 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <iostream>
+
 namespace azh
 {
     template<class T>
     class vector
     {
         private:
+            T* m_Data;
+            size_t m_Size;
+            size_t m_Capacity;
+            size_t m_Increments;
+
         public:
-            vector();
-    };   
+            explicit vector(size_t capacity=10)
+                : m_Size(0), m_Capacity(10), m_Increments(20) { m_Data=new T[m_Capacity]; }
+
+            vector(const vector& vec)
+                : m_Size(vec.m_Size), m_Capacity(vec.m_Capacity), m_Increments(vec.m_Increments)
+            {
+                m_Data=new T[m_Size];
+                for(size_t i=0;i<m_Size;i++)
+                    m_Data[i]=vec.m_Data[i];
+            }
+            
+            ~vector() { delete[] m_Data; }
+
+            inline bool empty() { return m_Size==0; }
+            inline size_t size() { return m_Size; }
+            inline size_t capacity() { return m_Capacity; }
+            inline size_t increments() { return m_Increments; }
+            
+            inline void setIncrements(size_t increments) { m_Increments=increments; }
+
+            void resize(size_t size);
+            
+            inline void push_back(const T& data)
+            {
+                if(m_Size==m_Capacity)
+                    resize(m_Capacity+m_Increments);
+                m_Data[m_Size++]=data;
+            }
+
+            inline void pop_back() { m_Size--; }
+
+            T& operator[](size_t i) { return m_Data[i]; }
+
+            vector& operator=(const vector& vec)
+            {
+                m_Size=vec.m_Size;
+                m_Capacity=vec.m_Capacity;
+                m_Increments=vec.m_Increments;
+                delete[] m_Data;
+                m_Data=new T[m_Size];
+                for(size_t i=0;i<m_Size;i++)
+                    m_Data[i]=vec.m_Data[i];
+            }
+            class iterator
+            {
+                private:
+                    vector* m_Vector;
+                    size_t m_Index;
+                
+                public:
+                    iterator(vector* vec=nullptr,size_t i=0)
+                        : m_Vector(vec), m_Index(i) {  }
+
+                    iterator(const iterator& it)
+                        : m_Vector(it.m_Vector), m_Index(it.m_Index) {  }
+
+                    iterator& operator=(const iterator& it)
+                    {
+                        m_Vector=it.m_Vector;
+                        m_Index=it.m_Index;
+                    }
+
+                    iterator& operator++() { m_Index++; return *this; }
+
+                    iterator operator++(int)
+                    {
+                        iterator it=*this;
+                        m_Index++;
+                        return it;
+                    }
+
+                    iterator& operator--() { m_Index--; return *this; }
+                    
+                    iterator operator--(int)
+                    {
+                        iterator it=*this;
+                        m_Index--;
+                        return it;
+                    }
+
+                    bool operator!=(const iterator& it) { return !(m_Vector==it.m_Vector&&m_Index==it.m_Index); }
+
+                    T& operator*() { return (*m_Vector)[m_Index]; }
+            };
+
+            inline iterator begin() { return iterator(this,0); }
+            inline iterator end() { return iterator(this,m_Size); }
+    };
+
+    template <class T>
+    void vector<T>::resize(size_t size)
+    {
+        if(size<m_Size)
+            return;
+        T* temp=new T[size];
+        for(size_t i=0;i<m_Size;i++)
+            temp[i]=m_Data[i];
+        delete[] m_Data;
+        m_Data=temp;
+        m_Capacity=size;
+    }
 }
 
 #endif /* VECTOR_H */
