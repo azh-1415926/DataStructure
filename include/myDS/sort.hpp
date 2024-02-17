@@ -167,6 +167,51 @@ namespace azh
         int len=end-begin;
         if(len<=0)
             throw std::invalid_argument("mergeSortRecursive");
+        T2 temp=new T1[len];
+        static std::function<void(int,int)> _mergeRecursive=[begin,comparision,temp](int left,int right)
+        {
+            if(left==right)
+                return;
+            int mid=left+((right-left)>>1);
+            _mergeRecursive(left,mid);
+            _mergeRecursive(mid+1,right);
+            /* 归并开始 */
+            int i=left;
+            int p1=left;
+            int p2=mid+1;
+            while(p1<=mid&&p2<=right)
+            {
+                if(!comparision(*(begin+p1),*(begin+p2)))
+                {
+                    *(temp+i)=*(begin+p1);
+                    i++;
+                    p1++;
+                }
+                else
+                {
+                    *(temp+i)=*(begin+p2);
+                    i++;
+                    p2++;
+                }
+            }
+            while(p1<=mid)
+            {
+                *(temp+i)=*(begin+p1);
+                i++;
+                p1++;
+            }
+            while(p2<=right)
+            {
+                *(temp+i)=*(begin+p2);
+                i++;
+                p2++;
+            }
+            for(size_t i=0;i<right+1-left;i++)
+                *(begin+left+i)=*(temp+left+i);
+            /* 归并结束 */
+        };
+        _mergeRecursive(0,len-1);
+        delete[] temp;
     }
 
     template<class T1,class T2>
