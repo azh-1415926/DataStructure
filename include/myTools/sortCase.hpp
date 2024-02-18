@@ -44,7 +44,7 @@ namespace azh
     {
         if(!m_FuncOfRand)
             throw "sortCase:not call setRandFunction!";
-        static vector<T> vec;
+        static vector<T1> vec;
         static size_t count=0;
         if(count<refreshCount)
         {
