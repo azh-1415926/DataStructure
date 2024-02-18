@@ -21,6 +21,9 @@
 #define LEFT_RANGE 0
 #define RIGHT_RANGE 100
 
+#define SORT_FUNC(func) \
+    func(array,N,SIZE,compare)
+
 /* 测试排序的数组、用于还原的备用数组 */
 static int* array=NULL;
 static int* arrayCopy=NULL;
@@ -33,13 +36,13 @@ int compare(const eleType first,const eleType second)
 }
 
 /* 显示数据函数 */
-void showData(eleType data)
+void printData(eleType data)
 {
     printf("%d ",*(int*)data);
 }
 
 /* 用于初始化数据的函数 */
-void inital(eleType data,int num)
+void initalData(eleType data,int num)
 {
     *(int*)data=num%(RIGHT_RANGE-LEFT_RANGE)+LEFT_RANGE;
 }
@@ -68,65 +71,65 @@ void export(const char* log)
     exportLog("sort.log",buf);
 }
 
-void func0()
+void sortBy(int i)
 {
-    qsort(array,N,SIZE,compare);
+    switch (i)
+    {
+    case 0:
+        SORT_FUNC(qsort);
+        break;
+
+    case 1:
+        SORT_FUNC(bubbleSort);
+        break;
+    
+    case 2:
+        SORT_FUNC(selectionSort);
+        break;
+
+    case 3:
+        SORT_FUNC(insertionSort);
+        break;
+
+    case 4:
+        SORT_FUNC(shellSort);
+        break;
+
+    case 5:
+        SORT_FUNC(mergeSort);
+        break;
+
+    case 6:
+        SORT_FUNC(mergeSortRecursive);
+        break;
+
+    case 7:
+        SORT_FUNC(quickSort);
+        break;
+
+    case 8:
+        SORT_FUNC(quickSortRecursive);
+        break;
+
+    case 9:
+        SORT_FUNC(heapSort);
+        break;
+
+    default:
+        break;
+    }
 }
 
-void func1()
-{
-    bubbleSort(array,N,SIZE,compare);
-}
-
-void func2()
-{
-    selectionSort(array,N,SIZE,compare);
-}
-
-void func3()
-{
-    insertionSort(array,N,SIZE,compare);
-}
-
-void func4()
-{
-    shellSort(array,N,SIZE,compare);
-}
-
-void func5()
-{
-    mergeSort(array,N,SIZE,compare);
-}
-
-void func6()
-{
-    mergeSortRecursive(array,N,SIZE,compare);
-}
-
-void func7()
-{
-    quickSort(array,N,SIZE,compare);
-}
-
-void func8()
-{
-    quickSortRecursive(array,N,SIZE,compare);
-}
-
-void func9()
-{
-    heapSort(array,N,SIZE,compare);
-}
-
-/* 计时排序 count 次数的时间 */
-double countTime(int count,void(*func)(int))
+/* 计时第 i 个排序方式，执行 count 次数的时间 */
+double countTime(int i,int count)
 {
     clock_t startTime,endTime;
     double costTime=0.0;
     startTime=clock();
-    for(int i=0;i<count;i++){
+    for(int j=0;j<count;j++)
+    {
         memcpy(array,arrayCopy,N*SIZE);
-        func(i);
+        sortBy(i);
     }
     endTime=clock();
     costTime=(endTime-startTime)/1000.0;
@@ -134,19 +137,20 @@ double countTime(int count,void(*func)(int))
     return costTime;
 }
 
-/* 测试所有排序，以相同数据序列测试 */
-void testAllCase(char** sortInfo,void(**funcInfo)(int),int n)
+/* 从 0-n 测试排序函数，以相同数据序列测试 */
+void testAllCase(char** sortInfo,int n)
 {
     char log[4096]={0};
     char buf[50]={0};
     double costTime=0.0;
     printf("Array : ");
-    showCase((void*)arrayCopy,N,showData);
+    showCase((void*)arrayCopy,N,printData);
     for(int i=0;i<n;i++){
         sprintf(currFunc,sortInfo[i]);
-        costTime=countTime(COUNT,funcInfo[i]);
-        if(!verifyCase((void*)array,N,compare)){
-            showCase((void*)array,N,showData);
+        costTime=countTime(i,COUNT);
+        if(!verifyCase((void*)array,N,compare))
+        {
+            showCase((void*)array,N,printData);
             printf("%s error!",sortInfo[i]);
             free(array);
             free(arrayCopy);
@@ -158,19 +162,20 @@ void testAllCase(char** sortInfo,void(**funcInfo)(int),int n)
     export(log);
 }
 
-/* 测试单个排序 count 次随机数据 */
-void testOneCase(char* sortName,void(*func)(int),int count)
+/* 测试第 i 个排序 count 次随机数据 */
+void testOneCase(char* sortName,int i,int count)
 {
     printf("------ Name : %s Count : %d ------\n",sortName,count);
     for(int i=0;i<count;i++){
         sprintf(currFunc,sortName);
         memcpy(array,arrayCopy,N*SIZE);
-        countTime(COUNT,func);
+        countTime(i,COUNT);
         printf("Array : ");
-        showCase((void*)arrayCopy,N,showData);
+        showCase((void*)arrayCopy,N,printData);
         printf("Sorted : ");
-        showCase((void*)array,N,showData);
-        if(!verifyCase((void*)array,N,compare)){
+        showCase((void*)array,N,printData);
+        if(!verifyCase((void*)array,N,compare))
+        {
             printf("%s error!",sortName);
             free(array);
             free(arrayCopy);
@@ -197,25 +202,14 @@ int main()
         "HeapSort"
     };
     int n=sizeof(sortInfo)/sizeof(char*);
-    void(**funcInfo)(int)=(void(**)(int))malloc(n*sizeof(void(*)(int)));
-    funcInfo[0]=func0;
-    funcInfo[1]=func1;
-    funcInfo[2]=func2;
-    funcInfo[3]=func3;
-    funcInfo[4]=func4;
-    funcInfo[5]=func5;
-    funcInfo[6]=func6;
-    funcInfo[7]=func7;
-    funcInfo[8]=func8;
-    funcInfo[9]=func9;
     double costTime=0.0;
     array=malloc(N*SIZE);
     arrayCopy=malloc(N*SIZE);
-    initalCase(inital);
+    initalCase(initalData);
     createCase((void*)arrayCopy,N);
     // createCaseNoRepeat(arrayCopy,N,LEFT_RANGE,RIGHT_RANGE);
-    testAllCase(sortInfo,funcInfo,n);
-    testOneCase(sortInfo[9],funcInfo[9],10);
+    testAllCase(sortInfo,10);
+    testOneCase(sortInfo[9],9,10);
     free(array);
     free(arrayCopy);
     return 0;
