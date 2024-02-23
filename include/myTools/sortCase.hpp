@@ -23,7 +23,7 @@ namespace azh
             inline void setRandFunction(T3 funcOfRand) { m_FuncOfRand=funcOfRand; }
             
             vector<T1> getNoRepeat();
-            vector<T1> getSame(size_t refreshCount);
+            vector<T1> getNoRepeatByCount(size_t refreshCount);
 
             static bool verify(vector<T1> vec,std::function<int(const T1&,const T1&)> comparision);
 
@@ -40,7 +40,7 @@ namespace azh
     }
 
     template<class T1,class T2,class T3>
-    vector<T1> sortCase<T1,T2,T3>::getSame(size_t refreshCount)
+    vector<T1> sortCase<T1,T2,T3>::getNoRepeatByCount(size_t refreshCount)
     {
         if(!m_FuncOfRand)
             throw "sortCase:not call setRandFunction!";

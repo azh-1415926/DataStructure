@@ -72,6 +72,7 @@ namespace azh
                 m_Data=new T[m_Size];
                 for(size_t i=0;i<m_Size;i++)
                     m_Data[i]=vec.m_Data[i];
+                return *this;
             }
             
             class iterator
@@ -122,8 +123,8 @@ namespace azh
                         return m_Index-it.m_Index;
                     }
                     
-                    iterator operator-(int i) { return iterator(m_Vector,m_Index-i); }
-                    iterator operator+(int i) { return iterator(m_Vector,m_Index+i); }
+                    iterator operator-(int i) const { return iterator(m_Vector,m_Index-i); }
+                    iterator operator+(int i) const { return iterator(m_Vector,m_Index+i); }
             };
 
             inline iterator begin() { return iterator(this,0); }

@@ -27,7 +27,28 @@ namespace azh
             static void heapSort(T2 begin,T2 end, T3 comparision);
         
         private:
+            static void swap(T1* v1,T1* v2)
+            {
+                T1 temp=*v1;
+                *v1=*v2;
+                *v2=temp;
+            }
+
             static void swap(T2 v1,T2 v2)
+            {
+                T1 temp=*v1;
+                *v1=*v2;
+                *v2=temp;
+            }
+
+            static void swap(T1* v1,T2 v2)
+            {
+                T1 temp=*v1;
+                *v1=*v2;
+                *v2=temp;
+            }
+
+            static void swap(T2 v1,T1* v2)
             {
                 T1 temp=*v1;
                 *v1=*v2;
@@ -76,7 +97,7 @@ namespace azh
         int len=end-begin;
         if(len<=0)
             throw std::invalid_argument("insertionSort");
-        T2 temp=new T1;
+        T1* temp=new T1;
         for(int i=1;i<len;i++)
         {
             int j;
@@ -94,7 +115,7 @@ namespace azh
         int len=end-begin;
         if(len<=0)
             throw std::invalid_argument("shellSort");
-        T2 temp=new T1;
+        T1* temp=new T1;
         for(int gap=len>>1;gap>0;gap>>=1)
         {
             for(int i=gap;i<len;i++)
@@ -115,7 +136,7 @@ namespace azh
         int len=end-begin;
         if(len<=0)
             throw std::invalid_argument("mergeSort");
-        T2 temp=new T1[len];
+        T1* temp=new T1[len];
         for(int mergeSize=1;mergeSize<len;mergeSize<<=1)
         {
             for(int left=0;left<len;)
@@ -172,7 +193,7 @@ namespace azh
         int len=end-begin;
         if(len<=0)
             throw std::invalid_argument("mergeSortRecursive");
-        T2 temp=new T1[len];
+        T1* temp=new T1[len];
         static std::function<void(int,int)> _mergeRecursive=[begin,comparision,temp](int left,int right)
         {
             if(left==right)
