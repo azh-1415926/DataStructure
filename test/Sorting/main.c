@@ -132,7 +132,7 @@ double countTime(int i,int count)
         sortBy(i);
     }
     endTime=clock();
-    costTime=(endTime-startTime)/1000.0;
+    costTime=(endTime-startTime)/1.0/CLOCKS_PER_SEC;
     printf("Sorting by : %-20s CostTime : %.3lfs\n",currFunc,costTime);
     return costTime;
 }
