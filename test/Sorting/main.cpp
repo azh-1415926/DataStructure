@@ -1,5 +1,6 @@
 #include <myDS/sort.hpp>
 #include <myTools/sortCase.hpp>
+#include <myTools/timer.hpp>
 #include <algorithm>
 
 #include <ctime>
@@ -105,22 +106,48 @@ void sortBy(int i)
 
 int main()
 {
-    int n=100000;
+    int sortCount=1000000;
+    azh::Timer timer;
     azh::sortCase<int> sortCase(10,0,10);
     sortCase.setRandFunction(getRandForInt);
     
+    /* 测试全部排序 */
     for(int i=1;i<10;i++)
     {
         vecCpy=sortCase.getNoRepeat();
         std::cout<<"Before Sorting:\n";
         SHOW_CONTAINER_DATA(vecCpy,printData);
-        for(int j=0;j<n;j++)
+        timer.start();
+        for(int j=0;j<sortCount;j++)
         {
             vec=vecCpy;
             sortBy(i);
         }
+        double sec=timer.end();
         std::cout<<"After Sorting:\n";
         SHOW_CONTAINER_DATA(vec,printData);
+        std::cout<<"Cost time:"<<sec<<"\n";
+        bool isVaild=sortCase.verify(vec,comparisionForInt);
+        if(!isVaild)
+            std::cout<<"sort error!\n";
+    }
+
+    /* 测试单个排序 */
+    for(int i=0;i<10;i++)
+    {
+        vecCpy=sortCase.getNoRepeat();
+        std::cout<<"Before Sorting:\n";
+        SHOW_CONTAINER_DATA(vecCpy,printData);
+        timer.start();
+        for(int j=0;j<sortCount;j++)
+        {
+            vec=vecCpy;
+            sortBy(5);
+        }
+        double sec=timer.end();
+        std::cout<<"After Sorting:\n";
+        SHOW_CONTAINER_DATA(vec,printData);
+        std::cout<<"Cost time:"<<sec<<"\n";
         bool isVaild=sortCase.verify(vec,comparisionForInt);
         if(!isVaild)
             std::cout<<"sort error!\n";
