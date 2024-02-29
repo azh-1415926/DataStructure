@@ -96,7 +96,7 @@ namespace azh
             /* 插入 pair */
             bool insert(const Pair<T1,T2>& pair);
             /* 插入 vector，返回插入失败的数组 */
-            vector<Pair<T1,T2>> insert(const vector<Pair<T1,T2>>& vec);
+            Vector<Pair<T1,T2>> insert(const Vector<Pair<T1,T2>>& vec);
             /* 在 B 树中删除关键字为 key 的节点 */
             bool erase(T1 key);
             /* 遍历关键字 */
@@ -561,9 +561,9 @@ namespace azh
     }
 
     template <class T1, class T2, size_t T3>
-    inline vector<Pair<T1, T2>> BTree<T1, T2, T3>::insert(const vector<Pair<T1, T2>> &vec)
+    inline Vector<Pair<T1, T2>> BTree<T1, T2, T3>::insert(const Vector<Pair<T1, T2>> &vec)
     {
-        vector<Pair<T1, T2>> vecOfFailed;
+        Vector<Pair<T1, T2>> vecOfFailed;
         for(int i=0;i<vec.size();i++)
         {
             const Pair<T1,T2>& pair=vec[i];

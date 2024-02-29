@@ -7,7 +7,7 @@
 namespace azh
 {
     template<class T>
-    class vector
+    class Vector
     {
         private:
             T* m_Data;
@@ -16,10 +16,10 @@ namespace azh
             size_t m_Increments;
 
         public:
-            explicit vector(size_t capacity=10)
+            explicit Vector(size_t capacity=10)
                 : m_Size(0), m_Capacity(10), m_Increments(20) { m_Data=new T[m_Capacity]; }
 
-            vector(std::initializer_list<T> list)
+            Vector(std::initializer_list<T> list)
                 : m_Size(0), m_Capacity(list.size()), m_Increments(20)
             {
                 m_Data=new T[m_Capacity];
@@ -32,7 +32,7 @@ namespace azh
                 m_Size=m_Capacity;
             }
 
-            vector(const vector& vec)
+            Vector(const Vector& vec)
                 : m_Size(vec.m_Size), m_Capacity(vec.m_Capacity), m_Increments(vec.m_Increments)
             {
                 m_Data=new T[m_Size];
@@ -40,7 +40,7 @@ namespace azh
                     m_Data[i]=vec.m_Data[i];
             }
             
-            ~vector() { delete[] m_Data; }
+            ~Vector() { delete[] m_Data; }
 
             inline bool empty() const { return m_Size==0; }
             inline size_t size() const { return m_Size; }
@@ -63,7 +63,7 @@ namespace azh
             T& operator[](size_t i) { return m_Data[i]; }
             const T& operator[](size_t i) const { return m_Data[i]; }
 
-            vector& operator=(const vector& vec)
+            Vector& operator=(const Vector& vec)
             {
                 m_Size=vec.m_Size;
                 m_Capacity=vec.m_Capacity;
@@ -78,11 +78,11 @@ namespace azh
             class iterator
             {
                 private:
-                    vector* m_Vector;
+                    Vector* m_Vector;
                     size_t m_Index;
                 
                 public:
-                    iterator(vector* vec=nullptr,size_t i=0)
+                    iterator(Vector* vec=nullptr,size_t i=0)
                         : m_Vector(vec), m_Index(i) {  }
 
                     iterator(const iterator& it)
@@ -119,7 +119,7 @@ namespace azh
                     int operator-(const iterator& it)
                     {
                         if(m_Vector!=it.m_Vector)
-                            throw std::invalid_argument("vector iterator error!");
+                            throw std::invalid_argument("Vector iterator error!");
                         return m_Index-it.m_Index;
                     }
                     
@@ -132,7 +132,7 @@ namespace azh
     };
 
     template <class T>
-    void vector<T>::reserve(size_t n)
+    void Vector<T>::reserve(size_t n)
     {
         if(n<m_Size)
             return;

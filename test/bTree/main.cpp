@@ -50,8 +50,8 @@ void traversal(int data)
 
 int main(){
     azh::BTree<Key,int> tree;
-    azh::vector<int> keys={35,16,18,70,5,50,22,60,13,17,12,45,25,42,15,90,30,7};
-    azh::vector<azh::Pair<Key,int>> vec;
+    azh::Vector<int> keys={35,16,18,70,5,50,22,60,13,17,12,45,25,42,15,90,30,7};
+    azh::Vector<azh::Pair<Key,int>> vec;
     for(int i=0;i<keys.size();i++)
     {
         vec.push_back(azh::Pair<Key,int>(keys[i],keys[i]));

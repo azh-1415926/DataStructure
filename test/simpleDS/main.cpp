@@ -14,7 +14,7 @@ int main(){
     azh::linkList<int> list;
     list.insert(0);
     list.show();
-    azh::vector<int> vec;
+    azh::Vector<int> vec;
     vec.push_back(0);
     vec.push_back(3);
     for(auto i : vec)

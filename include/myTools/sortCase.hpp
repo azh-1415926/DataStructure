@@ -18,21 +18,21 @@ namespace azh
 
         public:
             explicit sortCase(size_t n,const T2& lowerLimit,const T2& upperLimit)
-                : m_Sum(10), m_LowerLimit(lowerLimit), m_UpperLimit(upperLimit) {  }
+                : m_Sum(n), m_LowerLimit(lowerLimit), m_UpperLimit(upperLimit) {  }
 
             inline void setRandFunction(T3 funcOfRand) { m_FuncOfRand=funcOfRand; }
             
-            vector<T1> getNoRepeat();
-            vector<T1> getNoRepeatByCount(size_t refreshCount);
+            Vector<T1> getNoRepeat();
+            Vector<T1> getNoRepeatByCount(size_t refreshCount);
 
-            static bool verify(vector<T1> vec,std::function<int(const T1&,const T1&)> comparision);
+            static bool verify(Vector<T1> vec,std::function<int(const T1&,const T1&)> comparision);
 
         private:
-            vector<T1> getNoRepeatData();
+            Vector<T1> getNoRepeatData();
     };
 
     template<class T1,class T2,class T3>
-    vector<T1> sortCase<T1,T2,T3>::getNoRepeat()
+    Vector<T1> sortCase<T1,T2,T3>::getNoRepeat()
     {
         if(!m_FuncOfRand)
             throw "sortCase:not call setRandFunction!";
@@ -40,24 +40,26 @@ namespace azh
     }
 
     template<class T1,class T2,class T3>
-    vector<T1> sortCase<T1,T2,T3>::getNoRepeatByCount(size_t refreshCount)
+    Vector<T1> sortCase<T1,T2,T3>::getNoRepeatByCount(size_t refreshCount)
     {
         if(!m_FuncOfRand)
             throw "sortCase:not call setRandFunction!";
-        static vector<T1> vec;
+        static Vector<T1> vec;
         static size_t count=0;
-        if(count<refreshCount)
+        if(count==0||count>=refreshCount)
         {
             vec=getNoRepeatData();
             count++;
+            if(count>=refreshCount)
+                count=0;
         }
         return vec;
     }
 
     template<class T1,class T2,class T3>
-    vector<T1> sortCase<T1,T2,T3>::getNoRepeatData()
+    Vector<T1> sortCase<T1,T2,T3>::getNoRepeatData()
     {
-        vector<T1> vec;
+        Vector<T1> vec;
         auto seed=m_UpperLimit-m_LowerLimit;
         if(seed<m_Sum)
             throw "sortCase:seed is smaller than n!";
@@ -83,7 +85,7 @@ namespace azh
     }
 
     template<class T1,class T2,class T3>
-    bool sortCase<T1,T2,T3>::verify(vector<T1> vec,std::function<int(const T1&,const T1&)> comparision)
+    bool sortCase<T1,T2,T3>::verify(Vector<T1> vec,std::function<int(const T1&,const T1&)> comparision)
     {
         for(auto i=vec.begin();i!=vec.end()-1;i++)
         {
