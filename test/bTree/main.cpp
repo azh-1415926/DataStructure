@@ -50,24 +50,13 @@ void traversal(int data)
 
 int main(){
     azh::BTree<Key,int> tree;
-    tree.insert(35,35);
-    tree.insert(16,16);
-    tree.insert(18,18);
-    tree.insert(70,70);
-    tree.insert(5,5);
-    tree.insert(50,50);
-    tree.insert(22,22);
-    tree.insert(60,60);
-    tree.insert(13,13);
-    tree.insert(17,17);
-    tree.insert(12,12);
-    tree.insert(45,45);
-    tree.insert(25,25);
-    tree.insert(42,42);
-    tree.insert(15,15);
-    tree.insert(90,90);
-    tree.insert(30,30);
-    tree.insert(7,7);
+    azh::vector<int> keys={35,16,18,70,5,50,22,60,13,17,12,45,25,42,15,90,30,7};
+    azh::vector<azh::Pair<Key,int>> vec;
+    for(int i=0;i<keys.size();i++)
+    {
+        vec.push_back(azh::Pair<Key,int>(keys[i],keys[i]));
+    }
+    tree.insert(vec);
     std::cout<<"Create bTree\n";
     std::cout<<"ShowKeys:";
     tree.show();

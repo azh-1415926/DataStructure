@@ -21,16 +21,16 @@ namespace azh
 
             vector(std::initializer_list<T> list)
                 : m_Size(0), m_Capacity(list.size()), m_Increments(20)
+            {
+                m_Data=new T[m_Capacity];
+                size_t i=0;
+                for(auto it=list.begin();it!=list.end();it++)
                 {
-                    m_Data=new T[m_Capacity];
-                    size_t i=0;
-                    for(auto it=list.begin();it!=list.end();it++)
-                    {
-                        m_Data[i]=*it;
-                        i++;
-                    }
-                    m_Size=m_Capacity;
+                    m_Data[i]=*it;
+                    i++;
                 }
+                m_Size=m_Capacity;
+            }
 
             vector(const vector& vec)
                 : m_Size(vec.m_Size), m_Capacity(vec.m_Capacity), m_Increments(vec.m_Increments)

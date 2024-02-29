@@ -4,6 +4,9 @@
 #include <iostream>
 #include <functional>
 #include <simpleDS/linkQueue.hpp>
+#include <simpleDS/vector.hpp>
+
+#include "pair.hpp"
 
 namespace azh
 {
@@ -89,7 +92,11 @@ namespace azh
             /* 查找 key 对应的数据 */
             T2 search(T1 key) const;
             /* 创建关键字为 key、数据为 data 的节点，并插入到 B 树中 */
-            bool insert(T1 key,T2 data);
+            bool insert(T1 key,T2 date);
+            /* 插入 pair */
+            bool insert(const Pair<T1,T2>& pair);
+            /* 插入 vector，返回插入失败的数组 */
+            vector<Pair<T1,T2>> insert(const vector<Pair<T1,T2>>& vec);
             /* 在 B 树中删除关键字为 key 的节点 */
             bool erase(T1 key);
             /* 遍历关键字 */
@@ -545,6 +552,25 @@ namespace azh
             splitBTNode(currNode);
         }
         return true;
+    }
+
+    template <class T1, class T2, size_t T3>
+    inline bool BTree<T1, T2, T3>::insert(const Pair<T1, T2> &pair)
+    {
+        return insert(pair.first,pair.second);
+    }
+
+    template <class T1, class T2, size_t T3>
+    inline vector<Pair<T1, T2>> BTree<T1, T2, T3>::insert(const vector<Pair<T1, T2>> &vec)
+    {
+        vector<Pair<T1, T2>> vecOfFailed;
+        for(int i=0;i<vec.size();i++)
+        {
+            const Pair<T1,T2>& pair=vec[i];
+            if(!insert(pair.first,pair.second))
+                vecOfFailed.push_back(pair);
+        }
+        return vecOfFailed;
     }
 
     template<class T1,class T2,size_t T3>
